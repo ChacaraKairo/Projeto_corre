@@ -40,12 +40,11 @@ export const DatabaseInit = () => {
       );
     `);
 
-    // 2. Tabela de Transações Financeiras (Ganhos e Gastos)
-    // Aqui incluímos o veiculo_id para o rastreio
+    // 2. Tabela de Transações Financeiras
     db.execSync(`
       CREATE TABLE IF NOT EXISTS transacoes_financeiras (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        veiculo_id INTEGER, -- Pode ser NULL se for um gasto geral
+        veiculo_id INTEGER,
         categoria_id INTEGER NOT NULL,
         descricao TEXT,
         valor REAL NOT NULL,
@@ -56,9 +55,7 @@ export const DatabaseInit = () => {
       );
     `);
 
-    // 3. MIGRACÕES (Tratamento de colunas para apps já instalados)
-
-    // Migração Perfil
+    // 3. MIGRACÕES
     const colunasPerfil = [
       { nome: 'tipo_meta', def: "TEXT DEFAULT 'diaria'" },
       { nome: 'meta_semanal', def: 'REAL DEFAULT 0' },
@@ -69,27 +66,12 @@ export const DatabaseInit = () => {
         db.execSync(
           `ALTER TABLE perfil_usuario ADD COLUMN ${col.nome} ${col.def};`,
         );
-        console.log(
-          `[MIGRAÇÃO] Coluna ${col.nome} adicionada ao perfil.`,
-        );
       } catch (e) {
         /* Coluna já existe */
       }
     });
 
-    // Migração Transações (Caso você já tivesse a tabela sem o veiculo_id)
-    try {
-      db.execSync(
-        'ALTER TABLE transacoes_financeiras ADD COLUMN veiculo_id INTEGER;',
-      );
-      console.log(
-        '[MIGRAÇÃO] Coluna veiculo_id adicionada às transações.',
-      );
-    } catch (e) {
-      /* Coluna já existe */
-    }
-
-    // 4. Manutenção (Garante que a tabela de manutenção existe)
+    // 4. Manutenção
     db.execSync(`
       CREATE TABLE IF NOT EXISTS registros_manutencao (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -102,9 +84,18 @@ export const DatabaseInit = () => {
       );
     `);
 
-    console.log(
-      '[BANCO] Sistema pronto e vinculado aos veículos.',
-    );
+    // 5. SEED DATA
+    db.execSync(`
+      INSERT OR IGNORE INTO perfil_usuario (id, nome, meta_diaria) VALUES (1, 'Kairo Chacara', 100.00);
+      
+      INSERT OR IGNORE INTO categorias_financeiras (nome, tipo, cor) VALUES 
+      ('Combustível', 'despesa', '#FF4444'),
+      ('Manutenção', 'despesa', '#FFAA00'),
+      ('App Entrega', 'ganho', '#44FF44'),
+      ('Gorjeta', 'ganho', '#00AAFF');
+    `);
+
+    console.log('[BANCO] Tabelas e sementes prontas.');
   } catch (error) {
     console.error(
       '[ERRO] Falha crítica na inicialização do banco:',

@@ -1,76 +1,67 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import * as SplashScreen from 'expo-splash-screen'; // Importante para UX
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { DatabaseInit } from '@/database/DatabaseInit'; // Verifique se o caminho está correto
-
-// Impede que a Splash Screen feche automaticamente
-SplashScreen.preventAutoHideAsync();
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { View, ActivityIndicator } from 'react-native';
+import { DatabaseInit } from '../database/DatabaseInit'; // Verifique se o caminho src/ está correto
+import db from '../database/DatabaseInit';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [appReady, setAppReady] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [hasUser, setHasUser] = useState(false);
+  const segments = useSegments();
+  const router = useRouter();
 
   useEffect(() => {
-    async function initializeApp() {
+    async function setup() {
       try {
-        // Inicializa o SQLite
+        // Inicializa as tabelas do SQLite para o MeuCorre
         DatabaseInit();
 
-        // Aqui você pode carregar outras coisas se precisar (fontes, login, etc)
-        console.log('[SISTEMA] Banco de dados pronto.');
-      } catch (e) {
-        console.warn(
-          '[ERRO] Falha ao inicializar o app:',
-          e,
+        // Verifica se já existe um perfil cadastrado
+        const result = await db.getAllAsync<{ id: number }>(
+          'SELECT id FROM perfil_usuario LIMIT 1;',
         );
+        setHasUser(result.length > 0);
+      } catch (error) {
+        console.error('Erro na inicialização:', error);
       } finally {
-        setAppReady(true);
-        // Esconde a Splash Screen após tudo estar pronto
-        await SplashScreen.hideAsync();
+        // Aguarda um pouco mais para a Splash (index) ser visível (opcional)
+        setTimeout(() => setLoading(false), 2000);
       }
     }
-
-    initializeApp();
+    setup();
   }, []);
 
-  // Enquanto o banco não carrega, não renderiza as rotas para evitar erros de SQL
-  if (!appReady) {
-    return null;
-  }
+  useEffect(() => {
+    if (loading) return;
 
+    const rootSegment = segments[0];
+
+    // Se NÃO tem usuário e NÃO está na tela de cadastro, manda registrar
+    if (!hasUser && rootSegment !== 'cadastro') {
+      router.replace('/cadastro');
+    }
+    // Se TEM usuário e está na Splash (index) ou Cadastro, manda para o Login
+    else if (
+      hasUser &&
+      (rootSegment === undefined ||
+        rootSegment === 'cadastro')
+    ) {
+      router.replace('/login');
+    }
+  }, [hasUser, loading, segments]);
+
+  // Enquanto carrega o banco, o index.tsx (Splash) será exibido automaticamente
+  // através do componente Stack abaixo.
   return (
-    <ThemeProvider
-      value={
-        colorScheme === 'dark' ? DarkTheme : DefaultTheme
-      }
-    >
-      <Stack>
-        <Stack.Screen
-          name="(tabs)"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="modal"
-          options={{
-            presentation: 'modal',
-            title: 'Modal',
-          }}
-        />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />{' '}
+      {/* Sua Tela de Carregamento */}
+      <Stack.Screen name="login" />{' '}
+      {/* Sua Nova Tela de Login */}
+      <Stack.Screen name="cadastro" />{' '}
+      {/* Tela de Cadastro */}
+      <Stack.Screen name="dashboard" />{' '}
+      {/* Tela Principal */}
+    </Stack>
   );
 }
