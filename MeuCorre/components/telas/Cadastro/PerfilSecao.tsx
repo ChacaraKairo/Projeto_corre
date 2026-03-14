@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { User, Camera, X, Lock } from 'lucide-react-native';
 import { Input } from '../../ui/inputs/Input';
-import { styles } from '../../../styles/Cadastro/componentes/cadastroStyles';
+import { styles } from '../../../styles/telas/Cadastro/componentes/cadastroStyles';
 import { PhotoService } from './script/photoService';
 
 interface PerfilProps {

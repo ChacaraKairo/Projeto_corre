@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-// Importações apontando para o arquivo correto
 import { DatabaseInit } from '../database/DatabaseInit';
 import db from '../database/DatabaseInit';
 
@@ -40,7 +39,6 @@ export default function RootLayout() {
   useEffect(() => {
     if (!isReady) return;
 
-    // Forçamos a tipagem para string para evitar o erro de "no overlap"
     const rootSegment = segments[0] as string | undefined;
 
     // Verifica se estamos na raiz (URL "/" ou arquivo "index")
@@ -51,18 +49,20 @@ export default function RootLayout() {
 
     if (isAtRoot) {
       if (hasUser) {
-        router.replace('/login');
+        // Se já tem cadastro, vai para o login
+        router.replace('/(auth)/login' as any);
       } else {
-        router.replace('/cadastro');
+        // Se não tem, vai criar conta
+        router.replace('/(auth)/cadastro' as any);
       }
     }
   }, [isReady, hasUser, segments, router]);
 
+  // 3. RENDERIZAÇÃO DAS ROTAS (Limpo)
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
-      <Stack.Screen name="login" />
-      <Stack.Screen name="cadastro" />
+      <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
     </Stack>
   );

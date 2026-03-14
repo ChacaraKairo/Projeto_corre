@@ -8,19 +8,19 @@ import {
 } from 'react-native';
 import {
   Settings,
-  Bike,
+  Bike, // Para Bicicleta
+  Motorbike, // Para Moto
   Car,
   Gauge,
-  Truck,
   Bus,
 } from 'lucide-react-native';
 import { Input } from '../../ui/inputs/Input';
-import { styles } from '../../../styles/Cadastro/componentes/cadastroStyles';
+import { styles } from '../../../styles/telas/Cadastro/componentes/cadastroStyles';
 
 interface VeiculoProps {
-  tipo: 'moto' | 'carro' | 'caminhao' | 'van';
+  tipo: 'moto' | 'carro' | 'bicicleta' | 'van';
   setTipo: (
-    t: 'moto' | 'carro' | 'caminhao' | 'van',
+    t: 'moto' | 'carro' | 'bicicleta' | 'van',
   ) => void;
   marca: string;
   setMarca: (t: string) => void;
@@ -62,30 +62,35 @@ export const VeiculoSecao: React.FC<VeiculoProps> = ({
           marca: 'Ex: Honda',
           modelo: 'Ex: CG Titan',
           motor: 'Ex: 160cc',
+          placa: 'ABC1D23',
         };
       case 'carro':
         return {
           marca: 'Ex: Fiat',
           modelo: 'Ex: Toro',
           motor: 'Ex: 2.0',
+          placa: 'ABC1D23',
         };
-      case 'caminhao':
+      case 'bicicleta':
         return {
-          marca: 'Ex: Volvo',
-          modelo: 'Ex: FH 540',
-          motor: 'Ex: 13L',
+          marca: 'Ex: Caloi / Oggi',
+          modelo: 'Ex: Vulcan',
+          motor: 'Ex: N/A ou 250W', // Bicicletas normais não têm motor, elétricas sim
+          placa: 'Opcional para Bike',
         };
       case 'van':
         return {
           marca: 'Ex: Mercedes',
           modelo: 'Ex: Sprinter',
           motor: 'Ex: 2.2',
+          placa: 'ABC1D23',
         };
       default:
         return {
           marca: 'Marca',
           modelo: 'Modelo',
           motor: 'Motor',
+          placa: 'Placa',
         };
     }
   };
@@ -109,7 +114,7 @@ export const VeiculoSecao: React.FC<VeiculoProps> = ({
             ]}
             onPress={() => setTipo('moto')}
           >
-            <Bike
+            <Motorbike
               size={24}
               color={tipo === 'moto' ? '#00C853' : '#444'}
             />
@@ -149,28 +154,29 @@ export const VeiculoSecao: React.FC<VeiculoProps> = ({
         </View>
 
         <View style={localStyles.selectorRow}>
+          {/* BOTÃO DA BICICLETA (Substituiu o Caminhão) */}
           <TouchableOpacity
             style={[
               localStyles.selectBtn,
-              tipo === 'caminhao' &&
+              tipo === 'bicicleta' &&
                 localStyles.selectBtnAtivo,
             ]}
-            onPress={() => setTipo('caminhao')}
+            onPress={() => setTipo('bicicleta')}
           >
-            <Truck
+            <Bike
               size={24}
               color={
-                tipo === 'caminhao' ? '#00C853' : '#444'
+                tipo === 'bicicleta' ? '#00C853' : '#444'
               }
             />
             <Text
               style={[
                 localStyles.selectLabel,
-                tipo === 'caminhao' &&
+                tipo === 'bicicleta' &&
                   localStyles.selectLabelAtivo,
               ]}
             >
-              CAMINHÃO
+              BICICLETA
             </Text>
           </TouchableOpacity>
 
@@ -220,44 +226,56 @@ export const VeiculoSecao: React.FC<VeiculoProps> = ({
         </View>
       </View>
 
-      <View style={localStyles.row}>
-        <View style={localStyles.flex1}>
-          <Input
-            label="Ano"
-            placeholder="2024"
-            value={ano}
-            onChangeText={setAno}
-            keyboardType="numeric"
-          />
+      {/* Só exibe Ano e Motor se NÃO for bicicleta */}
+      {tipo !== 'bicicleta' && (
+        <View style={localStyles.row}>
+          <View style={localStyles.flex1}>
+            <Input
+              label="Ano"
+              placeholder="2024"
+              value={ano}
+              onChangeText={setAno}
+              keyboardType="numeric"
+            />
+          </View>
+          <View style={localStyles.flex1}>
+            <Input
+              label="Motor"
+              placeholder={placeholders.motor}
+              value={motor}
+              onChangeText={setMotor}
+              // Validação condicional já existente mantida
+              erro={erro && tipo !== 'bicicleta' && !motor}
+            />
+          </View>
         </View>
-        <View style={localStyles.flex1}>
-          <Input
-            label="Motor"
-            placeholder={placeholders.motor}
-            value={motor}
-            onChangeText={setMotor}
-          />
-        </View>
-      </View>
+      )}
 
-      <Input
-        label="Placa"
-        placeholder="ABC1D23"
-        value={placa}
-        onChangeText={(t) => setPlaca(t.toUpperCase())}
-        autoCapitalize="characters"
-        erro={erro && !placa}
-      />
+      {/* Oculta Placa se for bicicleta */}
+      {tipo !== 'bicicleta' && (
+        <Input
+          label="Placa"
+          placeholder={placeholders.placa}
+          value={placa}
+          onChangeText={(t) => setPlaca(t.toUpperCase())}
+          autoCapitalize="characters"
+          erro={erro && !placa}
+        />
+      )}
 
-      <Input
-        label="Quilometragem Atual"
-        placeholder="Ex: 12500"
-        value={km}
-        onChangeText={setKm}
-        keyboardType="numeric"
-        Icone={Gauge}
-        erro={erro && !km}
-      />
+      {tipo !== 'bicicleta' && (
+        <Input
+          label="Quilometragem Atual"
+          placeholder="Ex: 12500"
+          value={km}
+          onChangeText={setKm}
+          keyboardType="numeric"
+          Icone={Gauge}
+          // Se a pessoa usa bike sem ciclocomputador, pode não saber os Km iniciais.
+          // Mas mantive a validação caso você exija começar do zero.
+          erro={erro && !km}
+        />
+      )}
     </View>
   );
 };
@@ -286,7 +304,7 @@ const localStyles = StyleSheet.create({
   },
   selectBtn: {
     flex: 1,
-    height: 70, // Reduzido um pouco para caber os 4 botões na tela
+    height: 70,
     backgroundColor: '#202020',
     borderRadius: 16,
     borderWidth: 2,
@@ -299,7 +317,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 200, 83, 0.05)',
   },
   selectLabel: {
-    fontSize: 9, // Ajustado para não quebrar texto longo
+    fontSize: 9,
     fontWeight: '900',
     color: '#444',
     marginTop: 6,

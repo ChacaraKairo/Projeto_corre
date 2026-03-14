@@ -15,14 +15,14 @@ import {
 } from 'lucide-react-native';
 import { Stack } from 'expo-router';
 
-import { useCadastro } from '../hooks/cadastro/useCadastro';
-import { styles } from '../styles/Cadastro/componentes/cadastroStyles';
+import { useCadastro } from '../../hooks/cadastro/useCadastro';
+import { styles } from '../../styles/telas/Cadastro/componentes/cadastroStyles';
 
 // Seus componentes modulares
-import { HeaderCadastro } from '../components/telas/Cadastro/HeaderCadastro';
-import { PerfilSecao } from '../components/telas/Cadastro/PerfilSecao';
-import { VeiculoSecao } from '../components/telas/Cadastro/VeiculoSecao';
-import { MetasSecao } from '../components/telas/Cadastro/MetasSecao';
+import { HeaderCadastro } from '../../components/telas/Cadastro/HeaderCadastro';
+import { PerfilSecao } from '../../components/telas/Cadastro/PerfilSecao';
+import { VeiculoSecao } from '../../components/telas/Cadastro/VeiculoSecao';
+import { MetasSecao } from '../../components/telas/Cadastro/MetasSecao';
 
 export default function CadastroScreen() {
   const {

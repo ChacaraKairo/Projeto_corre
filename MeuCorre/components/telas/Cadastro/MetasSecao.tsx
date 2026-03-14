@@ -14,7 +14,7 @@ import {
   CalendarDays,
 } from 'lucide-react-native';
 import { Input } from '../../ui/inputs/Input';
-import { styles as cadastroStyles } from '../../../styles/Cadastro/componentes/cadastroStyles';
+import { styles as cadastroStyles } from '../../../styles/telas/Cadastro/componentes/cadastroStyles';
 
 interface MetasSecaoProps {
   meta: string;

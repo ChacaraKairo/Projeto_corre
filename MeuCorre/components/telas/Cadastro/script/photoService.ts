@@ -30,19 +30,16 @@ export const PhotoService = {
           FileSystem.cacheDirectory;
 
         if (!baseDir) {
-          throw new Error(
-            'O sistema de arquivos retornou vazio. Tente reiniciar o Expo Go.',
-          );
+          // Se não conseguir acessar pastas locais (ex: Web), usa o URI temporário
+          // Isso evita o crash e permite continuar o cadastro
+          return tempUri;
         }
 
         const fileName = `profile_${Date.now()}.jpg`;
         const destPath = `${baseDir}${fileName}`;
 
         // Copia o arquivo
-        await FileSystem.copyAsync({
-          from: tempUri,
-          to: destPath,
-        });
+        await FileSystem.copyAsync(tempUri, destPath);
 
         // Deleta antiga se existir
         if (

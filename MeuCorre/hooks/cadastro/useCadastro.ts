@@ -14,7 +14,7 @@ export const useCadastro = () => {
 
   // Estados do Veículo
   const [tipoVeiculo, setTipoVeiculo] = useState<
-    'moto' | 'carro' | 'caminhao' | 'van'
+    'moto' | 'carro' | 'bicicleta' | 'van'
   >('moto');
   const [marca, setMarca] = useState('');
   const [modelo, setModelo] = useState('');
@@ -39,8 +39,8 @@ export const useCadastro = () => {
       senha.length < 4 ||
       !marca ||
       !modelo ||
-      !placa ||
-      !kmAtual ||
+      (tipoVeiculo !== 'bicicleta' && !placa) ||
+      (tipoVeiculo !== 'bicicleta' && !kmAtual) ||
       !meta ||
       !aceitouTermos
     ) {
@@ -81,7 +81,7 @@ export const useCadastro = () => {
         ],
       );
 
-      router.replace('/'); // Rota do Expo Router
+      router.replace('/origemganhos'); // Rota do Expo Router
     } catch (error) {
       console.error('Erro ao salvar:', error);
       Alert.alert('Erro', 'Falha ao guardar os dados.');

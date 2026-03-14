@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Bike, Car } from 'lucide-react-native';
 import { TipoVeiculo } from '../../../hooks/types/index';
-import { veiculoSelectorStyles as styles } from '../../../styles/Cadastro/componentes/VeiculoSelectorStyles';
+import { veiculoSelectorStyles as styles } from '../../../styles/telas/Cadastro/componentes/VeiculoSelectorStyles';
 
 interface VeiculoSelectorProps {
   selecionado: TipoVeiculo;
