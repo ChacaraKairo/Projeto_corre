@@ -1,27 +1,26 @@
-import React from 'react';
+import { useRouter } from "expo-router";
+import { Check, Fuel } from "lucide-react-native";
+import React from "react";
 import {
-  View,
+  Animated,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  TouchableOpacity,
-  Alert,
-  Image,
-  Animated,
   Text,
-} from 'react-native';
-import { Fuel, Check } from 'lucide-react-native';
-import { Stack, useRouter } from 'expo-router';
+  TouchableOpacity,
+  View
+} from "react-native";
 
 // Lógica centralizada (Crie este hook em src/hooks/useLogin.ts)
-import { useLogin } from '../../hooks/login/useLogin';
+import { useLogin } from "../../hooks/login/useLogin";
 
 // Importação dos seus componentes modulares
-import { CardLogin } from '../../components/telas/Login/CardLogin';
-import { FooterLogin } from '../../components/telas/Login/FooterLogin';
+import { CardLogin } from "../../components/telas/login/CardLogin";
+import { FooterLogin } from "../../components/telas/login/FooterLogin";
 
 // Importação dos estilos centralizados
-import { loginStyles as styles } from '../../styles/telas/login/LoginStyles';
+import { loginStyles as styles } from "../../styles/telas/login/LoginStyles";
 
 const LoginScreen: React.FC = () => {
   const router = useRouter();
@@ -47,36 +46,29 @@ const LoginScreen: React.FC = () => {
       {/* Botão Calculadora Flex (Topo Direito) */}
       <TouchableOpacity
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 50,
           right: 20,
           zIndex: 50,
-          backgroundColor: '#161616',
+          backgroundColor: "#161616",
           padding: 10,
           borderRadius: 12,
           borderWidth: 1,
-          borderColor: '#333',
-          shadowColor: '#000',
+          borderColor: "#333",
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.25,
           shadowRadius: 3.84,
           elevation: 5,
         }}
-        onPress={() =>
-          Alert.alert(
-            'Em Breve',
-            'A Calculadora Flex estará disponível aqui.',
-          )
-        }
+        onPress={() => router.push("/calculadora")}
         activeOpacity={0.7}
       >
         <Fuel size={24} color="#00C853" />
       </TouchableOpacity>
 
       <KeyboardAvoidingView
-        behavior={
-          Platform.OS === 'ios' ? 'padding' : 'height'
-        }
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
         <ScrollView
@@ -87,23 +79,23 @@ const LoginScreen: React.FC = () => {
           {/* Logo do App com animação (Substituindo o HeaderLogin antigo) */}
           <Animated.View
             style={{
-              alignItems: 'center',
+              alignItems: "center",
               marginTop: 60,
               marginBottom: 30,
               transform: [{ translateY: bounceAnim }],
             }}
           >
             <Image
-              source={require('../../assets/images/android-icon-foreground.png')}
+              source={require("../../assets/images/android-icon-foreground.png")}
               style={{ width: 220, height: 220 }}
               resizeMode="contain"
             />
             <Text
               style={{
-                color: '#888',
+                color: "#888",
                 fontSize: 16,
                 marginTop: -40,
-                fontWeight: '500',
+                fontWeight: "500",
               }}
             >
               Você nas ruas, nós no seu bolso.
@@ -121,17 +113,15 @@ const LoginScreen: React.FC = () => {
             biometriaDisponivel={biometriaDisponivel}
             onLogin={realizarLoginManual}
             onBiometria={realizarLoginBiometrico}
-            onNavigateCadastro={() =>
-              router.push('/cadastro')
-            }
+            onNavigateCadastro={() => router.push("/cadastro")}
           />
 
           {/* Checkbox de Lembrar Senha */}
           <TouchableOpacity
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
               marginTop: 10,
               marginBottom: 20,
             }}
@@ -144,26 +134,18 @@ const LoginScreen: React.FC = () => {
                 height: 20,
                 borderRadius: 6,
                 borderWidth: 2,
-                borderColor: '#00C853',
-                alignItems: 'center',
-                justifyContent: 'center',
+                borderColor: "#00C853",
+                alignItems: "center",
+                justifyContent: "center",
                 marginRight: 8,
-                backgroundColor: lembrarSenha
-                  ? '#00C853'
-                  : 'transparent',
+                backgroundColor: lembrarSenha ? "#00C853" : "transparent",
               }}
             >
               {lembrarSenha && (
-                <Check
-                  size={14}
-                  color="#0A0A0A"
-                  strokeWidth={3}
-                />
+                <Check size={14} color="#0A0A0A" strokeWidth={3} />
               )}
             </View>
-            <Text
-              style={{ color: '#888', fontWeight: 'bold' }}
-            >
+            <Text style={{ color: "#888", fontWeight: "bold" }}>
               Lembrar minha senha
             </Text>
           </TouchableOpacity>
