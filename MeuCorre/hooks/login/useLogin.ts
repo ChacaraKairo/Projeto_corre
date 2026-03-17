@@ -8,6 +8,7 @@ export const useLogin = () => {
   const router = useRouter();
   const [nome, setNome] = useState('');
   const [senha, setSenha] = useState('');
+  const [temUsuario, setTemUsuario] = useState(false);
   const [lembrarSenha, setLembrarSenha] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
@@ -35,6 +36,7 @@ export const useLogin = () => {
       );
 
       if (usuario) {
+        setTemUsuario(true);
         setNome(usuario.nome); // O nome fica sempre preenchido
 
         // Verifica a preferência de senha
@@ -47,6 +49,8 @@ export const useLogin = () => {
           setSenha(usuario.senha); // Preenche a senha se estava marcado
           setLembrarSenha(true); // Deixa o checkbox marcado
         }
+      } else {
+        setTemUsuario(false);
       }
     } catch (e) {
       console.log('Erro ao carregar dados salvos:', e);
@@ -142,6 +146,7 @@ export const useLogin = () => {
     setNome,
     senha,
     setSenha,
+    temUsuario,
     lembrarSenha,
     setLembrarSenha,
     carregando,

@@ -28,7 +28,9 @@ export const DatabaseInit = () => {
         placa TEXT NOT NULL UNIQUE,
         km_atual INTEGER DEFAULT 0,
         combustivel_padrao TEXT DEFAULT 'flex',
-        ativo INTEGER DEFAULT 0
+        id_user INTEGER,
+        ativo INTEGER DEFAULT 0,
+        FOREIGN KEY (id_user) REFERENCES perfil_usuario (id) ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS categorias_financeiras (

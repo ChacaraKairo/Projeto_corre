@@ -32,6 +32,7 @@ const LoginScreen: React.FC = () => {
     setNome,
     senha,
     setSenha,
+    temUsuario,
     lembrarSenha,
     setLembrarSenha,
     carregando,
@@ -121,8 +122,10 @@ const LoginScreen: React.FC = () => {
             biometriaDisponivel={biometriaDisponivel}
             onLogin={realizarLoginManual}
             onBiometria={realizarLoginBiometrico}
-            onNavigateCadastro={() =>
-              router.push('/cadastro')
+            onNavigateCadastro={
+              !temUsuario
+                ? () => router.push('/cadastro')
+                : (undefined as any)
             }
           />
 

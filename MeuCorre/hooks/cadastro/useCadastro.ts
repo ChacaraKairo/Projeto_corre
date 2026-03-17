@@ -55,7 +55,7 @@ export const useCadastro = () => {
       const valorMeta = parseFloat(meta) || 0;
 
       // 1. Inserir Perfil
-      await db.runAsync(
+      const resultUsuario = await db.runAsync(
         `INSERT INTO perfil_usuario (nome, senha, foto_uri, tipo_meta, meta_diaria, meta_semanal) VALUES (?, ?, ?, ?, ?, ?);`,
         [
           nome.trim(),
@@ -67,9 +67,11 @@ export const useCadastro = () => {
         ],
       );
 
+      const usuarioId = resultUsuario.lastInsertRowId;
+
       // 2. Inserir Veículo
       await db.runAsync(
-        `INSERT INTO veiculos (tipo, marca, modelo, ano, motor, placa, km_atual, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, 1);`,
+        `INSERT INTO veiculos (tipo, marca, modelo, ano, motor, placa, km_atual, ativo, id_user) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?);`,
         [
           tipoVeiculo,
           marca,
@@ -78,6 +80,7 @@ export const useCadastro = () => {
           motor,
           placa.toUpperCase(),
           parseInt(kmAtual) || 0,
+          usuarioId,
         ],
       );
 
