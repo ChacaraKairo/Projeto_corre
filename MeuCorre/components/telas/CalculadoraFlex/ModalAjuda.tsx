@@ -1,4 +1,7 @@
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+} from '@expo/vector-icons';
 import {
   Modal,
   ScrollView,
@@ -6,15 +9,21 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
+import { useTema } from '../../../hooks/modo_tema';
 
 export default function ModalAjuda({
   modalAjuda,
   setModalAjuda,
 }: {
   modalAjuda: boolean;
-  setModalAjuda: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalAjuda: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
 }) {
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   return (
     <Modal
       visible={modalAjuda}
@@ -22,86 +31,232 @@ export default function ModalAjuda({
       transparent
       onRequestClose={() => setModalAjuda(false)}
     >
-      <View style={styles.modalOverlay}>
+      <View
+        style={[
+          styles.modalOverlay,
+          {
+            backgroundColor: isDark
+              ? 'rgba(0,0,0,0.97)'
+              : 'rgba(255,255,255,0.95)',
+          },
+        ]}
+      >
         <ScrollView
           contentContainerStyle={styles.modalContent}
           showsVerticalScrollIndicator={false}
         >
           {/* Close Button */}
           <TouchableOpacity
-            style={styles.modalCloseBtn}
+            style={[
+              styles.modalCloseBtn,
+              {
+                backgroundColor: isDark
+                  ? '#161616'
+                  : '#FFFFFF',
+                borderColor: isDark ? '#222' : '#E0E0E0',
+              },
+            ]}
             onPress={() => setModalAjuda(false)}
             activeOpacity={0.8}
           >
-            <Ionicons name="close" size={24} color="#666" />
+            <Ionicons
+              name="close"
+              size={24}
+              color={isDark ? '#666' : '#333'}
+            />
           </TouchableOpacity>
 
           {/* Header */}
           <View style={styles.modalHeader}>
             <View style={styles.modalIconWrap}>
-              <Ionicons name="calculator" size={40} color="#00C853" />
+              <Ionicons
+                name="calculator"
+                size={40}
+                color="#00C853"
+              />
             </View>
-            <Text style={styles.modalTitle}>Entenda a Matemática</Text>
+            <Text
+              style={[
+                styles.modalTitle,
+                { color: isDark ? '#fff' : '#000' },
+              ]}
+            >
+              Entenda a Matemática
+            </Text>
             <Text style={styles.modalSubtitle}>
               Por que os 70% ficaram para trás?
             </Text>
           </View>
 
           {/* Tópico 1 */}
-          <View style={styles.modalCard}>
+          <View
+            style={[
+              styles.modalCard,
+              {
+                backgroundColor: isDark
+                  ? '#161616'
+                  : '#FFFFFF',
+                borderColor: isDark ? '#222' : '#E0E0E0',
+              },
+            ]}
+          >
             <View style={styles.modalCardHeader}>
-              <MaterialCommunityIcons name="flask" size={20} color="#EAB308" />
-              <Text style={[styles.modalCardTitle, { color: "#EAB308" }]}>
+              <MaterialCommunityIcons
+                name="flask"
+                size={20}
+                color="#EAB308"
+              />
+              <Text
+                style={[
+                  styles.modalCardTitle,
+                  { color: '#EAB308' },
+                ]}
+              >
                 A Nova Gasolina (E30)
               </Text>
             </View>
-            <Text style={styles.modalCardText}>
-              Desde agosto de 2025, a gasolina comum no Brasil passou a ter{" "}
-              <Text style={styles.highlight}>30% de etanol anidro</Text> (antes
-              era 27%). Isso significa que a gasolina ficou "menos pura" e rende
-              menos quilómetros por litro, o que aproxima o custo-benefício dos
-              dois combustíveis.
+            <Text
+              style={[
+                styles.modalCardText,
+                { color: isDark ? '#888' : '#555' },
+              ]}
+            >
+              Desde agosto de 2025, a gasolina comum no
+              Brasil passou a ter{' '}
+              <Text
+                style={[
+                  styles.highlight,
+                  { color: isDark ? '#fff' : '#000' },
+                ]}
+              >
+                30% de etanol anidro
+              </Text>{' '}
+              (antes era 27%). Isso significa que a gasolina
+              ficou "menos pura" e rende menos quilómetros
+              por litro, o que aproxima o custo-benefício
+              dos dois combustíveis.
             </Text>
           </View>
 
           {/* Tópico 2 */}
-          <View style={styles.modalCard}>
+          <View
+            style={[
+              styles.modalCard,
+              {
+                backgroundColor: isDark
+                  ? '#161616'
+                  : '#FFFFFF',
+                borderColor: isDark ? '#222' : '#E0E0E0',
+              },
+            ]}
+          >
             <View style={styles.modalCardHeader}>
-              <Ionicons name="flash" size={20} color="#00C853" />
-              <Text style={[styles.modalCardTitle, { color: "#00C853" }]}>
+              <Ionicons
+                name="flash"
+                size={20}
+                color="#00C853"
+              />
+              <Text
+                style={[
+                  styles.modalCardTitle,
+                  { color: '#00C853' },
+                ]}
+              >
                 Motores Inteligentes
               </Text>
             </View>
-            <Text style={styles.modalCardText}>
-              Os carros flex fabricados nos últimos anos possuem sistemas de
-              injeção e taxas de compressão muito mais eficientes com o
-              combustível vegetal. O etanol agora rende mais do que rendia
-              antigamente em relação à gasolina.
+            <Text
+              style={[
+                styles.modalCardText,
+                { color: isDark ? '#888' : '#555' },
+              ]}
+            >
+              Os carros flex fabricados nos últimos anos
+              possuem sistemas de injeção e taxas de
+              compressão muito mais eficientes com o
+              combustível vegetal. O etanol agora rende mais
+              do que rendia antigamente em relação à
+              gasolina.
             </Text>
           </View>
 
           {/* Tópico 3 */}
-          <View style={styles.modalCard}>
+          <View
+            style={[
+              styles.modalCard,
+              {
+                backgroundColor: isDark
+                  ? '#161616'
+                  : '#FFFFFF',
+                borderColor: isDark ? '#222' : '#E0E0E0',
+              },
+            ]}
+          >
             <View style={styles.modalCardHeader}>
-              <Ionicons name="speedometer" size={20} color="#3B82F6" />
-              <Text style={[styles.modalCardTitle, { color: "#3B82F6" }]}>
+              <Ionicons
+                name="speedometer"
+                size={20}
+                color="#3B82F6"
+              />
+              <Text
+                style={[
+                  styles.modalCardTitle,
+                  { color: '#3B82F6' },
+                ]}
+              >
                 Seja Preciso
               </Text>
             </View>
-            <Text style={[styles.modalCardText, { marginBottom: 12 }]}>
-              A regra dos 75% é uma média nacional segura. Mas queres ser exato?
-              Faz o seguinte:
+            <Text
+              style={[
+                styles.modalCardText,
+                {
+                  marginBottom: 12,
+                  color: isDark ? '#888' : '#555',
+                },
+              ]}
+            >
+              A regra dos 75% é uma média nacional segura.
+              Mas queres ser exato? Faz o seguinte:
             </Text>
-            <View style={styles.stepsBox}>
-              <Text style={styles.stepText}>
-                1. Vê quanto o teu veículo faz por litro no Etanol (ex: 9km/l)
+            <View
+              style={[
+                styles.stepsBox,
+                {
+                  backgroundColor: isDark
+                    ? '#0A0A0A'
+                    : '#F5F5F5',
+                  borderColor: isDark ? '#222' : '#E0E0E0',
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.stepText,
+                  { color: isDark ? '#fff' : '#000' },
+                ]}
+              >
+                1. Vê quanto o teu veículo faz por litro no
+                Etanol (ex: 9km/l)
               </Text>
-              <Text style={styles.stepText}>
+              <Text
+                style={[
+                  styles.stepText,
+                  { color: isDark ? '#fff' : '#000' },
+                ]}
+              >
                 2. Vê quanto faz na Gasolina (ex: 12km/l)
               </Text>
-              <Text style={styles.stepText}>
-                3. Divide um pelo outro:{" "}
-                <Text style={{ color: "#00C853" }}>9 ÷ 12 = 0,75</Text>
+              <Text
+                style={[
+                  styles.stepText,
+                  { color: isDark ? '#fff' : '#000' },
+                ]}
+              >
+                3. Divide um pelo outro:{' '}
+                <Text style={{ color: '#00C853' }}>
+                  9 ÷ 12 = 0,75
+                </Text>
               </Text>
             </View>
           </View>
@@ -111,7 +266,9 @@ export default function ModalAjuda({
             onPress={() => setModalAjuda(false)}
             activeOpacity={0.85}
           >
-            <Text style={styles.modalCtaText}>Tudo certo, vamos rodar!</Text>
+            <Text style={styles.modalCtaText}>
+              Tudo certo, vamos rodar!
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </View>
@@ -122,7 +279,7 @@ export default function ModalAjuda({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.97)",
+    backgroundColor: 'rgba(0,0,0,0.97)',
   },
   modalContent: {
     padding: 24,
@@ -131,95 +288,95 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   modalCloseBtn: {
-    position: "absolute",
+    position: 'absolute',
     top: 48,
     right: 24,
     padding: 12,
-    backgroundColor: "#161616",
+    backgroundColor: '#161616',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#222",
+    borderColor: '#222',
   },
   modalHeader: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 8,
   },
   modalIconWrap: {
     padding: 16,
-    backgroundColor: "rgba(0,200,83,0.1)",
+    backgroundColor: 'rgba(0,200,83,0.1)',
     borderRadius: 999,
     marginBottom: 16,
   },
   modalTitle: {
     fontSize: 22,
-    fontWeight: "900",
-    color: "#fff",
-    textTransform: "uppercase",
+    fontWeight: '900',
+    color: '#fff',
+    textTransform: 'uppercase',
     letterSpacing: -0.5,
   },
   modalSubtitle: {
     fontSize: 10,
-    fontWeight: "900",
-    color: "#00C853",
-    textTransform: "uppercase",
+    fontWeight: '900',
+    color: '#00C853',
+    textTransform: 'uppercase',
     letterSpacing: 2,
     marginTop: 8,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   modalCard: {
-    backgroundColor: "#161616",
+    backgroundColor: '#161616',
     padding: 24,
     borderRadius: 28,
     borderWidth: 1,
-    borderColor: "#222",
+    borderColor: '#222',
     gap: 8,
   },
   modalCardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   modalCardTitle: {
     fontSize: 12,
-    fontWeight: "900",
-    textTransform: "uppercase",
+    fontWeight: '900',
+    textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   modalCardText: {
-    color: "#888",
+    color: '#888',
     fontSize: 12,
     lineHeight: 20,
   },
   highlight: {
-    color: "#fff",
-    fontWeight: "700",
+    color: '#fff',
+    fontWeight: '700',
   },
   stepsBox: {
-    backgroundColor: "#0A0A0A",
+    backgroundColor: '#0A0A0A',
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#222",
+    borderColor: '#222',
     gap: 8,
   },
   stepText: {
     fontSize: 10,
-    color: "#fff",
-    fontWeight: "700",
-    fontStyle: "italic",
+    color: '#fff',
+    fontWeight: '700',
+    fontStyle: 'italic',
   },
   modalCta: {
     paddingVertical: 20,
-    backgroundColor: "#00C853",
+    backgroundColor: '#00C853',
     borderRadius: 24,
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: 8,
   },
   modalCtaText: {
-    color: "#0A0A0A",
+    color: '#0A0A0A',
     fontSize: 12,
-    fontWeight: "900",
-    textTransform: "uppercase",
+    fontWeight: '900',
+    textTransform: 'uppercase',
     letterSpacing: 2,
   },
 });

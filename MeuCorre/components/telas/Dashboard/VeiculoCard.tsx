@@ -9,6 +9,7 @@ import {
   ClipboardList,
 } from 'lucide-react-native';
 import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashboardStyles';
+import { useTema } from '../../../hooks/modo_tema';
 
 interface VeiculoProps {
   veiculo: {
@@ -27,8 +28,20 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
   onTrocar,
   onOficina,
 }) => {
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   return (
-    <View style={styles.cardPreto}>
+    <View
+      style={[
+        styles.cardPreto,
+        {
+          backgroundColor: isDark ? '#161616' : '#FFFFFF',
+          borderColor: isDark ? '#222' : '#E0E0E0',
+          borderWidth: 1,
+        },
+      ]}
+    >
       <View style={styles.veiculoHeader}>
         <View
           style={{
@@ -53,20 +66,40 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
             )}
           </View>
           <View>
-            <Text style={styles.veiculoTextoPrimario}>
+            <Text
+              style={[
+                styles.veiculoTextoPrimario,
+                { color: isDark ? '#FFF' : '#000' },
+              ]}
+            >
               {veiculo?.modelo || 'Sem Veículo'}
             </Text>
-            <Text style={styles.veiculoTextoSecundario}>
+            <Text
+              style={[
+                styles.veiculoTextoSecundario,
+                { color: isDark ? '#888' : '#555' },
+              ]}
+            >
               {veiculo?.placa || '---'}
             </Text>
           </View>
         </View>
 
         <View style={styles.eficienciaContainer}>
-          <Text style={styles.eficienciaLabel}>
+          <Text
+            style={[
+              styles.eficienciaLabel,
+              { color: isDark ? '#666' : '#888' },
+            ]}
+          >
             EFICIÊNCIA
           </Text>
-          <Text style={styles.eficienciaValor}>
+          <Text
+            style={[
+              styles.eficienciaValor,
+              { color: isDark ? '#FFF' : '#000' },
+            ]}
+          >
             R$ {rendimento}/km
           </Text>
         </View>
@@ -74,7 +107,14 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
 
       <View style={styles.acoesVeiculoRow}>
         <TouchableOpacity
-          style={styles.btnAcaoVeiculo}
+          style={[
+            styles.btnAcaoVeiculo,
+            {
+              backgroundColor: isDark
+                ? '#0A0A0A'
+                : '#F5F5F5',
+            },
+          ]}
           onPress={onTrocar}
         >
           <ArrowLeftRight size={18} color="#00C853" />
@@ -84,7 +124,14 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.btnAcaoVeiculo}
+          style={[
+            styles.btnAcaoVeiculo,
+            {
+              backgroundColor: isDark
+                ? '#0A0A0A'
+                : '#F5F5F5',
+            },
+          ]}
           onPress={onOficina}
         >
           <ClipboardList size={18} color="#00C853" />

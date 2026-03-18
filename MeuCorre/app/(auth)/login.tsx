@@ -16,8 +16,8 @@ import {
 import { useLogin } from '../../hooks/login/useLogin';
 
 // Importação dos seus componentes modulares
-import { CardLogin } from '../../components/telas/login/CardLogin';
-import { FooterLogin } from '../../components/telas/login/FooterLogin';
+import { CardLogin } from '../../components/telas/Login/CardLogin';
+import { FooterLogin } from '../../components/telas/Login/FooterLogin';
 
 // Importação dos estilos centralizados
 import { loginStyles as styles } from '../../styles/telas/login/LoginStyles';

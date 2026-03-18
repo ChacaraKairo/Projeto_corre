@@ -13,6 +13,7 @@ import {
 } from 'lucide-react-native';
 import { useExplore } from '../../hooks/explore/useExplore';
 import { exploreStyles as styles } from '../../styles/telas/Explore/exploreStyles';
+import { useTema } from '../../hooks/modo_tema';
 
 export default function DatabaseViewerScreen() {
   const {
@@ -24,11 +25,26 @@ export default function DatabaseViewerScreen() {
     limparTabela,
   } = useExplore();
 
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: isDark ? '#0A0A0A' : '#F5F5F5' },
+      ]}
+    >
       <View style={styles.header}>
         <Database size={24} color="#00C853" />
-        <Text style={styles.title}>Inspetor de Dados</Text>
+        <Text
+          style={[
+            styles.title,
+            { color: isDark ? '#FFFFFF' : '#000000' },
+          ]}
+        >
+          Inspetor de Dados
+        </Text>
         <TouchableOpacity
           onPress={() =>
             tabelaSelecionada &&
@@ -50,6 +66,11 @@ export default function DatabaseViewerScreen() {
               key={tabela}
               style={[
                 styles.tabButton,
+                !isDark && {
+                  backgroundColor: '#FFFFFF',
+                  borderColor: '#E0E0E0',
+                  borderWidth: 1,
+                },
                 tabelaSelecionada === tabela &&
                   styles.tabButtonActive,
               ]}
@@ -58,6 +79,7 @@ export default function DatabaseViewerScreen() {
               <Text
                 style={[
                   styles.tabText,
+                  !isDark && { color: '#555' },
                   tabelaSelecionada === tabela &&
                     styles.tabTextActive,
                 ]}
@@ -71,7 +93,12 @@ export default function DatabaseViewerScreen() {
 
       {/* Cabeçalho da Tabela e Ações */}
       <View style={styles.actionsBar}>
-        <Text style={styles.infoText}>
+        <Text
+          style={[
+            styles.infoText,
+            { color: isDark ? '#FFFFFF' : '#000000' },
+          ]}
+        >
           {dados.length} registros em {tabelaSelecionada}
         </Text>
         <TouchableOpacity
@@ -94,14 +121,44 @@ export default function DatabaseViewerScreen() {
           </Text>
         }
         renderItem={({ item, index }) => (
-          <View style={styles.card}>
-            <Text style={styles.cardIndex}>
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: isDark
+                  ? '#161616'
+                  : '#FFFFFF',
+                borderColor: isDark ? '#222' : '#E0E0E0',
+                borderWidth: 1,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.cardIndex,
+                { color: isDark ? '#FFFFFF' : '#000000' },
+              ]}
+            >
               #{index + 1}
             </Text>
             {Object.keys(item).map((key) => (
               <View key={key} style={styles.row}>
-                <Text style={styles.key}>{key}:</Text>
-                <Text style={styles.value}>
+                <Text
+                  style={[
+                    styles.key,
+                    { color: isDark ? '#888' : '#555' },
+                  ]}
+                >
+                  {key}:
+                </Text>
+                <Text
+                  style={[
+                    styles.value,
+                    {
+                      color: isDark ? '#FFFFFF' : '#000000',
+                    },
+                  ]}
+                >
                   {String(item[key])}
                 </Text>
               </View>

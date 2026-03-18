@@ -1,22 +1,27 @@
-import React from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import React from 'react';
+import {
+  ActivityIndicator,
+  ScrollView,
+  View,
+} from 'react-native';
 
 // Importação dos Estilos (Caminho atualizado)
-import { dashboardStyles as styles } from "../../styles/telas/Dashboard/dashboardStyles";
+import { dashboardStyles as styles } from '../../styles/telas/Dashboard/dashboardStyles';
 
 // Importação do Hook Personalizado
-import { useDashboard } from "../../hooks/dashboard/useDashboard";
+import { useDashboard } from '../../hooks/dashboard/useDashboard';
+import { useTema } from '../../hooks/modo_tema';
 
 // Importação dos Componentes (Caminhos atualizados)
-import { FinanceiroMensal } from "../../components/telas/Dashboard/FinanceiroMensal";
-import { FooterCalculadora } from "../../components/telas/Dashboard/FooterCalculadora";
-import { GanhosCard } from "../../components/telas/Dashboard/GanhosCard";
-import { GastosCard } from "../../components/telas/Dashboard/GastosCard";
-import { HeaderDashboard } from "../../components/telas/Dashboard/HeaderDashboard";
-import { ModalUpdateKm } from "../../components/telas/Dashboard/ModalUpdateKm";
-import { StatusGrid } from "../../components/telas/Dashboard/StatusGrid";
-import { UltimasMovimentacoes } from "../../components/telas/Dashboard/UltimasMovimentacoes";
-import { VeiculoCard } from "../../components/telas/Dashboard/VeiculoCard";
+import { FinanceiroMensal } from '../../components/telas/Dashboard/FinanceiroMensal';
+import { FooterCalculadora } from '../../components/telas/Dashboard/FooterCalculadora';
+import { GanhosCard } from '../../components/telas/Dashboard/GanhosCard';
+import { GastosCard } from '../../components/telas/Dashboard/GastosCard';
+import { HeaderDashboard } from '../../components/telas/Dashboard/HeaderDashboard';
+import { ModalUpdateKm } from '../../components/telas/Dashboard/ModalUpdateKm';
+import { StatusGrid } from '../../components/telas/Dashboard/StatusGrid';
+import { UltimasMovimentacoes } from '../../components/telas/Dashboard/UltimasMovimentacoes';
+import { VeiculoCard } from '../../components/telas/Dashboard/VeiculoCard';
 
 export default function DashboardScreen() {
   const {
@@ -45,14 +50,18 @@ export default function DashboardScreen() {
     abrirCalculadora,
   } = useDashboard();
 
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   if (loading) {
     return (
       <View
         style={[
           styles.container,
           {
-            justifyContent: "center",
-            alignItems: "center",
+            backgroundColor: isDark ? '#0A0A0A' : '#F5F5F5',
+            justifyContent: 'center',
+            alignItems: 'center',
           },
         ]}
       >
@@ -62,10 +71,15 @@ export default function DashboardScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: isDark ? '#0A0A0A' : '#F5F5F5' },
+      ]}
+    >
       <HeaderDashboard
-        nome={usuario?.nome || "Piloto"}
-        fraseMotivacional={frase || "Bora faturar!"}
+        nome={usuario?.nome || 'Piloto'}
+        fraseMotivacional={frase || 'Bora faturar!'}
         fotoPerfil={usuario?.foto_uri}
         onPressConfig={onPressConfig}
       />
@@ -99,7 +113,10 @@ export default function DashboardScreen() {
 
         <GastosCard valor={gastos} qtdGastos={qtdGastos} />
 
-        <FinanceiroMensal ganhos={ganhosMensal} gastos={gastosMensal} />
+        <FinanceiroMensal
+          ganhos={ganhosMensal}
+          gastos={gastosMensal}
+        />
 
         <UltimasMovimentacoes dados={movimentacoes} />
       </ScrollView>

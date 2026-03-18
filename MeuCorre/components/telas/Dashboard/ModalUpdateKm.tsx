@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { useTema } from '../../../hooks/modo_tema';
 
 interface ModalUpdateKmProps {
   visible: boolean;
@@ -25,6 +26,9 @@ export const ModalUpdateKm = ({
   km,
   setKm,
 }: ModalUpdateKmProps) => {
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   return (
     <Modal
       visible={visible}
@@ -38,14 +42,44 @@ export const ModalUpdateKm = ({
         }
         style={styles.overlay}
       >
-        <View style={styles.modalContainer}>
-          <Text style={styles.title}>Atualizar KM</Text>
+        <View
+          style={[
+            styles.modalContainer,
+            {
+              backgroundColor: isDark
+                ? '#161616'
+                : '#FFFFFF',
+              borderColor: isDark ? '#333' : '#E0E0E0',
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.title,
+              { color: isDark ? '#FFF' : '#000' },
+            ]}
+          >
+            Atualizar KM
+          </Text>
 
-          <Text style={styles.label}>
+          <Text
+            style={[
+              styles.label,
+              { color: isDark ? '#888' : '#555' },
+            ]}
+          >
             QUILOMETRAGEM ATUAL
           </Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                backgroundColor: isDark
+                  ? '#0A0A0A'
+                  : '#F5F5F5',
+                color: isDark ? '#FFF' : '#000',
+              },
+            ]}
             placeholder="Ex: 12500"
             placeholderTextColor="#666"
             value={km}
@@ -57,9 +91,21 @@ export const ModalUpdateKm = ({
           <View style={styles.buttonsRow}>
             <TouchableOpacity
               onPress={onClose}
-              style={styles.btnCancel}
+              style={[
+                styles.btnCancel,
+                {
+                  backgroundColor: isDark
+                    ? '#222'
+                    : '#F5F5F5',
+                },
+              ]}
             >
-              <Text style={styles.btnCancelText}>
+              <Text
+                style={[
+                  styles.btnCancelText,
+                  { color: isDark ? '#FFF' : '#000' },
+                ]}
+              >
                 Cancelar
               </Text>
             </TouchableOpacity>

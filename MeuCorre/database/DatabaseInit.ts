@@ -4,7 +4,7 @@ const db = SQLite.openDatabaseSync('meucorre.db');
 
 export const DatabaseInit = () => {
   try {
-    // 1. Configurações Iniciais e Tabelas Base
+    // Criação de todas as tabelas e colunas atualizadas numa única execução
     db.execSync(`
       PRAGMA journal_mode = WAL;
       PRAGMA foreign_keys = ON;
@@ -15,6 +15,8 @@ export const DatabaseInit = () => {
         senha TEXT,
         foto_uri TEXT,
         meta_diaria REAL DEFAULT 0,
+        tipo_meta TEXT DEFAULT 'diaria', 
+        meta_semanal REAL DEFAULT 0,     
         data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
       );
 
@@ -40,10 +42,7 @@ export const DatabaseInit = () => {
         icone_id TEXT, 
         cor TEXT       
       );
-    `);
 
-    // 2. Tabela de Transações Financeiras
-    db.execSync(`
       CREATE TABLE IF NOT EXISTS transacoes_financeiras (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         veiculo_id INTEGER,
@@ -55,27 +54,7 @@ export const DatabaseInit = () => {
         FOREIGN KEY (veiculo_id) REFERENCES veiculos (id) ON DELETE SET NULL,
         FOREIGN KEY (categoria_id) REFERENCES categorias_financeiras (id)
       );
-    `);
 
-    // 3. MIGRACÕES
-    const colunasPerfil = [
-      { nome: 'tipo_meta', def: "TEXT DEFAULT 'diaria'" },
-      { nome: 'meta_semanal', def: 'REAL DEFAULT 0' },
-    ];
-
-    colunasPerfil.forEach((col) => {
-      try {
-        db.execSync(
-          `ALTER TABLE perfil_usuario ADD COLUMN ${col.nome} ${col.def};`,
-        );
-      } catch (e) {
-        /* Coluna já existe */
-      }
-    });
-
-    // 4. NOVA ESTRUTURA DE MANUTENÇÃO (Oficina)
-    db.execSync(`
-      -- A. Tabela para os Itens de Manutenção (O que deve ser acompanhado: Óleo, Pneu, etc)
       CREATE TABLE IF NOT EXISTS itens_manutencao (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         veiculo_id INTEGER NOT NULL,
@@ -87,11 +66,10 @@ export const DatabaseInit = () => {
         FOREIGN KEY (veiculo_id) REFERENCES veiculos (id) ON DELETE CASCADE
       );
 
-      -- B. Tabela para o Histórico de Serviços (Quando foi trocado, quanto custou)
       CREATE TABLE IF NOT EXISTS historico_manutencao (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         veiculo_id INTEGER NOT NULL,
-        item_id INTEGER, -- Ligação à peça trocada (Pode ser nulo se for um conserto avulso/inesperado)
+        item_id INTEGER, 
         descricao TEXT NOT NULL,
         valor REAL DEFAULT 0,
         km_servico INTEGER NOT NULL,
@@ -99,9 +77,20 @@ export const DatabaseInit = () => {
         FOREIGN KEY (veiculo_id) REFERENCES veiculos (id) ON DELETE CASCADE,
         FOREIGN KEY (item_id) REFERENCES itens_manutencao (id) ON DELETE SET NULL
       );
+
+      CREATE TABLE IF NOT EXISTS notificacoes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titulo TEXT NOT NULL,
+        mensagem TEXT NOT NULL,
+        tipo TEXT DEFAULT 'info',
+        lida INTEGER DEFAULT 0,
+        data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
-    console.log('[BANCO] Tabelas prontas.');
+    console.log(
+      '[BANCO] Esquema de tabelas criado/verificado com sucesso.',
+    );
   } catch (error) {
     console.error(
       '[ERRO] Falha crítica na inicialização do banco:',

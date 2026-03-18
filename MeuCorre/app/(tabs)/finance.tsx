@@ -24,6 +24,7 @@ import { ValueInput } from '../../components/telas/finance/ValueInput';
 import { CategoryGrid } from '../../components/telas/finance/CategoryGrid';
 import { SuccessOverlay } from '../../components/telas/finance/SuccessOverlay';
 import { AdicionarCategoria } from '../../components/telas/finance/AdicionarCategoria';
+import { useTema } from '../../hooks/modo_tema';
 
 export default function AddTransactionScreen() {
   // Hook Personalizado
@@ -53,9 +54,15 @@ export default function AddTransactionScreen() {
     handleAddCategoria,
   } = useFinance();
 
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   return (
     <KeyboardAvoidingView
-      style={parentStyles.container}
+      style={[
+        parentStyles.container,
+        { backgroundColor: isDark ? '#0A0A0A' : '#F5F5F5' },
+      ]}
       behavior={
         Platform.OS === 'ios' ? 'padding' : undefined
       }
@@ -80,9 +87,16 @@ export default function AddTransactionScreen() {
                   backgroundColor:
                     tipo === 'ganho'
                       ? 'rgba(0, 200, 83, 0.1)'
-                      : '#1A1A1A',
+                      : isDark
+                        ? '#1A1A1A'
+                        : '#FFFFFF',
                   borderColor:
-                    tipo === 'ganho' ? '#00C853' : '#333',
+                    tipo === 'ganho'
+                      ? '#00C853'
+                      : isDark
+                        ? '#333'
+                        : '#E0E0E0',
+                  borderWidth: 1,
                 },
               ]}
               onPress={() => setTipo('ganho')}
@@ -114,9 +128,16 @@ export default function AddTransactionScreen() {
                   backgroundColor:
                     tipo === 'despesa'
                       ? 'rgba(244, 67, 54, 0.1)'
-                      : '#1A1A1A',
+                      : isDark
+                        ? '#1A1A1A'
+                        : '#FFFFFF',
                   borderColor:
-                    tipo === 'despesa' ? '#F44336' : '#333',
+                    tipo === 'despesa'
+                      ? '#F44336'
+                      : isDark
+                        ? '#333'
+                        : '#E0E0E0',
+                  borderWidth: 1,
                 },
               ]}
               onPress={() => setTipo('despesa')}
@@ -176,11 +197,19 @@ export default function AddTransactionScreen() {
                         backgroundColor:
                           selectedVehicleId === v.id
                             ? mainColor
-                            : '#1A1A1A',
+                            : isDark
+                              ? '#1A1A1A'
+                              : '#FFFFFF',
                         borderColor:
                           selectedVehicleId === v.id
                             ? mainColor
-                            : '#333',
+                            : isDark
+                              ? '#333'
+                              : '#E0E0E0',
+                        borderWidth:
+                          selectedVehicleId === v.id
+                            ? 0
+                            : 1,
                       },
                     ]}
                   >
@@ -191,7 +220,9 @@ export default function AddTransactionScreen() {
                           color:
                             selectedVehicleId === v.id
                               ? '#0A0A0A'
-                              : '#888',
+                              : isDark
+                                ? '#888'
+                                : '#555',
                         },
                       ]}
                     >

@@ -16,6 +16,7 @@ import { HeaderOrigem } from '../../components/telas/OrigemGanhos/HeaderOrigem';
 import { ItemOrigem } from '../../components/telas/OrigemGanhos/ItemOrigem';
 import { ModalNovaOrigem } from '../../components/telas/OrigemGanhos/ModalNovaOrigem';
 import { useOrigemGanhos } from '../../hooks/OrigemGanhos/useOrigemGanhos';
+import { useTema } from '../../hooks/modo_tema';
 import { styles } from '../../styles/telas/OrigemGanhos/OrigemGanhosStyles';
 
 export default function OrigemGanhosScreen() {
@@ -38,8 +39,16 @@ export default function OrigemGanhosScreen() {
     concluirConfiguracao,
   } = useOrigemGanhos();
 
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: isDark ? '#0A0A0A' : '#F5F5F5' },
+      ]}
+    >
       <HeaderOrigem busca={busca} setBusca={setBusca} />
 
       {/* ScrollView principal da tela */}
@@ -73,7 +82,16 @@ export default function OrigemGanhosScreen() {
         >
           <TouchableOpacity
             onPress={() => setModalAberto(true)}
-            style={styles.btnAddManual}
+            style={[
+              styles.btnAddManual,
+              {
+                backgroundColor: isDark
+                  ? '#161616'
+                  : '#FFFFFF',
+                borderColor: isDark ? '#222' : '#E0E0E0',
+                borderWidth: 1,
+              },
+            ]}
             activeOpacity={0.7}
           >
             <View style={styles.btnAddIcon}>
@@ -83,7 +101,12 @@ export default function OrigemGanhosScreen() {
                 strokeWidth={3}
               />
             </View>
-            <Text style={styles.btnAddText}>
+            <Text
+              style={[
+                styles.btnAddText,
+                { color: isDark ? '#FFFFFF' : '#000000' },
+              ]}
+            >
               ADICIONAR OUTRA ORIGEM
             </Text>
           </TouchableOpacity>
@@ -94,16 +117,18 @@ export default function OrigemGanhosScreen() {
           style={{
             flexDirection: 'row',
             padding: 20,
-            backgroundColor: '#161616',
+            backgroundColor: isDark ? '#161616' : '#FFFFFF',
             margin: 20,
             borderRadius: 12,
             alignItems: 'center',
+            borderWidth: isDark ? 0 : 1,
+            borderColor: '#E0E0E0',
           }}
         >
           <Info size={20} color="#00C853" />
           <Text
             style={{
-              color: '#888',
+              color: isDark ? '#888' : '#555',
               marginLeft: 10,
               flex: 1,
               fontSize: 12,
@@ -120,7 +145,7 @@ export default function OrigemGanhosScreen() {
         style={{
           padding: 20,
           borderTopWidth: 1,
-          borderColor: '#161616',
+          borderColor: isDark ? '#161616' : '#E0E0E0',
         }}
       >
         <TouchableOpacity

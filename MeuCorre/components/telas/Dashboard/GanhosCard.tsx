@@ -11,6 +11,7 @@ import {
   Target,
   Plus,
 } from 'lucide-react-native';
+import { useTema } from '../../../hooks/modo_tema';
 
 /**
  * TELA: Dashboard - Componente GanhosCard (Dinâmico Diário/Semanal)
@@ -51,9 +52,18 @@ export const GanhosCard: React.FC<GanhosProps> = ({
       ? 'P/ META DIÁRIA'
       : 'P/ META SEMANAL';
 
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   return (
     <TouchableOpacity
-      style={styles.cardGanhos}
+      style={[
+        styles.cardGanhos,
+        {
+          backgroundColor: isDark ? '#161616' : '#FFFFFF',
+          borderColor: isDark ? '#222' : '#E0E0E0',
+        },
+      ]}
       activeOpacity={0.8}
       onPress={() =>
         router.push({
@@ -79,7 +89,12 @@ export const GanhosCard: React.FC<GanhosProps> = ({
               size={12}
               color={metaRestante <= 0 ? '#00C853' : '#666'}
             />
-            <Text style={styles.labelMeta}>
+            <Text
+              style={[
+                styles.labelMeta,
+                { color: isDark ? '#666' : '#888' },
+              ]}
+            >
               {metaRestante <= 0
                 ? 'META BATIDA!'
                 : `FALTAM ${labelFaltante}`}
@@ -89,6 +104,7 @@ export const GanhosCard: React.FC<GanhosProps> = ({
           <Text
             style={[
               styles.valorMetaRestante,
+              { color: isDark ? '#FFF' : '#000' },
               metaRestante <= 0 && { color: '#00C853' },
             ]}
           >
@@ -100,11 +116,21 @@ export const GanhosCard: React.FC<GanhosProps> = ({
       </View>
 
       <View style={styles.mainContent}>
-        <Text style={styles.labelGanhosHoje}>
+        <Text
+          style={[
+            styles.labelGanhosHoje,
+            { color: isDark ? '#666' : '#888' },
+          ]}
+        >
           GANHOS {labelPeriodo}{' '}
           {qtdGanhos > 0 ? `• ${qtdGanhos} REGISTOS` : ''}
         </Text>
-        <Text style={styles.valorGanhosBig}>
+        <Text
+          style={[
+            styles.valorGanhosBig,
+            { color: isDark ? '#FFF' : '#000' },
+          ]}
+        >
           R${' '}
           {safeGanhos.toLocaleString('pt-BR', {
             minimumFractionDigits: 2,
@@ -113,7 +139,12 @@ export const GanhosCard: React.FC<GanhosProps> = ({
         </Text>
       </View>
 
-      <View style={styles.barraProgressoBg}>
+      <View
+        style={[
+          styles.barraProgressoBg,
+          { backgroundColor: isDark ? '#222' : '#E0E0E0' },
+        ]}
+      >
         <View
           style={[
             styles.barraProgressoFill,
@@ -126,7 +157,12 @@ export const GanhosCard: React.FC<GanhosProps> = ({
         />
       </View>
 
-      <Text style={styles.porcentagemTexto}>
+      <Text
+        style={[
+          styles.porcentagemTexto,
+          { color: isDark ? '#444' : '#888' },
+        ]}
+      >
         {porcentagem.toFixed(0)}% da meta
       </Text>
     </TouchableOpacity>

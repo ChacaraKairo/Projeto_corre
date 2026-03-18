@@ -6,6 +6,7 @@ import {
 } from 'lucide-react-native';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTema } from '../../../hooks/modo_tema';
 
 interface FinanceiroMensalProps {
   ganhos: number;
@@ -17,18 +18,43 @@ export const FinanceiroMensal: React.FC<
 > = ({ ganhos, gastos }) => {
   const lucro = ganhos - gastos;
 
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: isDark ? '#161616' : '#FFFFFF',
+          borderColor: isDark ? '#222' : '#E0E0E0',
+        },
+      ]}
+    >
       <View style={styles.header}>
         <Calendar size={20} color="#00C853" />
-        <Text style={styles.title}>RESUMO DO MÊS</Text>
+        <Text
+          style={[
+            styles.title,
+            { color: isDark ? '#FFF' : '#000' },
+          ]}
+        >
+          RESUMO DO MÊS
+        </Text>
       </View>
 
       <View style={styles.row}>
         <View style={styles.column}>
           <View style={styles.labelContainer}>
             <TrendingUp size={14} color="#00C853" />
-            <Text style={styles.label}>GANHOS</Text>
+            <Text
+              style={[
+                styles.label,
+                { color: isDark ? '#888' : '#555' },
+              ]}
+            >
+              GANHOS
+            </Text>
           </View>
           <Text
             style={[styles.value, { color: '#00C853' }]}
@@ -43,7 +69,14 @@ export const FinanceiroMensal: React.FC<
         <View style={styles.column}>
           <View style={styles.labelContainer}>
             <TrendingDown size={14} color="#F44336" />
-            <Text style={styles.label}>GASTOS</Text>
+            <Text
+              style={[
+                styles.label,
+                { color: isDark ? '#888' : '#555' },
+              ]}
+            >
+              GASTOS
+            </Text>
           </View>
           <Text
             style={[styles.value, { color: '#F44336' }]}
@@ -56,15 +89,35 @@ export const FinanceiroMensal: React.FC<
         </View>
       </View>
 
-      <View style={styles.divider} />
+      <View
+        style={[
+          styles.divider,
+          { backgroundColor: isDark ? '#222' : '#E0E0E0' },
+        ]}
+      />
 
-      <View style={styles.lucroContainer}>
+      <View
+        style={[
+          styles.lucroContainer,
+          {
+            backgroundColor: isDark
+              ? 'rgba(0,0,0,0.2)'
+              : '#F5F5F5',
+            borderColor: isDark ? '#222' : '#E0E0E0',
+          },
+        ]}
+      >
         <View style={styles.labelContainer}>
           <Wallet
             size={16}
             color={lucro >= 0 ? '#00C853' : '#F44336'}
           />
-          <Text style={styles.labelLucro}>
+          <Text
+            style={[
+              styles.labelLucro,
+              { color: isDark ? '#FFF' : '#000' },
+            ]}
+          >
             LUCRO LÍQUIDO
           </Text>
         </View>

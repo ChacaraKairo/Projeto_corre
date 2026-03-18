@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { TrendingDown, Plus } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useTema } from '../../../hooks/modo_tema';
 
 interface GastosProps {
   valor: number;
@@ -19,9 +20,18 @@ export const GastosCard: React.FC<GastosProps> = ({
 }) => {
   const router = useRouter();
 
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[
+        styles.card,
+        {
+          backgroundColor: isDark ? '#161616' : '#FFFFFF',
+          borderColor: isDark ? '#222' : '#E0E0E0',
+        },
+      ]}
       activeOpacity={0.8}
       onPress={() =>
         router.push({
@@ -45,11 +55,21 @@ export const GastosCard: React.FC<GastosProps> = ({
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.label}>
+        <Text
+          style={[
+            styles.label,
+            { color: isDark ? '#666' : '#888' },
+          ]}
+        >
           GASTOS DE HOJE{' '}
           {qtdGastos > 0 ? `• ${qtdGastos} REGISTOS` : ''}
         </Text>
-        <Text style={styles.value}>
+        <Text
+          style={[
+            styles.value,
+            { color: isDark ? '#FFF' : '#000' },
+          ]}
+        >
           R${' '}
           {valor.toLocaleString('pt-BR', {
             minimumFractionDigits: 2,

@@ -1,43 +1,68 @@
-import { Tabs } from "expo-router";
-import { Compass, Home } from "lucide-react-native";
-import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Tabs } from 'expo-router';
+import { Database, Home } from 'lucide-react-native';
+import React from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTema } from '../../hooks/modo_tema';
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#00C853", // Verde destaque do app
-        tabBarInactiveTintColor: "#444", // Cinza para inativos
+        tabBarActiveTintColor: '#00C853', // Verde destaque do app
+        tabBarInactiveTintColor: isDark ? '#444' : '#888', // Cinza para inativos
         headerShown: false, // Esconde o cabeçalho padrão
         tabBarStyle: {
-          backgroundColor: "#0A0A0A", // Fundo escuro igual ao Dashboard
+          backgroundColor: isDark ? '#0A0A0A' : '#FFFFFF',
           borderTopWidth: 1,
-          borderTopColor: "#161616", // Linha sutil de divisão
+          borderTopColor: isDark ? '#161616' : '#E0E0E0',
           height: 60 + insets.bottom,
           paddingBottom: 8 + insets.bottom,
           paddingTop: 8,
         },
         tabBarLabelStyle: {
           fontSize: 10,
-          fontWeight: "bold",
+          fontWeight: 'bold',
         },
       }}
     >
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: "Dashboard",
-          tabBarIcon: ({ color }) => <Home size={24} color={color} />,
+          title: 'Dashboard',
+          tabBarIcon: ({ color }) => (
+            <Home size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
-          title: "Ajustes",
-          tabBarIcon: ({ color }) => <Compass size={24} color={color} />,
+          title: 'Dados',
+          tabBarIcon: ({ color }) => (
+            <Database size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="finance"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="calculadora"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="origemganhos"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
