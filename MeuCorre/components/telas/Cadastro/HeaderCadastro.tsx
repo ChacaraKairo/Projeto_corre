@@ -3,7 +3,12 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Bike, Car } from 'lucide-react-native';
+import {
+  Bike,
+  Motorbike,
+  Car,
+  Bus,
+} from 'lucide-react-native';
 
 interface HeaderProps {
   tipoVeiculo: 'moto' | 'carro' | 'bicicleta' | 'van';
@@ -15,15 +20,26 @@ export const HeaderCadastro: React.FC<HeaderProps> = ({
   return (
     <View style={headerStyles.header}>
       <View style={headerStyles.iconContainer}>
-        {tipoVeiculo === 'moto' ||
-        tipoVeiculo === 'bicicleta' ? (
+        {tipoVeiculo === 'carro' ? (
+          <Car
+            size={40}
+            color="#0A0A0A"
+            strokeWidth={2.5}
+          />
+        ) : tipoVeiculo === 'van' ? (
+          <Bus
+            size={40}
+            color="#0A0A0A"
+            strokeWidth={2.5}
+          />
+        ) : tipoVeiculo === 'bicicleta' ? (
           <Bike
             size={40}
             color="#0A0A0A"
             strokeWidth={2.5}
           />
         ) : (
-          <Car
+          <Motorbike
             size={40}
             color="#0A0A0A"
             strokeWidth={2.5}

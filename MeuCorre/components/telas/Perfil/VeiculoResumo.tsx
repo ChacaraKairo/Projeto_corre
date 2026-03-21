@@ -7,7 +7,9 @@ import {
 } from 'react-native';
 import {
   Bike,
+  Motorbike,
   Car,
+  Bus,
   ArrowLeftRight,
   Settings2,
 } from 'lucide-react-native'; // Atualizei os ícones
@@ -80,8 +82,12 @@ export const VeiculoResumo = ({
           >
             {veiculo?.tipo === 'carro' ? (
               <Car size={20} color="#00C853" />
-            ) : (
+            ) : veiculo?.tipo === 'van' ? (
+              <Bus size={20} color="#00C853" />
+            ) : veiculo?.tipo === 'bicicleta' ? (
               <Bike size={20} color="#00C853" />
+            ) : (
+              <Motorbike size={20} color="#00C853" />
             )}
           </View>
 

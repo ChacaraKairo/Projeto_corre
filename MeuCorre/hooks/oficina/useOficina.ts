@@ -19,9 +19,11 @@ export function useOficina() {
   const [modalReset, setModalReset] = useState<{
     visivel: boolean;
     item: any;
+    ultimoValor: number;
   }>({
     visivel: false,
     item: null,
+    ultimoValor: 0,
   });
 
   // Estados do Formulário
@@ -224,61 +226,119 @@ export function useOficina() {
   // ==========================================
   // 3. AÇÕES (INSERIR E ATUALIZAR)
   // ==========================================
-  const handleReset = (item: any) => {
+  const handleReset = async (item: any) => {
     if (!veiculoConsultado) return;
 
-    showCustomAlert(
-      'Renovar Ciclo',
-      `Deseja registrar a manutenção de "${item.nome}" como realizada e reiniciar a contagem?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Sim, registrar',
-          onPress: async () => {
-            try {
-              await db.runAsync(
-                'UPDATE itens_manutencao SET ultima_troca_km = ?, ultima_troca_data = ? WHERE id = ?',
-                [
-                  veiculoConsultado.km_atual,
-                  new Date().toISOString(),
-                  item.id,
-                ],
-              );
+    try {
+      // Procura o último valor registado para sugerir ao utilizador
+      const historico: any = await db.getFirstAsync(
+        'SELECT valor FROM historico_manutencao WHERE item_id = ? ORDER BY id DESC LIMIT 1',
+        [item.id],
+      );
 
-              // Salvar no histórico de manutenções
-              await db.runAsync(
-                `INSERT INTO historico_manutencao (veiculo_id, item_id, descricao, valor, km_servico) 
-                 VALUES (?, ?, ?, ?, ?)`,
-                [
-                  veiculoConsultado.id,
-                  item.id,
-                  `Manutenção: ${item.nome}`,
-                  0, // Valor a 0 (poderá ser editável no futuro na tela de histórico)
-                  veiculoConsultado.km_atual,
-                ],
-              );
+      setModalReset({
+        visivel: true,
+        item,
+        ultimoValor: historico?.valor || 0,
+      });
+    } catch (error) {
+      console.error('Erro ao buscar histórico:', error);
+      setModalReset({
+        visivel: true,
+        item,
+        ultimoValor: 0,
+      });
+    }
+  };
 
-              await carregarItensManutencao(
-                veiculoConsultado.id,
-              );
-              showCustomAlert(
-                'Sucesso',
-                'Manutenção registrada no histórico e ciclo renovado!',
-              );
-            } catch (error) {
-              console.error(
-                'Erro ao resetar manutenção:',
-                error,
-              );
-              showCustomAlert(
-                'Erro',
-                'Não foi possível registrar a manutenção.',
-              );
-            }
-          },
-        },
-      ],
-    );
+  const handleConfirmReset = async (valorPago: number) => {
+    const item = modalReset.item;
+    if (!item || !veiculoConsultado) return;
+
+    try {
+      // 1. Atualizar ciclo
+      await db.runAsync(
+        'UPDATE itens_manutencao SET ultima_troca_km = ?, ultima_troca_data = ? WHERE id = ?',
+        [
+          veiculoConsultado.km_atual,
+          new Date().toISOString(),
+          item.id,
+        ],
+      );
+
+      // 2. Salvar no histórico de manutenções
+      await db.runAsync(
+        `INSERT INTO historico_manutencao (veiculo_id, item_id, descricao, valor, km_servico) 
+         VALUES (?, ?, ?, ?, ?)`,
+        [
+          veiculoConsultado.id,
+          item.id,
+          `Manutenção: ${item.nome}`,
+          valorPago,
+          veiculoConsultado.km_atual,
+        ],
+      );
+
+      // 3. Garantir Categoria e Inserir Transação Financeira
+      let categoriaId = null;
+      const categoria: any = await db.getFirstAsync(
+        "SELECT id FROM categorias_financeiras WHERE nome = ? AND tipo = 'despesa' LIMIT 1",
+        [item.nome],
+      );
+
+      if (categoria) {
+        categoriaId = categoria.id;
+      } else {
+        // Formata o ícone (ex: 'circle-dot' vira 'CircleDot') para compatibilidade com o Lucide
+        const iconeFormatado = item.icone
+          ? item.icone
+              .split('-')
+              .map(
+                (p: string) =>
+                  p.charAt(0).toUpperCase() + p.slice(1),
+              )
+              .join('')
+          : 'Wrench';
+
+        const result: any = await db.runAsync(
+          "INSERT INTO categorias_financeiras (nome, tipo, icone_id, cor) VALUES (?, 'despesa', ?, '#795548')",
+          [item.nome, iconeFormatado],
+        );
+        categoriaId = result.lastInsertRowId;
+      }
+
+      await db.runAsync(
+        `INSERT INTO transacoes_financeiras 
+        (veiculo_id, categoria_id, valor, tipo, data_transacao) 
+        VALUES (?, ?, ?, ?, datetime('now', 'localtime'))`,
+        [
+          veiculoConsultado.id,
+          categoriaId,
+          valorPago,
+          'despesa',
+        ],
+      );
+
+      await carregarItensManutencao(veiculoConsultado.id);
+
+      // Fecha o Modal
+      setModalReset({
+        visivel: false,
+        item: null,
+        ultimoValor: 0,
+      });
+
+      showCustomAlert(
+        'Sucesso',
+        'Manutenção registada e ciclo renovado!\n\nEste gasto foi adicionado automaticamente ao teu financeiro, não precisas de o registar novamente no dashboard.',
+      );
+    } catch (error) {
+      console.error('Erro ao resetar manutenção:', error);
+      showCustomAlert(
+        'Erro',
+        'Não foi possível registrar a manutenção.',
+      );
+    }
   };
 
   const handleAddNovoItem = async () => {
@@ -384,6 +444,7 @@ export function useOficina() {
     calcularProgresso,
     getStatusResumo,
     handleReset,
+    handleConfirmReset,
     handleAddNovoItem,
   };
 }

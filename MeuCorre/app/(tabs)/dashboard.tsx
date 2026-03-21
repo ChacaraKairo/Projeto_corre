@@ -141,7 +141,7 @@ export default function DashboardScreen() {
         <VeiculoCard
           veiculo={veiculo}
           rendimento="0.15"
-          onTrocar={onTrocarVeiculo}
+          onGaragem={onTrocarVeiculo}
           onOficina={onIrParaOficina}
         />
 

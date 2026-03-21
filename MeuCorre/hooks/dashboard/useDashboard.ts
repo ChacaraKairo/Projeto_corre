@@ -166,19 +166,20 @@ export const useDashboard = () => {
             setQtdGastos(resultadoGastos?.qtd || 0);
 
             // --- BUSCA MENSAL ---
-            const queryGanhosMensal = `SELECT SUM(valor) as total FROM transacoes_financeiras WHERE tipo = 'ganho' AND veiculo_id = ? AND data_transacao >= ?`;
+            // O resumo do mês engloba todas as transações (de todos os veículos) do mês atual
+            const mesAtualGeral = `${ano}-${mes}-%`;
+
+            const queryGanhosMensal = `SELECT SUM(valor) as total FROM transacoes_financeiras WHERE tipo = 'ganho' AND data_transacao LIKE ?`;
             const resultGanhosMensal: any =
               await db.getFirstAsync(queryGanhosMensal, [
-                veiculoSalvo.id,
-                dataInicioMesStr,
+                mesAtualGeral,
               ]);
             setGanhosMensal(resultGanhosMensal?.total || 0);
 
-            const queryGastosMensal = `SELECT SUM(valor) as total FROM transacoes_financeiras WHERE tipo = 'despesa' AND veiculo_id = ? AND data_transacao >= ?`;
+            const queryGastosMensal = `SELECT SUM(valor) as total FROM transacoes_financeiras WHERE tipo = 'despesa' AND data_transacao LIKE ?`;
             const resultGastosMensal: any =
               await db.getFirstAsync(queryGastosMensal, [
-                veiculoSalvo.id,
-                dataInicioMesStr,
+                mesAtualGeral,
               ]);
             setGastosMensal(resultGastosMensal?.total || 0);
 

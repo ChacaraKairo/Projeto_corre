@@ -37,7 +37,10 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
     <View style={styles.header}>
       <View style={styles.perfilContainer}>
         <TouchableOpacity
-          style={styles.infoUsuario}
+          style={[
+            styles.infoUsuario,
+            { flex: 1, paddingRight: 12 },
+          ]}
           activeOpacity={0.7}
           onPress={() => router.push('/perfil' as any)}
         >
@@ -65,19 +68,33 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
             )}
           </View>
 
-          <View>
+          <View style={{ flex: 1 }}>
             {/* Nome com peso 900 conforme a nova identidade */}
-            <Text style={styles.nomeUsuario}>
+            <Text
+              style={styles.nomeUsuario}
+              numberOfLines={1}
+            >
               {nome.split(' ')[0]}
             </Text>
-            <View style={styles.tagMotivacional}>
+            <View
+              style={[
+                styles.tagMotivacional,
+                { alignItems: 'flex-start' },
+              ]}
+            >
               <Zap
                 size={10}
                 color="#00C853"
                 fill="#00C853"
+                style={{ flexShrink: 0, marginTop: 2 }}
               />
               {/* Esta frase agora virá do frasesService via Dashboard.tsx */}
-              <Text style={styles.textoMotivacional}>
+              <Text
+                style={[
+                  styles.textoMotivacional,
+                  { flex: 1, flexWrap: 'wrap' },
+                ]}
+              >
                 {fraseMotivacional}
               </Text>
             </View>

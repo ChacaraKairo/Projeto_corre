@@ -17,6 +17,7 @@ import { useTema } from '../../hooks/modo_tema';
 import { CardVeiculoOficina } from '../../components/telas/Oficina/CardVeiculoOficina';
 import { ItemManutencaoCard } from '../../components/telas/Oficina/ItemManutencaoCard';
 import { ModalNovoItem } from '../../components/telas/Oficina/ModalNovoItem';
+import { ModalResetManutencao } from '../../components/telas/Oficina/ModalResetManutencao';
 
 export default function OficinaScreen() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function OficinaScreen() {
     setListaAberta,
     modalNovoItem,
     setModalNovoItem,
+    modalReset,
     setModalReset,
     calcularProgresso,
     getStatusResumo,
@@ -43,6 +45,7 @@ export default function OficinaScreen() {
     setNovoItemIcone,
     handleAddNovoItem,
     handleReset,
+    handleConfirmReset,
   } = useOficina();
 
   const statusResumo = getStatusResumo();
@@ -123,6 +126,22 @@ export default function OficinaScreen() {
         setUltimaTrocaData={setNovoItemUltimaTrocaData}
         icone={novoItemIcone}
         setIcone={setNovoItemIcone}
+      />
+
+      <ModalResetManutencao
+        visible={modalReset.visivel}
+        onClose={() =>
+          setModalReset({
+            visivel: false,
+            item: null,
+            ultimoValor: 0,
+          })
+        }
+        onConfirm={handleConfirmReset}
+        itemNome={modalReset.item?.nome || ''}
+        itemIcone={modalReset.item?.icone || 'wrench'}
+        kmAtual={veiculoConsultado?.km_atual || 0}
+        ultimoValor={modalReset.ultimoValor}
       />
     </SafeAreaView>
   );
