@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -18,10 +19,16 @@ import {
   HelpCircle,
   FileText,
   Check,
+  DownloadCloud,
+  UploadCloud,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { showCustomAlert } from '../../hooks/alert/useCustomAlert';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import db from '../../database/DatabaseInit';
 
 // Lógica e Estilos
 import { useTema } from '../../hooks/modo_tema';
@@ -66,6 +73,141 @@ export default function ConfiguracoesScreen() {
   // Função para lidar com a troca de tema
   const handleToggleTema = () => {
     if (setTema) setTema(isDark ? 'claro' : 'escuro');
+  };
+
+  // ==========================================
+  // FUNÇÕES DE BACKUP E RESTAURAÇÃO DE DADOS
+  // ==========================================
+  const exportarBackup = async () => {
+    try {
+      const tabelas = [
+        'categorias_financeiras',
+        'veiculos',
+        'itens_manutencao',
+        'historico_manutencao',
+        'transacoes_financeiras',
+      ];
+      const backupData: any = {};
+
+      for (const tabela of tabelas) {
+        const rows = await db.getAllAsync(
+          `SELECT * FROM ${tabela}`,
+        );
+        backupData[tabela] = rows;
+      }
+
+      const jsonStr = JSON.stringify(backupData, null, 2);
+      const fileUri =
+        FileSystem.documentDirectory +
+        'meucorre_backup.json';
+      await FileSystem.writeAsStringAsync(
+        fileUri,
+        jsonStr,
+        {
+          encoding: FileSystem.EncodingType.UTF8,
+        },
+      );
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri, {
+          dialogTitle: 'Salvar Backup',
+        });
+      } else {
+        showCustomAlert(
+          'Aviso',
+          'O partilhamento não está disponível no dispositivo.',
+        );
+      }
+    } catch (error) {
+      console.error('Erro ao exportar backup:', error);
+      showCustomAlert(
+        'Erro',
+        'Não foi possível criar o ficheiro de backup.',
+      );
+    }
+  };
+
+  const executarRestauracao = async (data: any) => {
+    try {
+      await db.execAsync('BEGIN TRANSACTION;');
+
+      const tabelas = [
+        'transacoes_financeiras',
+        'historico_manutencao',
+        'itens_manutencao',
+        'veiculos',
+        'categorias_financeiras',
+      ];
+
+      for (const tabela of tabelas) {
+        await db.execAsync(`DELETE FROM ${tabela};`); // Limpa a tabela atual
+
+        if (data[tabela] && data[tabela].length > 0) {
+          const colunas = Object.keys(data[tabela][0]);
+          const placeholders = colunas
+            .map(() => '?')
+            .join(', ');
+          const colunasStr = colunas.join(', ');
+
+          for (const row of data[tabela]) {
+            const valores = colunas.map((col) => row[col]);
+            await db.runAsync(
+              `INSERT INTO ${tabela} (${colunasStr}) VALUES (${placeholders})`,
+              valores,
+            );
+          }
+        }
+      }
+
+      await db.execAsync('COMMIT;');
+      showCustomAlert(
+        'Sucesso',
+        'Backup restaurado! Reinicia o aplicativo para recarregar todos os dados visuais.',
+      );
+    } catch (error) {
+      await db.execAsync('ROLLBACK;');
+      console.error('Erro ao restaurar:', error);
+      showCustomAlert(
+        'Erro',
+        'Falha ao restaurar dados. O ficheiro pode estar corrompido.',
+      );
+    }
+  };
+
+  const importarBackup = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'application/json',
+        copyToCacheDirectory: true,
+      });
+      if (result.canceled) return;
+
+      const fileContent =
+        await FileSystem.readAsStringAsync(
+          result.assets[0].uri,
+          { encoding: FileSystem.EncodingType.UTF8 },
+        );
+      const data = JSON.parse(fileContent);
+
+      Alert.alert(
+        'Restaurar Backup',
+        'Isto irá APAGAR todos os teus dados atuais e substituí-los pelos dados do ficheiro. Desejas continuar?',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Restaurar',
+            style: 'destructive',
+            onPress: () => executarRestauracao(data),
+          },
+        ],
+      );
+    } catch (error) {
+      console.error('Erro ao ler backup:', error);
+      showCustomAlert(
+        'Erro',
+        'Não foi possível ler o ficheiro de backup.',
+      );
+    }
   };
 
   return (
@@ -211,6 +353,40 @@ export default function ConfiguracoesScreen() {
                   'Seus dados são salvos apenas no seu celular.',
                 )
               }
+            />
+          </View>
+        </View>
+
+        {/* SECÇÃO: BACKUP E DADOS */}
+        <View>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: textMuted },
+            ]}
+          >
+            DADOS E BACKUP
+          </Text>
+          <View
+            style={[
+              styles.sectionContainer,
+              { borderColor },
+            ]}
+          >
+            <SettingItem
+              isDark={isDark}
+              icon={UploadCloud}
+              title="Exportar Dados (Backup)"
+              subtitle="Cria um ficheiro JSON com todas as tuas informações"
+              onClick={exportarBackup}
+            />
+            <SettingItem
+              isDark={isDark}
+              isLast={true}
+              icon={DownloadCloud}
+              title="Restaurar Backup"
+              subtitle="Importa informações de um ficheiro existente"
+              onClick={importarBackup}
             />
           </View>
         </View>

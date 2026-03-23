@@ -49,9 +49,7 @@ export const AcoesGrid = () => {
               borderWidth: 1,
             },
           ]}
-          onPress={() =>
-            Alert.alert('Relatórios', 'Em breve')
-          }
+          onPress={() => router.push('/relatorios')}
         >
           <BarChart3 size={24} color="#00C853" />
           <Text

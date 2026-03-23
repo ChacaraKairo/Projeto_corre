@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import {
   Clock,
   TrendingUp,
   TrendingDown,
 } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashboardStyles';
 import { useTema } from '../../../hooks/modo_tema';
 
@@ -23,6 +24,7 @@ export const UltimasMovimentacoes = ({
 }) => {
   const { tema } = useTema();
   const isDark = tema === 'escuro';
+  const router = useRouter();
 
   return (
     <View style={{ marginTop: 24, paddingBottom: 100 }}>
@@ -50,7 +52,12 @@ export const UltimasMovimentacoes = ({
             ÚLTIMOS REGISTOS
           </Text>
         </View>
-        <Text style={styles.btnVerTudo}>Ver Tudo</Text>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => router.push('/historico')}
+        >
+          <Text style={styles.btnVerTudo}>Ver Tudo</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.containerLista}>
