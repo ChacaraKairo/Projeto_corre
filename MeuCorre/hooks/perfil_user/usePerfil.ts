@@ -1,3 +1,4 @@
+// Arquivo: src/hooks/perfil_user/usePerfil.ts
 import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import db from '../../database/DatabaseInit';
@@ -15,34 +16,74 @@ export function usePerfil() {
   const [loading, setLoading] = useState(true);
 
   const carregarDados = async () => {
+    console.log(
+      '\n--- [PERFIL DEBUG] Iniciando carregarDados() ---',
+    );
     try {
-      // Puxa o utilizador logado
+      // 1. Puxa o utilizador logado
       const user: any = await db.getFirstAsync(
         'SELECT * FROM perfil_usuario LIMIT 1',
       );
+
       if (user) {
+        console.log(
+          `[PERFIL DEBUG] Usuário encontrado: ID ${user.id} | Nome: ${user.nome}`,
+        );
         setUsuario(user);
+
         const tm = user.tipo_meta || 'diaria';
         setTipoMeta(tm);
+
         const val =
           tm === 'semanal'
             ? user.meta_semanal
             : user.meta_diaria;
         setMeta(val ? val.toString() : '150');
-      }
 
-      // Puxa o veículo ativo
-      const veic: any = await db.getFirstAsync(
-        'SELECT * FROM veiculos WHERE ativo = 1',
-      );
-      setVeiculo(veic);
+        // 2. Busca todos os veículos para ver como está o banco agora
+        const todosVeiculos = await db.getAllAsync(
+          'SELECT id, modelo, placa, ativo FROM veiculos',
+        );
+        console.log(
+          '[PERFIL DEBUG] Estado atual de todos os veículos no banco:',
+          todosVeiculos,
+        );
+
+        // 3. Puxa o veículo ativo específico deste utilizador
+        console.log(
+          `[PERFIL DEBUG] Buscando veículo ativo para o user_id: ${user.id}...`,
+        );
+        const veic: any = await db.getFirstAsync(
+          'SELECT * FROM veiculos WHERE ativo = 1 AND id_user = ? LIMIT 1',
+          [user.id],
+        );
+
+        if (veic) {
+          console.log(
+            `[PERFIL DEBUG] Veículo ATIVO encontrado: ${veic.modelo} (${veic.placa})`,
+          );
+        } else {
+          console.log(
+            '[PERFIL DEBUG] ALERTA: Nenhum veículo retornado com ativo=1 para este usuário!',
+          );
+        }
+
+        setVeiculo(veic);
+      } else {
+        console.log(
+          '[PERFIL DEBUG] Nenhum usuário encontrado no banco.',
+        );
+      }
     } catch (error) {
       console.error(
-        'Erro ao carregar dados do perfil:',
+        '[PERFIL DEBUG] Erro ao carregar dados do perfil:',
         error,
       );
     } finally {
       setLoading(false);
+      console.log(
+        '--- [PERFIL DEBUG] Fim do carregarDados() ---\n',
+      );
     }
   };
 
@@ -60,6 +101,7 @@ export function usePerfil() {
         tipoMeta === 'semanal'
           ? 'meta_semanal'
           : 'meta_diaria';
+
       await db.runAsync(
         `UPDATE perfil_usuario SET ${campo} = ? WHERE id = ?`,
         [valorFormatado, usuario.id],
@@ -76,20 +118,17 @@ export function usePerfil() {
       );
     }
   };
+
   const alterarFoto = async () => {
     try {
       const novaFotoUri = await PhotoService.takePhoto(
         usuario?.foto_uri,
       );
-
       if (novaFotoUri) {
-        // Atualiza no banco de dados
         await db.runAsync(
           'UPDATE perfil_usuario SET foto_uri = ? WHERE id = ?',
           [novaFotoUri, usuario.id],
         );
-
-        // Atualiza a tela imediatamente (recarrega os dados do utilizador)
         carregarDados();
       }
     } catch (error) {
@@ -110,8 +149,8 @@ export function usePerfil() {
         {
           text: 'Sair',
           style: 'destructive',
-          onPress: () =>
-            router.replace('/(auth)/login' as any),
+          // @ts-ignore
+          onPress: () => router.replace('/(auth)/login'),
         },
       ],
     );
@@ -127,6 +166,6 @@ export function usePerfil() {
     alterarFoto,
     salvarMeta,
     realizarLogout,
-    carregarDados,
+    carregarDados, // A tela usa essa função para recarregar após trocar o veículo
   };
 }

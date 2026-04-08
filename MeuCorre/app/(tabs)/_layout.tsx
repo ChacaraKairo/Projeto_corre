@@ -14,20 +14,11 @@ export default function TabLayout() {
     <>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: '#00C853', // Verde destaque do app
-          tabBarInactiveTintColor: isDark ? '#444' : '#888', // Cinza para inativos
-          headerShown: false, // Esconde o cabeçalho padrão
+          tabBarActiveTintColor: '#00C853',
+          tabBarInactiveTintColor: isDark ? '#444' : '#888',
+          headerShown: false,
           tabBarStyle: {
-            backgroundColor: isDark ? '#0A0A0A' : '#FFFFFF',
-            borderTopWidth: 1,
-            borderTopColor: isDark ? '#161616' : '#E0E0E0',
-            height: 60 + insets.bottom,
-            paddingBottom: 8 + insets.bottom,
-            paddingTop: 8,
-          },
-          tabBarLabelStyle: {
-            fontSize: 10,
-            fontWeight: 'bold',
+            display: 'none',
           },
         }}
       >

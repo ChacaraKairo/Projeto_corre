@@ -1,3 +1,4 @@
+// src/app/(telas)/oficina.tsx
 import React from 'react';
 import {
   View,
@@ -5,10 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-  Modal,
   ActivityIndicator,
   RefreshControl,
-  Platform,
 } from 'react-native';
 import { ArrowLeft, Plus } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
@@ -19,12 +18,15 @@ import { useTema } from '../../hooks/modo_tema';
 
 // Componentes
 import { CardVeiculoOficina } from '../../components/telas/Oficina/CardVeiculoOficina';
-import { ItemManutencaoCard } from '../../components/telas/Oficina/ItemManutencaoCard';
 import { ModalNovoItem } from '../../components/telas/Oficina/ModalNovoItem';
 import { ModalResetManutencao } from '../../components/telas/Oficina/ModalResetManutencao';
+import { GridItensManutencao } from '../../components/telas/Oficina/GridItensManutencao';
 
 export default function OficinaScreen() {
   const router = useRouter();
+  const { tema } = useTema();
+  const isDark = tema === 'escuro';
+
   const {
     logs,
     loading,
@@ -38,27 +40,13 @@ export default function OficinaScreen() {
     setModalReset,
     calcularProgresso,
     getStatusResumo,
-    novoItemNome,
-    setNovoItemNome,
-    novoItemIntervalo,
-    setNovoItemIntervalo,
-    novoItemTempo,
-    setNovoItemTempo,
-    novoItemUltimaTrocaKm,
-    setNovoItemUltimaTrocaKm,
-    novoItemUltimaTrocaData,
-    setNovoItemUltimaTrocaData,
-    novoItemIcone,
-    setNovoItemIcone,
-    handleAddNovoItem,
+    // Funções de ação
     handleReset,
     handleConfirmReset,
+    carregarDados, // Função para atualizar após novo cadastro
   } = useOficina();
 
   const statusResumo = getStatusResumo();
-
-  const { tema } = useTema();
-  const isDark = tema === 'escuro';
 
   return (
     <SafeAreaView
@@ -75,6 +63,7 @@ export default function OficinaScreen() {
         >
           <ArrowLeft size={20} color="#666" />
         </TouchableOpacity>
+
         <Text
           style={[
             styles.headerTitle,
@@ -83,6 +72,7 @@ export default function OficinaScreen() {
         >
           Oficina
         </Text>
+
         <TouchableOpacity
           style={[
             styles.btnIcon,
@@ -112,7 +102,6 @@ export default function OficinaScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={['#00C853']}
               tintColor="#00C853"
             />
           }
@@ -123,95 +112,70 @@ export default function OficinaScreen() {
             onOpenSelector={() => router.push('/garagem')}
           />
 
-          <View>
-            {itensVisiveis.map((item: any) => (
-              <ItemManutencaoCard
-                // A chave dinâmica com o id do veículo força o re-render total dos itens na troca
-                key={`${veiculoConsultado?.id || 'v'}_${item.id}`}
-                item={item}
-                info={calcularProgresso(item)}
-                onResetPress={() => handleReset(item)}
-              />
-            ))}
+          {/* Grid de Itens com lógica encapsulada */}
+          <GridItensManutencao
+            veiculoId={veiculoConsultado?.id}
+            itens={itensVisiveis}
+            calcularProgresso={calcularProgresso}
+            handleReset={handleReset}
+          />
 
-            {/* Console de Logs na Tela */}
-            <View
-              style={{
-                marginTop: 24,
-                padding: 16,
+          {/* Terminal de Logs */}
+          <View
+            style={[
+              (styles as any).logContainer,
+              {
                 backgroundColor: isDark
                   ? '#111'
                   : '#E0E0E0',
-                borderRadius: 12,
-                borderWidth: 1,
-                borderColor: isDark ? '#333' : '#CCC',
+              },
+            ]}
+          >
+            <Text
+              style={{
+                color: isDark ? '#00C853' : '#007A33',
+                fontWeight: 'bold',
+                marginBottom: 8,
               }}
             >
-              <Text
-                style={{
-                  color: isDark ? '#00C853' : '#007A33',
-                  fontWeight: 'bold',
-                  marginBottom: 8,
-                  fontSize: 14,
-                }}
-              >
-                Terminal de Logs do Sistema
+              Terminal de Logs do Sistema
+            </Text>
+            {logs.length === 0 ? (
+              <Text style={{ color: '#888', fontSize: 12 }}>
+                Nenhum evento registrado.
               </Text>
-              {logs.length === 0 ? (
+            ) : (
+              logs.map((log, index) => (
                 <Text
-                  style={{
-                    color: isDark ? '#888' : '#666',
-                    fontSize: 12,
-                  }}
-                >
-                  Nenhum evento registado ainda.
-                </Text>
-              ) : (
-                logs.map((log: string, index: number) => (
-                  <Text
-                    key={index}
-                    style={{
+                  key={index}
+                  style={[
+                    (styles as any).logText,
+                    {
                       color: log.includes('[ERRO]')
                         ? '#EF4444'
                         : isDark
                           ? '#FFF'
                           : '#000',
-                      fontSize: 10,
-                      marginBottom: 4,
-                      fontFamily:
-                        Platform.OS === 'ios'
-                          ? 'Courier'
-                          : 'monospace',
-                    }}
-                  >
-                    {log}
-                  </Text>
-                ))
-              )}
-            </View>
+                    },
+                  ]}
+                >
+                  {log}
+                </Text>
+              ))
+            )}
           </View>
         </ScrollView>
       )}
 
-      {/* Modal de Criação de Item */}
+      {/* Modal de Novo Item (Inteligente) */}
       <ModalNovoItem
         visible={modalNovoItem}
         onClose={() => setModalNovoItem(false)}
-        onSave={handleAddNovoItem}
-        nome={novoItemNome}
-        setNome={setNovoItemNome}
-        intervalo={novoItemIntervalo}
-        setIntervalo={setNovoItemIntervalo}
-        tempo={novoItemTempo}
-        setTempo={setNovoItemTempo}
-        ultimaTrocaKm={novoItemUltimaTrocaKm}
-        setUltimaTrocaKm={setNovoItemUltimaTrocaKm}
-        ultimaTrocaData={novoItemUltimaTrocaData}
-        setUltimaTrocaData={setNovoItemUltimaTrocaData}
-        icone={novoItemIcone}
-        setIcone={setNovoItemIcone}
+        veiculoId={veiculoConsultado?.id}
+        onRefresh={carregarDados}
       />
 
+      {/* Modal de Reset (Renovação de Ciclo) */}
       <ModalResetManutencao
         visible={modalReset.visivel}
         onClose={() =>
@@ -224,11 +188,9 @@ export default function OficinaScreen() {
         onConfirm={handleConfirmReset}
         itemNome={modalReset.item?.nome || ''}
         itemIcone={modalReset.item?.icone || 'wrench'}
-        itemIntervaloKm={
-          modalReset.item?.intervalo_km || null
-        }
+        itemIntervaloKm={modalReset.item?.intervalo_km}
         itemIntervaloMeses={
-          modalReset.item?.intervalo_meses || null
+          modalReset.item?.intervalo_meses
         }
         kmAtual={veiculoConsultado?.km_atual || 0}
         ultimoValor={modalReset.ultimoValor}

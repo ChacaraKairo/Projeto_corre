@@ -1,6 +1,4 @@
-// Arquivo: src/components/telas/Login/CardLogin.tsx
-// Componente: CardLogin
-
+// Arquivo: src/components/telas/login/components/CardLogin.tsx
 import {
   AlertCircle,
   Fingerprint,
@@ -15,9 +13,10 @@ import {
 } from 'react-native';
 import { styles } from '../../../styles/telas/login/components/CardLoginStyles';
 import { Input } from '../../ui/inputs/Input';
+
 interface CardLoginProps {
-  nome: string;
-  setNome: (text: string) => void;
+  identificacao: string;
+  setIdentificacao: (text: string) => void;
   senha: string;
   setSenha: (text: string) => void;
   erro: string;
@@ -30,8 +29,8 @@ interface CardLoginProps {
 }
 
 export const CardLogin: React.FC<CardLoginProps> = ({
-  nome,
-  setNome,
+  identificacao,
+  setIdentificacao,
   senha,
   setSenha,
   erro,
@@ -42,6 +41,39 @@ export const CardLogin: React.FC<CardLoginProps> = ({
   onNavigateCadastro,
   onEsqueciSenha,
 }) => {
+  // Lógica de máscara dinâmica (E-mail ou CPF)
+  const handleIdentificacaoChange = (text: string) => {
+    const apenasNumeros = text.replace(/\D/g, '');
+
+    // Se o texto original só tem números, pontos ou traços, e não tem '@', aplicamos a máscara de CPF
+    if (
+      /^[\d\.\-]*$/.test(text) &&
+      apenasNumeros.length <= 11 &&
+      !text.includes('@')
+    ) {
+      let valor = apenasNumeros;
+
+      if (valor.length > 9) {
+        valor = valor.replace(
+          /(\d{3})(\d{3})(\d{3})(\d{1,2})/,
+          '$1.$2.$3-$4',
+        );
+      } else if (valor.length > 6) {
+        valor = valor.replace(
+          /(\d{3})(\d{3})(\d{1,3})/,
+          '$1.$2.$3',
+        );
+      } else if (valor.length > 3) {
+        valor = valor.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+      }
+
+      setIdentificacao(valor);
+    } else {
+      // Se for e-mail (tiver letras ou '@'), atualiza normalmente
+      setIdentificacao(text);
+    }
+  };
+
   return (
     <View style={styles.card}>
       <View style={styles.authLabelContainer}>
@@ -66,11 +98,12 @@ export const CardLogin: React.FC<CardLoginProps> = ({
 
       <View style={styles.inputWrapper}>
         <Input
-          label="Nome de Utilizador"
-          placeholder="Ex: João Silva"
-          value={nome}
-          onChangeText={setNome}
+          label="Identificação"
+          placeholder="E-mail ou CPF"
+          value={identificacao}
+          onChangeText={handleIdentificacaoChange}
           autoCapitalize="none"
+          keyboardType="email-address"
         />
       </View>
 

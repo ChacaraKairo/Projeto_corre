@@ -5,15 +5,15 @@ import {
   View,
 } from 'react-native';
 
-// Importação dos Estilos (Caminho atualizado)
+// Importação dos Estilos
 import { dashboardStyles as styles } from '../../styles/telas/Dashboard/dashboardStyles';
 
-// Importação do Hook Personalizado
+// Importação dos Hooks
 import { useDashboard } from '../../hooks/dashboard/useDashboard';
 import { useTema } from '../../hooks/modo_tema';
-import { useOficina } from '../../hooks/oficina/useOficina';
+import { useOficina } from '../../hooks/oficina/useOficina'; // Hook Mestre da Oficina
 
-// Importação dos Componentes (Caminhos atualizados)
+// Importação dos Componentes
 import { FinanceiroMensal } from '../../components/telas/Dashboard/FinanceiroMensal';
 import { FooterCalculadora } from '../../components/telas/Dashboard/FooterCalculadora';
 import { IndicesMCCard } from '../../components/telas/Dashboard/IndicesMCCard';
@@ -55,53 +55,12 @@ export default function DashboardScreen() {
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
-  // Trazemos a inteligência da Oficina para verificar a próxima manutenção
-  const { itensVisiveis, calcularProgresso } = useOficina();
-
-  let statusManutencao: 'critical' | 'warning' | 'ok' =
-    'ok';
-  let descManutencao = 'Sem manutenções';
-
-  if (itensVisiveis && itensVisiveis.length > 0) {
-    const analisados = itensVisiveis.map((item) => {
-      const prog = calcularProgresso(
-        item,
-        veiculo?.km_atual,
-      );
-      return {
-        ...item,
-        statusItem: prog.status,
-        perc: prog.percentagemDesgaste,
-      };
-    });
-
-    const criticos = analisados.filter(
-      (i) => i.statusItem === 'Crítico',
-    );
-    const atencao = analisados.filter(
-      (i) => i.statusItem === 'Atenção',
-    );
-
-    if (criticos.length > 0) {
-      statusManutencao = 'critical';
-      descManutencao =
-        criticos.length === 1
-          ? `Atrasada: ${criticos[0].nome}`
-          : `${criticos.length} manutenções atrasadas`;
-    } else if (atencao.length > 0) {
-      statusManutencao = 'warning';
-      descManutencao =
-        atencao.length === 1
-          ? `Atenção: ${atencao[0].nome}`
-          : `${atencao.length} manutenções próximas`;
-    } else {
-      statusManutencao = 'ok';
-      const proxima = analisados.reduce((prev, current) =>
-        prev.perc > current.perc ? prev : current,
-      );
-      descManutencao = `Próxima: ${proxima.nome}`;
-    }
-  }
+  // Buscamos apenas os dados, a lógica pesada agora mora dentro do StatusGrid
+  const {
+    itensVisiveis,
+    temManutencaoBanco,
+    calcularProgresso,
+  } = useOficina();
 
   if (loading) {
     return (
@@ -137,7 +96,7 @@ export default function DashboardScreen() {
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }} // Espaço para o Footer
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
         <VeiculoCard
           veiculo={veiculo}
@@ -146,22 +105,22 @@ export default function DashboardScreen() {
           onOficina={onIrParaOficina}
         />
 
+        {/* Repassamos os dados brutos para o StatusGrid */}
         <StatusGrid
           kmAtual={veiculo?.km_atual ?? 0}
-          statusManutencao={statusManutencao}
-          descManutencao={descManutencao}
+          itensVisiveis={itensVisiveis}
+          temManutencaoBanco={temManutencaoBanco}
+          calcularProgresso={calcularProgresso}
           onUpdateKm={onUpdateKm}
           onOpenOficina={onIrParaOficina}
         />
 
-        {/* --- COMPONENTE INSERIDO AQUI --- */}
         <IndicesMCCard
           custoPorKm={veiculo?.custo_km_calculado || 0}
           custoPorMinuto={
             veiculo?.custo_minuto_calculado || 0
           }
         />
-        {/* ------------------------------- */}
 
         <GanhosCard
           ganhosTotal={ganhos}

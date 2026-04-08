@@ -1,3 +1,4 @@
+// Arquivo: src/components/telas/Garagem/CardVeiculoGaragem.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import {
@@ -7,6 +8,8 @@ import {
   RefreshCw,
   Settings2,
   Trash2,
+  Calendar,
+  Wrench,
 } from 'lucide-react-native';
 import { styles } from '../../../styles/telas/Garagem/garagemStyles';
 import { useRouter } from 'expo-router';
@@ -32,11 +35,12 @@ export const CardVeiculoGaragem = ({
   const isDark = tema === 'escuro';
   const isAtivo = v.ativo === 1;
 
+  // Pega as definições do veículo
+  const tipo = (v.tipo as TipoVeiculo) || 'moto';
+  const config =
+    VEICULOS_CONFIG[tipo] || VEICULOS_CONFIG.moto;
+
   const renderIcon = (size: number, color: string) => {
-    // Pega as definições do veículo do nosso dicionário ou cai no padrão 'moto'
-    const tipo = (v.tipo as TipoVeiculo) || 'moto';
-    const config =
-      VEICULOS_CONFIG[tipo] || VEICULOS_CONFIG.moto;
     const Icone = config.icone;
     return <Icone size={size} color={color} />;
   };
@@ -58,7 +62,7 @@ export const CardVeiculoGaragem = ({
             : isDark
               ? '#111'
               : '#F5F5F5',
-          opacity: isAtivo ? 1 : 0.8,
+          opacity: isAtivo ? 1 : 0.9,
         },
       ]}
     >
@@ -69,6 +73,7 @@ export const CardVeiculoGaragem = ({
             style={{
               flexDirection: 'row',
               alignItems: 'center',
+              gap: 12,
             }}
           >
             <View
@@ -84,7 +89,7 @@ export const CardVeiculoGaragem = ({
               ]}
             >
               {renderIcon(
-                32,
+                28,
                 isAtivo
                   ? '#00C853'
                   : isDark
@@ -93,6 +98,16 @@ export const CardVeiculoGaragem = ({
               )}
             </View>
             <View>
+              <Text
+                style={{
+                  color: isAtivo ? '#00C853' : '#666',
+                  fontSize: 10,
+                  fontWeight: '700',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {v.marca || 'Marca n/d'}
+              </Text>
               <Text
                 style={[
                   styles.modeloText,
@@ -107,22 +122,49 @@ export const CardVeiculoGaragem = ({
                   },
                 ]}
               >
-                {v.modelo}
+                {v.modelo}{' '}
+                <Text
+                  style={{ fontSize: 12, color: '#666' }}
+                >
+                  • {v.motor}
+                </Text>
               </Text>
-              <Text
-                style={[
-                  styles.placaText,
-                  {
-                    color: isAtivo
-                      ? '#00C853'
-                      : isDark
-                        ? '#666'
-                        : '#888',
-                  },
-                ]}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 6,
+                  marginTop: 2,
+                }}
               >
-                {v.placa}
-              </Text>
+                <Text
+                  style={[
+                    styles.placaText,
+                    { color: isAtivo ? '#00C853' : '#888' },
+                  ]}
+                >
+                  {v.placa}
+                </Text>
+                <Text
+                  style={{ color: '#444', fontSize: 12 }}
+                >
+                  |
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  <Calendar size={12} color="#666" />
+                  <Text
+                    style={{ color: '#666', fontSize: 12 }}
+                  >
+                    {v.ano}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
 
@@ -140,12 +182,14 @@ export const CardVeiculoGaragem = ({
           )}
         </View>
 
-        {/* Informações de KM e Saúde */}
+        {/* Grid de Informações Técnicas */}
         <View style={styles.gridInfo}>
           <View style={styles.boxInfo}>
             <View style={styles.boxInfoLabelContainer}>
-              <Gauge size={12} color="#444" />
-              <Text style={styles.boxInfoLabel}>KM</Text>
+              <Gauge size={12} color="#666" />
+              <Text style={styles.boxInfoLabel}>
+                KM ATUAL
+              </Text>
             </View>
             <Text
               style={[
@@ -153,32 +197,72 @@ export const CardVeiculoGaragem = ({
                 { color: isDark ? '#FFF' : '#000' },
               ]}
             >
-              {v.km_atual?.toLocaleString() || '0'}
+              {v.km_atual?.toLocaleString() || '0'}{' '}
+              <Text style={{ fontSize: 10, color: '#666' }}>
+                km
+              </Text>
             </Text>
           </View>
+
           <View style={styles.boxInfo}>
             <View style={styles.boxInfoLabelContainer}>
-              <AlertCircle
-                size={12}
-                color={isAtivo ? '#00C853' : '#444'}
-              />
-              <Text style={styles.boxInfoLabel}>Saúde</Text>
+              <Wrench size={12} color="#666" />
+              <Text style={styles.boxInfoLabel}>
+                PROX. MANUTENÇÃO
+              </Text>
             </View>
+            {/* Campo reservado para sua lógica futura de manutenção */}
             <Text
               style={[
                 styles.boxInfoValor,
                 {
                   color: isAtivo
-                    ? '#00C853'
-                    : isDark
-                      ? '#666'
-                      : '#888',
+                    ? isDark
+                      ? '#AAA'
+                      : '#444'
+                    : '#666',
+                  fontSize: 13,
                 },
               ]}
             >
-              {isAtivo ? 'Excelente' : 'Inativo'}
+              Agendar Revisão{' '}
+              {/* Aqui entrará sua lógica futuramente */}
             </Text>
           </View>
+        </View>
+
+        {/* Status de Saúde */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+            marginTop: 12,
+            marginBottom: 16,
+          }}
+        >
+          <AlertCircle
+            size={14}
+            color={isAtivo ? '#00C853' : '#444'}
+          />
+          <Text
+            style={{
+              color: isDark ? '#666' : '#888',
+              fontSize: 12,
+            }}
+          >
+            Status:{' '}
+            <Text
+              style={{
+                color: isAtivo ? '#00C853' : '#666',
+                fontWeight: 'bold',
+              }}
+            >
+              {isAtivo
+                ? 'Excelente (Operacional)'
+                : 'Inativo na garagem'}
+            </Text>
+          </Text>
         </View>
 
         {/* Botões de Ação */}
@@ -229,7 +313,7 @@ export const CardVeiculoGaragem = ({
             onPress={() => onExcluir(v)}
             activeOpacity={0.8}
           >
-            <Trash2 size={18} color="#444" />
+            <Trash2 size={18} color="#FF5252" />
           </TouchableOpacity>
         </View>
       </View>
@@ -237,14 +321,14 @@ export const CardVeiculoGaragem = ({
       {/* Marca de água no fundo */}
       <View style={styles.watermark}>
         {renderIcon(
-          160,
+          140,
           isAtivo
             ? isDark
-              ? 'rgba(255,255,255,0.05)'
-              : 'rgba(0,0,0,0.05)'
+              ? 'rgba(255,255,255,0.03)'
+              : 'rgba(0,0,0,0.03)'
             : isDark
-              ? 'rgba(255,255,255,0.02)'
-              : 'rgba(0,0,0,0.02)',
+              ? 'rgba(255,255,255,0.01)'
+              : 'rgba(0,0,0,0.01)',
         )}
       </View>
     </View>

@@ -2,8 +2,11 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as Crypto from 'expo-crypto';
 import db from '../../database/DatabaseInit';
 import { validarRegrasSenha } from '../../utils/validacaoSenha';
+import { validarCPF } from '../../utils/validacaoCpf';
+import { VeiculoService } from './veiculoService'; // <-- Importação do novo Serviço
 
 export const useCadastro = () => {
   const router = useRouter();
@@ -36,17 +39,17 @@ export const useCadastro = () => {
   const [erro, setErro] = useState(false);
 
   const salvarCadastro = async () => {
-    // 1. LIMPEZA DE DADOS (Removendo espaços invisíveis)
+    // 1. LIMPEZA DE DADOS
     const nomeLimpo = nome.trim();
     const emailLimpo = email.trim();
     const senhaLimpa = senha.trim();
     const confirmacaoLimpa = confirmarSenha.trim();
     const cpfLimpo = cpf.trim();
 
-    // 2. LOGS DE DEBUG NO CONSOLE
     console.log('===== DEBUG CADASTRO =====');
     console.log(`Nome: |${nomeLimpo}|`);
     console.log(`Email: |${emailLimpo}|`);
+    console.log(`CPF: |${cpfLimpo}|`);
     console.log(
       `Senha: |${senhaLimpa}| (Tamanho: ${senhaLimpa.length})`,
     );
@@ -60,11 +63,11 @@ export const useCadastro = () => {
 
     setErro(true);
 
-    // 3. Validação de Campos Vazios
+    // 2. Validação de Campos Vazios Básicos
     if (
       !nomeLimpo ||
       !emailLimpo ||
-      cpfLimpo.length < 14 ||
+      !cpfLimpo ||
       !marca ||
       !modelo ||
       (tipoVeiculo !== 'bicicleta' && !placa) ||
@@ -79,14 +82,21 @@ export const useCadastro = () => {
       return;
     }
 
-    // 4. Validação de Regras de Senha (usando seu util)
-    const validacao = validarRegrasSenha(senhaLimpa);
-    if (!validacao.valida) {
-      Alert.alert('Senha Inválida', validacao.erro);
+    // 3. Validação Matemática do CPF
+    const validacaoCpf = validarCPF(cpfLimpo);
+    if (!validacaoCpf.valida) {
+      Alert.alert('CPF Inválido', validacaoCpf.erro);
       return;
     }
 
-    // 5. Verificação de Igualdade (agora com valores limpos)
+    // 4. Validação de Regras de Senha
+    const validacaoSenha = validarRegrasSenha(senhaLimpa);
+    if (!validacaoSenha.valida) {
+      Alert.alert('Senha Inválida', validacaoSenha.erro);
+      return;
+    }
+
+    // 5. Verificação de Igualdade das Senhas
     if (senhaLimpa !== confirmacaoLimpa) {
       Alert.alert(
         'Atenção',
@@ -98,6 +108,17 @@ export const useCadastro = () => {
     try {
       const valorMeta = parseFloat(meta) || 0;
 
+      // Criptografia
+      const senhaCriptografada =
+        await Crypto.digestStringAsync(
+          Crypto.CryptoDigestAlgorithm.SHA256,
+          senhaLimpa,
+        );
+
+      console.log(
+        '[CADASTRO] Senha criptografada com sucesso (SHA-256).',
+      );
+
       // 6. Inserir Perfil
       const resultUsuario = await db.runAsync(
         `INSERT INTO perfil_usuario (nome, email, cpf, senha, foto_uri, tipo_meta, meta_diaria, meta_semanal) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
@@ -105,7 +126,7 @@ export const useCadastro = () => {
           nomeLimpo,
           emailLimpo,
           cpfLimpo,
-          senhaLimpa,
+          senhaCriptografada,
           foto,
           tipoMeta,
           tipoMeta === 'diaria' ? valorMeta : 0,
@@ -115,20 +136,18 @@ export const useCadastro = () => {
 
       const usuarioId = resultUsuario.lastInsertRowId;
 
-      // 7. Inserir Veículo
-      await db.runAsync(
-        `INSERT INTO veiculos (tipo, marca, modelo, ano, motor, placa, km_atual, ativo, id_user) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?);`,
-        [
-          tipoVeiculo,
-          marca,
-          modelo,
-          parseInt(ano) || 0,
-          motor,
-          placa.toUpperCase().trim(),
-          parseInt(kmAtual) || 0,
-          usuarioId,
-        ],
-      );
+      // 7. Inserir Veículo usando o Serviço Global
+      await VeiculoService.inserirVeiculo({
+        tipo: tipoVeiculo,
+        marca: marca,
+        modelo: modelo,
+        ano: ano,
+        motor: motor,
+        placa: placa,
+        km_atual: parseInt(kmAtual) || 0,
+        ativo: 1, // O primeiro veículo cadastrado sempre será o ativo
+        id_user: usuarioId, // Relaciona com o usuário recém-criado
+      });
 
       console.log(
         '[SUCESSO] Cadastro realizado com ID:',

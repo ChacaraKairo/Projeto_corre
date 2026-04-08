@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'; // Removido o useState daqui
+import React, { useRef } from 'react';
 import { useRouter } from 'expo-router';
 import {
   View,
@@ -18,11 +18,8 @@ import {
   ChevronRight,
 } from 'lucide-react-native';
 import { Stack } from 'expo-router';
-
 import { useCadastro } from '../../hooks/cadastro/useCadastro';
 import { styles } from '../../styles/telas/Cadastro/componentes/cadastroStyles';
-
-// Seus componentes modulares
 import { HeaderCadastro } from '../../components/telas/Cadastro/HeaderCadastro';
 import { PerfilSecao } from '../../components/telas/Cadastro/PerfilSecao';
 import { VeiculoSecao } from '../../components/telas/Cadastro/VeiculoSecao';
@@ -39,7 +36,7 @@ export default function CadastroScreen() {
     senha,
     setSenha,
     confirmarSenha,
-    setConfirmarSenha, // <-- Agora pegamos direto do Hook
+    setConfirmarSenha,
     foto,
     setFoto,
     tipoVeiculo,
@@ -67,12 +64,6 @@ export default function CadastroScreen() {
   } = useCadastro();
 
   const router = useRouter();
-
-  // Removida a linha: const [confirmarSenha, setConfirmarSenha] = useState('');
-  // O erro acontecia porque você digitava no estado local daqui,
-  // mas o salvarCadastro olhava para o estado vazio lá do Hook.
-
-  // ===== CONFIGURAÇÃO DA ANIMAÇÃO DO FOOTER =====
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const isVisible = useRef(false);
 
@@ -142,8 +133,8 @@ export default function CadastroScreen() {
                 setCpf={setCpf}
                 senha={senha}
                 setSenha={setSenha}
-                confirmarSenha={confirmarSenha} // Agora sincronizado com o Hook
-                setConfirmarSenha={setConfirmarSenha} // Agora sincronizado com o Hook
+                confirmarSenha={confirmarSenha}
+                setConfirmarSenha={setConfirmarSenha}
                 foto={foto}
                 setFoto={setFoto}
                 erro={erro}
@@ -175,7 +166,6 @@ export default function CadastroScreen() {
                 erro={erro}
               />
 
-              {/* FOOTER ANIMADO */}
               <Animated.View
                 style={[
                   styles.footer,

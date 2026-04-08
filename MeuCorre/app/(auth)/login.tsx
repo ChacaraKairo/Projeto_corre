@@ -11,24 +11,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-// Lógica centralizada (Crie este hook em src/hooks/useLogin.ts)
 import { useLogin } from '../../hooks/login/useLogin';
-
-// Importação dos seus componentes modulares
 import { CardLogin } from '../../components/telas/Login/CardLogin';
 import { FooterLogin } from '../../components/telas/Login/FooterLogin';
-
-// Importação dos estilos centralizados
 import { loginStyles as styles } from '../../styles/telas/login/LoginStyles';
 
 const LoginScreen: React.FC = () => {
   const router = useRouter();
 
-  // Extraímos toda a inteligência do componente para o Hook
   const {
-    nome,
-    setNome,
+    identificacao,
+    setIdentificacao,
     senha,
     setSenha,
     temUsuario,
@@ -45,7 +38,6 @@ const LoginScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Botão Calculadora Flex (Topo Direito) */}
       <TouchableOpacity
         style={{
           position: 'absolute',
@@ -85,7 +77,6 @@ const LoginScreen: React.FC = () => {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Logo do App com animação (Substituindo o HeaderLogin antigo) */}
           <Animated.View
             style={{
               alignItems: 'center',
@@ -111,10 +102,9 @@ const LoginScreen: React.FC = () => {
             </Text>
           </Animated.View>
 
-          {/* O "Coração" do Login com os inputs e ações */}
           <CardLogin
-            nome={nome}
-            setNome={setNome}
+            identificacao={identificacao}
+            setIdentificacao={setIdentificacao}
             senha={senha}
             setSenha={setSenha}
             erro={erro}
@@ -132,7 +122,6 @@ const LoginScreen: React.FC = () => {
             }
           />
 
-          {/* Checkbox de Lembrar Senha */}
           <TouchableOpacity
             style={{
               flexDirection: 'row',
@@ -174,7 +163,6 @@ const LoginScreen: React.FC = () => {
             </Text>
           </TouchableOpacity>
 
-          {/* Rodapé informativo */}
           <FooterLogin />
         </ScrollView>
       </KeyboardAvoidingView>

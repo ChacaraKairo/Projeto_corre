@@ -14,8 +14,6 @@ import {
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useTema } from '../../hooks/modo_tema';
-
-// Importe o seu novo arquivo de estilos aqui (ajuste o caminho se necessário)
 import { styles } from '../../styles/telas/Termos/termosStyles';
 
 export default function TermosScreen() {
@@ -29,7 +27,6 @@ export default function TermosScreen() {
   const borderColor = isDark ? '#222' : '#E0E0E0';
   const textMuted = isDark ? '#AAA' : '#555';
 
-  // Componente auxiliar para os tópicos (Bullet Points)
   const BulletPoint = ({
     children,
   }: {
@@ -60,7 +57,6 @@ export default function TermosScreen() {
         },
       ]}
     >
-      {/* Header */}
       <View
         style={[
           styles.header,
@@ -69,7 +65,7 @@ export default function TermosScreen() {
       >
         <View style={styles.headerContent}>
           <TouchableOpacity
-            onPress={() => router.back()} // Volta para onde veio (Suporte ou Cadastro)
+            onPress={() => router.back()}
             style={[
               styles.btnVoltar,
               { backgroundColor: cardColor },
@@ -92,12 +88,10 @@ export default function TermosScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Ícone de Destaque */}
         <View style={styles.iconContainer}>
           <ShieldCheck size={48} color="#00C853" />
         </View>
 
-        {/* ================= TERMOS DE USO ================= */}
         <Text
           style={[styles.mainTitle, { color: textColor }]}
         >
@@ -208,7 +202,6 @@ export default function TermosScreen() {
           termos.
         </Text>
 
-        {/* Separador */}
         <View
           style={[
             styles.separator,
@@ -216,7 +209,6 @@ export default function TermosScreen() {
           ]}
         />
 
-        {/* ================= POLÍTICA DE PRIVACIDADE ================= */}
         <Text
           style={[styles.mainTitle, { color: textColor }]}
         >
@@ -270,7 +262,7 @@ export default function TermosScreen() {
         </BulletPoint>
         <BulletPoint>
           <Text style={{ fontWeight: 'bold' }}>
-            Segurança:
+            Security:
           </Text>{' '}
           Senha de acesso armazenada de forma local.
         </BulletPoint>

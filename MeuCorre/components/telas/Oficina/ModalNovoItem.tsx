@@ -1,3 +1,4 @@
+// Arquivo: src/components/telas/Oficina/ModalNovoItem.tsx
 import React from 'react';
 import {
   Modal,
@@ -5,31 +6,21 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
-import { X, Check } from 'lucide-react-native';
+import { X, Check, Landmark } from 'lucide-react-native';
 import { IconeServico } from './ItemManutencaoCard';
 import { useTema } from '../../../hooks/modo_tema';
+import { useModalNovoItem } from '../../../hooks/oficina/useModalNovoItem';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
-  onSave: () => void;
-  nome: string;
-  setNome: (t: string) => void;
-  intervalo: string;
-  setIntervalo: (t: string) => void;
-  tempo: string;
-  setTempo: (t: string) => void;
-  ultimaTrocaKm: string;
-  setUltimaTrocaKm: (t: string) => void;
-  ultimaTrocaData: string;
-  setUltimaTrocaData: (t: string) => void;
-  icone: string;
-  setIcone: (t: string) => void;
+  veiculoId: number;
+  onRefresh: () => void;
 }
 
 const ICONES_DISPONIVEIS = [
@@ -46,38 +37,50 @@ const ICONES_DISPONIVEIS = [
 export const ModalNovoItem = ({
   visible,
   onClose,
-  onSave,
-  nome,
-  setNome,
-  intervalo,
-  setIntervalo,
-  tempo,
-  setTempo,
-  ultimaTrocaKm,
-  setUltimaTrocaKm,
-  ultimaTrocaData,
-  setUltimaTrocaData,
-  icone,
-  setIcone,
+  veiculoId,
+  onRefresh,
 }: Props) => {
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
-  // Função para formatar a data automaticamente com barras (DD/MM/AAAA)
+  // Define uma cor de placeholder visível para cada tema
+  const placeholderColor = isDark ? '#666666' : '#999999';
+
+  const {
+    nome,
+    setNome,
+    intervalo,
+    setIntervalo,
+    tempo,
+    setTempo,
+    ultimaTrocaKm,
+    setUltimaTrocaKm,
+    ultimaTrocaData,
+    setUltimaTrocaData,
+    icone,
+    setIcone,
+    preco,
+    setPreco,
+    salvarNoFinanceiro,
+    setSalvarNoFinanceiro,
+    salvarManutencao,
+  } = useModalNovoItem(veiculoId, () => {
+    onRefresh();
+    onClose();
+  });
+
   const handleDateChange = (text: string) => {
     let formatted = text.replace(/\D/g, '');
-    if (formatted.length > 2) {
+    if (formatted.length > 2)
       formatted =
         formatted.substring(0, 2) +
         '/' +
         formatted.substring(2);
-    }
-    if (formatted.length > 5) {
+    if (formatted.length > 5)
       formatted =
         formatted.substring(0, 5) +
         '/' +
         formatted.substring(5, 9);
-    }
     setUltimaTrocaData(formatted);
   };
 
@@ -101,7 +104,7 @@ export const ModalNovoItem = ({
               {
                 backgroundColor: isDark
                   ? '#161616'
-                  : '#FFFFFF',
+                  : '#FFF',
                 borderColor: isDark ? '#333' : '#E0E0E0',
               },
             ]}
@@ -157,16 +160,18 @@ export const ModalNovoItem = ({
                     color: isDark ? '#FFF' : '#000',
                   },
                 ]}
-                placeholder="Ex: Troca de Óleo, Pastilhas..."
-                placeholderTextColor={
-                  isDark ? '#666' : '#999'
-                }
+                placeholder="Ex: Troca de Óleo"
+                placeholderTextColor={placeholderColor}
                 value={nome}
                 onChangeText={setNome}
               />
 
               <View
-                style={{ flexDirection: 'row', gap: 12 }}
+                style={{
+                  flexDirection: 'row',
+                  gap: 12,
+                  marginTop: 16,
+                }}
               >
                 <View style={{ flex: 1 }}>
                   <Text
@@ -190,13 +195,11 @@ export const ModalNovoItem = ({
                         color: isDark ? '#FFF' : '#000',
                       },
                     ]}
-                    placeholder="Ex: 5000"
-                    placeholderTextColor={
-                      isDark ? '#666' : '#999'
-                    }
+                    placeholder="5000"
+                    placeholderTextColor={placeholderColor}
+                    keyboardType="numeric"
                     value={intervalo}
                     onChangeText={setIntervalo}
-                    keyboardType="numeric"
                   />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -221,13 +224,11 @@ export const ModalNovoItem = ({
                         color: isDark ? '#FFF' : '#000',
                       },
                     ]}
-                    placeholder="Ex: 6"
-                    placeholderTextColor={
-                      isDark ? '#666' : '#999'
-                    }
+                    placeholder="6"
+                    placeholderTextColor={placeholderColor}
+                    keyboardType="numeric"
                     value={tempo}
                     onChangeText={setTempo}
-                    keyboardType="numeric"
                   />
                 </View>
               </View>
@@ -243,13 +244,10 @@ export const ModalNovoItem = ({
                   <Text
                     style={[
                       styles.label,
-                      {
-                        color: isDark ? '#888' : '#555',
-                        marginTop: 0,
-                      },
+                      { color: isDark ? '#888' : '#555' },
                     ]}
                   >
-                    KM DA ÚLTIMA TROCA
+                    KM ÚLTIMA TROCA
                   </Text>
                   <TextInput
                     style={[
@@ -264,23 +262,18 @@ export const ModalNovoItem = ({
                         color: isDark ? '#FFF' : '#000',
                       },
                     ]}
-                    placeholder="Ex: 12500"
-                    placeholderTextColor={
-                      isDark ? '#666' : '#999'
-                    }
+                    placeholder="12500"
+                    placeholderTextColor={placeholderColor}
+                    keyboardType="numeric"
                     value={ultimaTrocaKm}
                     onChangeText={setUltimaTrocaKm}
-                    keyboardType="numeric"
                   />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text
                     style={[
                       styles.label,
-                      {
-                        color: isDark ? '#888' : '#555',
-                        marginTop: 0,
-                      },
+                      { color: isDark ? '#888' : '#555' },
                     ]}
                   >
                     DATA DA TROCA
@@ -299,36 +292,108 @@ export const ModalNovoItem = ({
                       },
                     ]}
                     placeholder="DD/MM/AAAA"
-                    placeholderTextColor={
-                      isDark ? '#666' : '#999'
-                    }
-                    value={ultimaTrocaData}
-                    onChangeText={handleDateChange}
+                    placeholderTextColor={placeholderColor}
                     keyboardType="numeric"
                     maxLength={10}
+                    value={ultimaTrocaData}
+                    onChangeText={handleDateChange}
                   />
                 </View>
               </View>
-              <Text
+
+              <View
                 style={{
-                  fontSize: 10,
-                  color: '#888',
-                  marginTop: 8,
-                  marginBottom: 8,
-                  fontStyle: 'italic',
+                  flexDirection: 'row',
+                  gap: 12,
+                  marginTop: 16,
+                  alignItems: 'flex-end',
                 }}
               >
-                * Deixe em branco se a manutenção acabou de
-                ser feita agora.
-              </Text>
+                <View style={{ flex: 1.2 }}>
+                  <Text
+                    style={[
+                      styles.label,
+                      { color: isDark ? '#888' : '#555' },
+                    ]}
+                  >
+                    PREÇO (R$)
+                  </Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      {
+                        backgroundColor: isDark
+                          ? '#0A0A0A'
+                          : '#F5F5F5',
+                        borderColor: isDark
+                          ? '#333'
+                          : '#E0E0E0',
+                        color: isDark ? '#FFF' : '#000',
+                      },
+                    ]}
+                    placeholder="0,00"
+                    placeholderTextColor={placeholderColor}
+                    keyboardType="decimal-pad"
+                    value={preco}
+                    onChangeText={setPreco}
+                  />
+                </View>
+
+                <TouchableOpacity
+                  onPress={() =>
+                    setSalvarNoFinanceiro(
+                      !salvarNoFinanceiro,
+                    )
+                  }
+                  style={[
+                    styles.financeToggle,
+                    {
+                      backgroundColor: salvarNoFinanceiro
+                        ? 'rgba(0, 200, 83, 0.1)'
+                        : isDark
+                          ? '#222'
+                          : '#EEE',
+                      borderColor: salvarNoFinanceiro
+                        ? '#00C853'
+                        : 'transparent',
+                    },
+                  ]}
+                >
+                  <Landmark
+                    size={16}
+                    color={
+                      salvarNoFinanceiro
+                        ? '#00C853'
+                        : '#888'
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.financeText,
+                      {
+                        color: salvarNoFinanceiro
+                          ? '#00C853'
+                          : '#888',
+                      },
+                    ]}
+                  >
+                    {salvarNoFinanceiro
+                      ? 'NO FINANCEIRO'
+                      : 'SÓ OFICINA'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
               <Text
                 style={[
                   styles.label,
-                  { color: isDark ? '#888' : '#555' },
+                  {
+                    color: isDark ? '#888' : '#555',
+                    marginTop: 16,
+                  },
                 ]}
               >
-                ÍCONE DA LISTA
+                ÍCONE
               </Text>
               <View style={styles.iconGrid}>
                 {ICONES_DISPONIVEIS.map((id) => (
@@ -337,18 +402,16 @@ export const ModalNovoItem = ({
                     style={[
                       styles.iconWrapper,
                       {
-                        backgroundColor:
-                          icone === id
-                            ? 'rgba(0,200,83,0.1)'
-                            : isDark
-                              ? '#0A0A0A'
-                              : '#F5F5F5',
                         borderColor:
                           icone === id
                             ? '#00C853'
                             : isDark
                               ? '#333'
                               : '#E0E0E0',
+                        backgroundColor:
+                          icone === id
+                            ? 'rgba(0,200,83,0.1)'
+                            : 'transparent',
                       },
                     ]}
                     onPress={() => setIcone(id)}
@@ -356,11 +419,7 @@ export const ModalNovoItem = ({
                     <IconeServico
                       id={id}
                       color={
-                        icone === id
-                          ? '#00C853'
-                          : isDark
-                            ? '#666'
-                            : '#999'
+                        icone === id ? '#00C853' : '#888'
                       }
                       size={24}
                     />
@@ -378,8 +437,8 @@ export const ModalNovoItem = ({
                         : 0.5,
                   },
                 ]}
+                onPress={salvarManutencao}
                 disabled={!nome || (!intervalo && !tempo)}
-                onPress={onSave}
               >
                 <Check
                   size={20}
@@ -425,7 +484,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 1.5,
     marginBottom: 8,
-    marginTop: 16,
   },
   input: {
     borderWidth: 1,
@@ -434,17 +492,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  financeToggle: {
+    flex: 1,
+    height: 58,
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  financeText: { fontSize: 9, fontWeight: '900' },
   iconGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
-    marginTop: 8,
-    marginBottom: 32,
+    marginBottom: 24,
   },
   iconWrapper: {
     padding: 12,
     borderRadius: 16,
-    borderWidth: 1,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   btnSave: {
     backgroundColor: '#00C853',
