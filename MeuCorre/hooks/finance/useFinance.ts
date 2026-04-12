@@ -83,10 +83,10 @@ export const useFinance = () => {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               nome TEXT UNIQUE,
               tipo TEXT,
-              icone_id TEXT,
+              icon_id TEXT,
               cor TEXT
             );
-            INSERT OR IGNORE INTO categorias_financeiras (nome, tipo, icone_id, cor) VALUES 
+            INSERT OR IGNORE INTO categorias_financeiras (nome, tipo, icon_id, cor) VALUES 
             ('Combustível', 'despesa', 'Fuel', '#F44336'),
             ('Alimentação', 'despesa', 'Coffee', '#FF9800'),
             ('Manutenção', 'despesa', 'Wrench', '#795548'),
@@ -126,7 +126,7 @@ export const useFinance = () => {
             id: cat.id.toString(),
             nome: cat.nome,
             icon:
-              (Icons as any)[cat.icone_id || 'Briefcase'] ||
+              (Icons as any)[cat.icon_id || 'Briefcase'] ||
               Icons.Briefcase,
             cor: cat.cor,
           }));
@@ -228,7 +228,7 @@ export const useFinance = () => {
         tipo === 'ganho' ? '#00C853' : '#F44336';
 
       await db.runAsync(
-        'INSERT INTO categorias_financeiras (nome, tipo, icone_id, cor) VALUES (?, ?, ?, ?)',
+        'INSERT INTO categorias_financeiras (nome, tipo, icon_id, cor) VALUES (?, ?, ?, ?)',
         [
           novaCategoriaNome.trim(),
           tipo,
@@ -251,7 +251,7 @@ export const useFinance = () => {
         id: cat.id.toString(),
         nome: cat.nome,
         icon:
-          (Icons as any)[cat.icone_id || 'Briefcase'] ||
+          (Icons as any)[cat.icon_id || 'Briefcase'] ||
           Icons.Briefcase,
         cor: cat.cor,
       }));

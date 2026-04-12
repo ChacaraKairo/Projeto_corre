@@ -127,7 +127,7 @@ export function useOrigemGanhos() {
       for (const origem of origensEscolhidas) {
         // Usamos INSERT OR IGNORE para não travar se a categoria já existir (pois o nome é UNIQUE no SQLite)
         await db.runAsync(
-          'INSERT OR IGNORE INTO categorias_financeiras (nome, tipo, icone_id, cor) VALUES (?, ?, ?, ?);',
+          'INSERT OR IGNORE INTO categorias_financeiras (nome, tipo, icon_id, cor) VALUES (?, ?, ?, ?);',
           [origem.nome, 'ganho', origem.iconId, origem.cor],
         );
 

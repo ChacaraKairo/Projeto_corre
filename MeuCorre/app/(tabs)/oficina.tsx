@@ -28,7 +28,6 @@ export default function OficinaScreen() {
   const isDark = tema === 'escuro';
 
   const {
-    logs,
     loading,
     refreshing,
     onRefresh,
@@ -40,10 +39,9 @@ export default function OficinaScreen() {
     setModalReset,
     calcularProgresso,
     getStatusResumo,
-    // Funções de ação
     handleReset,
     handleConfirmReset,
-    carregarDados, // Função para atualizar após novo cadastro
+    carregarDados,
   } = useOficina();
 
   const statusResumo = getStatusResumo();
@@ -119,55 +117,10 @@ export default function OficinaScreen() {
             calcularProgresso={calcularProgresso}
             handleReset={handleReset}
           />
-
-          {/* Terminal de Logs */}
-          <View
-            style={[
-              (styles as any).logContainer,
-              {
-                backgroundColor: isDark
-                  ? '#111'
-                  : '#E0E0E0',
-              },
-            ]}
-          >
-            <Text
-              style={{
-                color: isDark ? '#00C853' : '#007A33',
-                fontWeight: 'bold',
-                marginBottom: 8,
-              }}
-            >
-              Terminal de Logs do Sistema
-            </Text>
-            {logs.length === 0 ? (
-              <Text style={{ color: '#888', fontSize: 12 }}>
-                Nenhum evento registrado.
-              </Text>
-            ) : (
-              logs.map((log, index) => (
-                <Text
-                  key={index}
-                  style={[
-                    (styles as any).logText,
-                    {
-                      color: log.includes('[ERRO]')
-                        ? '#EF4444'
-                        : isDark
-                          ? '#FFF'
-                          : '#000',
-                    },
-                  ]}
-                >
-                  {log}
-                </Text>
-              ))
-            )}
-          </View>
         </ScrollView>
       )}
 
-      {/* Modal de Novo Item (Inteligente) */}
+      {/* Modal de Novo Item */}
       <ModalNovoItem
         visible={modalNovoItem}
         onClose={() => setModalNovoItem(false)}

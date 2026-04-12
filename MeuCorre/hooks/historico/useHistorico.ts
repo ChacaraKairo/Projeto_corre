@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react'; // Importamos useEffect
 import { Alert } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import db from '../../database/DatabaseInit';
@@ -6,150 +6,245 @@ import db from '../../database/DatabaseInit';
 export function useHistorico() {
   const [loading, setLoading] = useState(true);
 
-  const [periodo, setPeriodo] = useState<
-    'dia' | 'semana' | 'mes'
-  >('semana');
-  const [dataRef, setDataRef] = useState(new Date());
+  const FILTROS_INICIAIS = {
+    periodo: 'dia' as
+      | 'dia'
+      | 'semana'
+      | 'mes'
+      | 'personalizado',
+    dataRef: new Date(),
+    dataInicioCustom: null as Date | null,
+    dataFimCustom: null as Date | null,
+    tipo: 'todos' as 'todos' | 'ganho' | 'despesa',
+    veiculoId: 'todos' as 'todos' | number,
+    categoriasSelecionadas: [] as number[],
+  };
 
-  // Estado para o Modal de Ações (Editar/Deletar)
-  const [registroSelecionado, setRegistroSelecionado] =
-    useState<any>(null);
+  const [filtros, setFiltros] = useState(FILTROS_INICIAIS);
 
-  // Filtro de Veículo
+  // ESTADOS DE DADOS
+  const [movimentacoes, setMovimentacoes] = useState<any[]>(
+    [],
+  );
+  const [categoriasDisponiveis, setCategoriasDisponiveis] =
+    useState<any[]>([]);
   const [veiculos, setVeiculos] = useState<any[]>([]);
-  const [veiculoFiltro, setVeiculoFiltro] = useState<
-    number | 'todos'
-  >('todos');
-  const [modalVeiculo, setModalVeiculo] = useState(false);
-
   const [dadosResumo, setDadosResumo] = useState({
     ganhos: 0,
     gastos: 0,
     saldo: 0,
   });
 
-  const [movimentacoes, setMovimentacoes] = useState<any[]>(
-    [],
-  );
+  // ESTADOS DE UI
+  const [registroSelecionado, setRegistroSelecionado] =
+    useState<any>(null);
+  const [modalEdicao, setModalEdicao] = useState(false);
+  const [modalFiltro, setModalFiltro] = useState(false);
+
+  const formatSQL = (d: Date) =>
+    d.toISOString().split('T')[0];
+
+  // 1. Reset inteligente para evitar loop
+  const resetarFiltros = useCallback(() => {
+    setFiltros((prev) => {
+      // Se já estiver no estado inicial (hoje), não atualiza para não causar re-render
+      const hoje = new Date().toDateString();
+      if (
+        prev.periodo === 'dia' &&
+        prev.dataRef.toDateString() === hoje &&
+        prev.categoriasSelecionadas.length === 0 &&
+        prev.tipo === 'todos'
+      ) {
+        return prev;
+      }
+      return { ...FILTROS_INICIAIS, dataRef: new Date() };
+    });
+  }, []);
+
+  const calcularIntervalo = useCallback(() => {
+    const {
+      periodo,
+      dataRef,
+      dataInicioCustom,
+      dataFimCustom,
+    } = filtros;
+    let inicio = '';
+    let fim = '';
+
+    if (periodo === 'dia') {
+      const d = formatSQL(dataRef);
+      inicio = `${d} 00:00:00`;
+      fim = `${d} 23:59:59`;
+    } else if (periodo === 'semana') {
+      const start = new Date(dataRef);
+      start.setDate(dataRef.getDate() - dataRef.getDay());
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      inicio = `${formatSQL(start)} 00:00:00`;
+      fim = `${formatSQL(end)} 23:59:59`;
+    } else if (periodo === 'mes') {
+      const ano = dataRef.getFullYear();
+      const mes = dataRef.getMonth();
+      inicio = `${formatSQL(new Date(ano, mes, 1))} 00:00:00`;
+      fim = `${formatSQL(new Date(ano, mes + 1, 0))} 23:59:59`;
+    } else if (
+      periodo === 'personalizado' &&
+      dataInicioCustom &&
+      dataFimCustom
+    ) {
+      inicio = `${formatSQL(dataInicioCustom)} 00:00:00`;
+      fim = `${formatSQL(dataFimCustom)} 23:59:59`;
+    }
+    return { inicio, fim };
+  }, [filtros]);
 
   const carregarDados = useCallback(async () => {
     setLoading(true);
     try {
-      // Carrega os veículos disponíveis
-      const frota = await db.getAllAsync(
-        'SELECT * FROM veiculos',
-      );
-      setVeiculos(frota);
-
-      let dataInicioStr = '';
-      let dataFimStr = '';
-      const ano = dataRef.getFullYear();
-      const mes = String(dataRef.getMonth() + 1).padStart(
-        2,
-        '0',
-      );
-      const dia = String(dataRef.getDate()).padStart(
-        2,
-        '0',
-      );
-
-      if (periodo === 'dia') {
-        dataInicioStr = `${ano}-${mes}-${dia} 00:00:00`;
-        dataFimStr = `${ano}-${mes}-${dia} 23:59:59`;
-      } else if (periodo === 'semana') {
-        const start = new Date(dataRef);
-        start.setDate(dataRef.getDate() - dataRef.getDay());
-        const end = new Date(start);
-        end.setDate(start.getDate() + 6);
-        dataInicioStr = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')} 00:00:00`;
-        dataFimStr = `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, '0')}-${String(end.getDate()).padStart(2, '0')} 23:59:59`;
-      } else if (periodo === 'mes') {
-        const end = new Date(
-          ano,
-          dataRef.getMonth() + 1,
-          0,
-        );
-        dataInicioStr = `${ano}-${mes}-01 00:00:00`;
-        dataFimStr = `${ano}-${mes}-${String(end.getDate()).padStart(2, '0')} 23:59:59`;
+      const { inicio, fim } = calcularIntervalo();
+      if (!inicio || !fim) {
+        setLoading(false);
+        return;
       }
 
+      const cats = await db.getAllAsync(`
+        SELECT DISTINCT c.id, c.nome, c.cor, c.icon_id, t.tipo
+        FROM categorias_financeiras c
+        JOIN transacoes_financeiras t ON t.categoria_id = c.id
+      `);
+      setCategoriasDisponiveis(cats);
+
       let query = `
-        SELECT t.*, c.nome as categoria_nome
+        SELECT t.*, c.nome as categoria_nome, c.cor as categoria_cor, c.icon_id as categoria_icon
         FROM transacoes_financeiras t
         LEFT JOIN categorias_financeiras c ON t.categoria_id = c.id
         WHERE t.data_transacao >= ? AND t.data_transacao <= ?
       `;
-      const params: any[] = [dataInicioStr, dataFimStr];
+      const params: any[] = [inicio, fim];
 
-      if (veiculoFiltro !== 'todos') {
+      if (filtros.veiculoId !== 'todos') {
         query += ' AND t.veiculo_id = ?';
-        params.push(veiculoFiltro);
+        params.push(filtros.veiculoId);
+      }
+      if (filtros.tipo !== 'todos') {
+        query += ' AND t.tipo = ?';
+        params.push(filtros.tipo);
+      }
+      if (filtros.categoriasSelecionadas.length > 0) {
+        const placeholders = filtros.categoriasSelecionadas
+          .map(() => '?')
+          .join(',');
+        query += ` AND t.categoria_id IN (${placeholders})`;
+        params.push(...filtros.categoriasSelecionadas);
       }
 
-      query += ' ORDER BY t.data_transacao DESC';
-
-      const transacoes = await db.getAllAsync(
-        query,
+      const rows = await db.getAllAsync(
+        query + ' ORDER BY t.data_transacao DESC',
         params,
       );
 
-      let ganhos = 0;
-      let gastos = 0;
-
-      const formatadas = transacoes.map((t: any) => {
+      let sumGanhos = 0;
+      let sumGastos = 0;
+      const formatadas = rows.map((t: any) => {
         const val = t.valor || 0;
-        if (t.tipo === 'ganho') ganhos += val;
-        else gastos += val;
-
-        // Formatar tempo se for hoje ou data curta
-        const dataHoraParts = t.data_transacao.split(' ');
-        const horaStr = dataHoraParts[1]
-          ? dataHoraParts[1].substring(0, 5)
-          : '';
-        const dataStr = dataHoraParts[0]
-          .split('-')
-          .reverse()
-          .slice(0, 2)
-          .join('/'); // DD/MM
-
+        t.tipo === 'ganho'
+          ? (sumGanhos += val)
+          : (sumGastos += val);
         return {
-          id: t.id,
-          tipo: t.tipo,
+          ...t,
           categoria: t.categoria_nome || 'Outros',
-          valor: val,
-          data:
-            periodo === 'dia'
-              ? horaStr
-              : `${dataStr} ${horaStr}`,
-          iconId:
-            t.tipo === 'ganho'
-              ? 'Briefcase'
-              : 'AlertCircle',
-          cor: t.tipo === 'ganho' ? '#00C853' : '#EF4444',
+          cor: t.categoria_cor || '#888',
+          iconId: t.categoria_icon || 'Briefcase',
+          dataExibicao: t.data_transacao
+            .split(' ')[0]
+            .split('-')
+            .reverse()
+            .slice(0, 2)
+            .join('/'),
+          dataOriginal: t.data_transacao,
         };
       });
 
       setDadosResumo({
-        ganhos,
-        gastos,
-        saldo: ganhos - gastos,
+        ganhos: sumGanhos,
+        gastos: sumGastos,
+        saldo: sumGanhos - sumGastos,
       });
       setMovimentacoes(formatadas);
-    } catch (error) {
-      console.error('Erro ao buscar histórico:', error);
+
+      const frotas = await db.getAllAsync(
+        'SELECT * FROM veiculos',
+      );
+      setVeiculos(frotas);
+    } catch (e) {
+      console.error('Erro ao carregar histórico:', e);
     } finally {
       setLoading(false);
     }
-  }, [dataRef, periodo, veiculoFiltro]);
+  }, [filtros, calcularIntervalo]);
 
+  // 2. DISPARO DE CARGA: Carrega sempre que o filtro mudar
+  useEffect(() => {
+    carregarDados();
+  }, [carregarDados]);
+
+  // 3. FOCO: Apenas reseta para o padrão ao entrar na tela
   useFocusEffect(
     useCallback(() => {
-      carregarDados();
-    }, [carregarDados]),
+      resetarFiltros();
+    }, [resetarFiltros]),
   );
 
-  // Formatação da Data no Header
-  const getLabelData = () => {
+  const atualizarFiltros = (
+    novosFiltros: Partial<typeof filtros>,
+  ) => {
+    setFiltros((prev) => ({ ...prev, ...novosFiltros }));
+  };
+
+  const navegarData = (dir: number) => {
+    const d = new Date(filtros.dataRef);
+    if (filtros.periodo === 'dia')
+      d.setDate(d.getDate() + dir);
+    else if (filtros.periodo === 'semana')
+      d.setDate(d.getDate() + dir * 7);
+    else if (filtros.periodo === 'mes')
+      d.setMonth(d.getMonth() + dir);
+    atualizarFiltros({ dataRef: d });
+  };
+
+  const deletarRegistro = useCallback(() => {
+    if (!registroSelecionado) return;
+    Alert.alert('Apagar', 'Deseja excluir este registro?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Apagar',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await db.runAsync(
+              'DELETE FROM transacoes_financeiras WHERE id = ?',
+              [registroSelecionado.id],
+            );
+            await carregarDados();
+            setRegistroSelecionado(null);
+          } catch (e) {
+            Alert.alert(
+              'Erro',
+              'Não foi possível apagar o registro.',
+            );
+          }
+        },
+      },
+    ]);
+  }, [registroSelecionado, carregarDados]);
+
+  const getLabelData = useCallback(() => {
+    const {
+      periodo,
+      dataRef,
+      dataInicioCustom,
+      dataFimCustom,
+    } = filtros;
     if (periodo === 'dia') {
       return dataRef.toLocaleDateString('pt-BR', {
         day: '2-digit',
@@ -160,101 +255,62 @@ export function useHistorico() {
       start.setDate(dataRef.getDate() - dataRef.getDay());
       const end = new Date(start);
       end.setDate(start.getDate() + 6);
-      return `${start.getDate()} ${start.toLocaleDateString('pt-BR', { month: 'short' })} - ${end.getDate()} ${end.toLocaleDateString('pt-BR', { month: 'short' })}`;
-    } else {
+      return `${start.getDate()}/${start.getMonth() + 1} - ${end.getDate()}/${end.getMonth() + 1}`;
+    } else if (periodo === 'mes') {
       return dataRef.toLocaleDateString('pt-BR', {
         month: 'long',
         year: 'numeric',
       });
+    } else if (
+      periodo === 'personalizado' &&
+      dataInicioCustom &&
+      dataFimCustom
+    ) {
+      return `${dataInicioCustom.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} - ${dataFimCustom.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}`;
     }
-  };
+    return 'Selecionar Data';
+  }, [filtros]);
 
-  const navegarData = (direcao: number) => {
-    const novaData = new Date(dataRef);
-    if (periodo === 'dia')
-      novaData.setDate(dataRef.getDate() + direcao);
-    if (periodo === 'semana')
-      novaData.setDate(dataRef.getDate() + direcao * 7);
-    if (periodo === 'mes')
-      novaData.setMonth(dataRef.getMonth() + direcao);
-    setDataRef(novaData);
-  };
-
-  const mudarPeriodo = (
-    novoPeriodo: 'dia' | 'semana' | 'mes',
+  const salvarEdicao = async (
+    id: number,
+    valor: number,
+    data: Date,
   ) => {
-    setPeriodo(novoPeriodo);
-    setDataRef(new Date());
-  };
-
-  // === AÇÕES DE GESTÃO DE REGISTOS ===
-
-  const abrirOpcoesRegistro = (item: any) => {
-    setRegistroSelecionado(item);
-  };
-
-  const fecharOpcoes = () => {
-    setRegistroSelecionado(null);
-  };
-
-  const editarRegistro = () => {
-    if (!registroSelecionado) return;
-    fecharOpcoes();
-    // Futuro: Redirecionar para tela de edição (ex: router.push(`/editar_transacao?id=${registroSelecionado.id}`))
-    Alert.alert(
-      'Editar',
-      `Vai editar o registo: ${registroSelecionado.categoria}`,
-    );
-  };
-
-  const deletarRegistro = () => {
-    if (!registroSelecionado) return;
-
-    Alert.alert(
-      'Apagar Registo',
-      `Tem a certeza que deseja apagar o registo de ${registroSelecionado.categoria} no valor de R$ ${registroSelecionado.valor.toFixed(2)}?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Apagar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await db.runAsync(
-                'DELETE FROM transacoes_financeiras WHERE id = ?',
-                [registroSelecionado.id],
-              );
-              await carregarDados(); // Recarrega os dados imediatamente
-              fecharOpcoes();
-            } catch (error) {
-              Alert.alert(
-                'Erro',
-                'Não foi possível apagar o registo.',
-              );
-            }
-          },
-        },
-      ],
-    );
+    try {
+      const sqlData = data
+        .toISOString()
+        .replace('T', ' ')
+        .split('.')[0];
+      await db.runAsync(
+        'UPDATE transacoes_financeiras SET valor = ?, data_transacao = ? WHERE id = ?',
+        [valor, sqlData, id],
+      );
+      carregarDados();
+      setModalEdicao(false);
+      setRegistroSelecionado(null);
+    } catch (e) {
+      Alert.alert('Erro ao salvar');
+    }
   };
 
   return {
     loading,
+    filtros,
+    atualizarFiltros,
     veiculos,
-    veiculoFiltro,
-    setVeiculoFiltro,
-    modalVeiculo,
-    setModalVeiculo,
-    periodo,
-    mudarPeriodo,
-    getLabelData,
-    navegarData,
-    dadosResumo,
     movimentacoes,
+    categoriasDisponiveis,
+    dadosResumo,
     registroSelecionado,
-    abrirOpcoesRegistro,
-    fecharOpcoes,
-    editarRegistro,
+    setRegistroSelecionado,
+    modalEdicao,
+    setModalEdicao,
+    modalFiltro,
+    setModalFiltro,
+    navegarData,
+    salvarEdicao,
     deletarRegistro,
+    getLabelData,
+    carregarDados,
   };
 }

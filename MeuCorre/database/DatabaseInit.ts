@@ -22,7 +22,7 @@ export const DatabaseInit = () => {
         '[BANCO] Banco de dados já está atualizado.',
       );
     } else {
-      // Ativa modos de segurança
+      // Ativa modos de segurança e performance
       db.execSync(`
         PRAGMA journal_mode = WAL;
         PRAGMA foreign_keys = ON;
@@ -36,15 +36,6 @@ export const DatabaseInit = () => {
         initV1();
         currentDbVersion = 1;
       }
-
-      // Exemplo de como você faria no futuro (v2):
-      /*
-      if (currentDbVersion === 1) {
-        console.log('[BANCO] Atualizando para v2 - Adicionando coluna Telefone...');
-        db.execSync('ALTER TABLE perfil_usuario ADD COLUMN telefone TEXT;');
-        currentDbVersion = 2;
-      }
-      */
 
       // 3. Atualiza a versão interna do banco para a nova
       db.execSync(
@@ -62,7 +53,6 @@ export const DatabaseInit = () => {
   }
 };
 
-// Função que contém todo o seu código original de criação
 const initV1 = () => {
   db.execSync(`
     CREATE TABLE IF NOT EXISTS perfil_usuario (
@@ -159,7 +149,7 @@ const initV1 = () => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL UNIQUE,
       tipo TEXT CHECK(tipo IN ('ganho', 'despesa')) NOT NULL,
-      icone_id TEXT, 
+      icon_id TEXT, -- Nome da coluna ajustado para bater com a query do Hook
       cor TEXT       
     );
 
@@ -169,7 +159,7 @@ const initV1 = () => {
       categoria_id INTEGER NOT NULL,
       descricao TEXT,
       valor REAL NOT NULL,
-      data_transacao DATE DEFAULT (date('now', 'localtime')),
+      data_transacao DATETIME DEFAULT (datetime('now', 'localtime')), -- Ajustado para DATETIME para salvar hora
       tipo TEXT CHECK(tipo IN ('ganho', 'despesa')) NOT NULL,
       FOREIGN KEY (veiculo_id) REFERENCES veiculos (id) ON DELETE SET NULL,
       FOREIGN KEY (categoria_id) REFERENCES categorias_financeiras (id)
