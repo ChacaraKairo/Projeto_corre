@@ -72,7 +72,7 @@ export function useRelatorios() {
       titulo: 'Termômetro MEI',
       desc: 'Controle de limite de faturação para não ser desenquadrado.',
       Icon: Gauge,
-      rota: '',
+      rota: 'relatorios/temometro_mei',
     },
     {
       id: 'extrato_irpf',
