@@ -1,3 +1,4 @@
+// MeuCorre/constants/theme.ts
 import { Platform } from 'react-native';
 
 // Cores base (Brand Colors)

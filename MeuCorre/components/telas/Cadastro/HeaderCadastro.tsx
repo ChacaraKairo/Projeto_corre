@@ -1,10 +1,10 @@
-// Arquivo: src/components/telas/Cadastro/HeaderCadastro.tsx
+// MeuCorre/components/telas/Cadastro/HeaderCadastro.tsx
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
   Image,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 interface HeaderProps {
@@ -33,8 +33,8 @@ export const HeaderCadastro: React.FC<HeaderProps> = () => {
 const headerStyles = StyleSheet.create({
   header: {
     alignItems: 'center',
-    marginTop: 40, // Reduzi um pouco a margem superior para compensar a logo maior
-    marginBottom: 30,
+    marginTop: 80, // Reduzi um pouco a margem superior para compensar a logo maior
+    marginBottom: 15,
   },
   imageCropContainer: {
     width: 160, // Largura total visível
@@ -46,8 +46,8 @@ const headerStyles = StyleSheet.create({
     // Garante que não há fundos ou bordas aparecendo
   },
   logoAumentada: {
-    width: 160, // Tamanho real renderizado (bem maior)
-    height: 160, // Tamanho real renderizado (bem maior)
+    width: 90, // Tamanho real renderizado (bem maior)
+    height: 110, // Tamanho real renderizado (bem maior)
     // Como a View tem height 110, 50px (25px em cima, 25px embaixo) serão cortados
   },
   subtitulo: {

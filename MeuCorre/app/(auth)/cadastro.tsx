@@ -1,35 +1,37 @@
-import React, { useRef } from 'react';
-import { useRouter } from 'expo-router';
+// MeuCorre/app/(auth)/cadastro.tsx
+import { Stack, useRouter } from 'expo-router';
 import {
-  View,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TouchableOpacity,
-  Text,
-  Animated,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-} from 'react-native';
-import {
-  ShieldCheck,
   ChevronRight,
+  ShieldCheck,
 } from 'lucide-react-native';
-import { Stack } from 'expo-router';
+import React, { useEffect, useRef } from 'react';
+import {
+  Animated,
+  Keyboard,
+  KeyboardAvoidingView,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import { useCadastro } from '../../hooks/cadastro/useCadastro';
 import { styles } from '../../styles/telas/Cadastro/componentes/cadastroStyles';
 
 // Componentes da tela
-import { RestaurarFluxoCadastro } from '../../components/telas/Cadastro/RestaurarFluxoCadastro';
 import { HeaderCadastro } from '../../components/telas/Cadastro/HeaderCadastro';
-import { PerfilSecao } from '../../components/telas/Cadastro/PerfilSecao';
-import { VeiculoSecao } from '../../components/telas/Cadastro/VeiculoSecao';
 import { MetasSecao } from '../../components/telas/Cadastro/MetasSecao';
+import { PerfilSecao } from '../../components/telas/Cadastro/PerfilSecao';
+import { RestaurarFluxoCadastro } from '../../components/telas/Cadastro/RestaurarFluxoCadastro';
+import { VeiculoSecao } from '../../components/telas/Cadastro/VeiculoSecao';
 
 // IMPORTAÇÃO DO ALERTA PERSONALIZADO
 import { CustomAlert } from '../../components/telas/Cadastro/CustomAlert';
+
+import { TipoVeiculo } from '../../type/typeVeiculos';
 
 export default function CadastroScreen() {
   const {
@@ -72,6 +74,7 @@ export default function CadastroScreen() {
   const router = useRouter();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const isVisible = useRef(false);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const translateY = fadeAnim.interpolate({
     inputRange: [0, 1],
@@ -107,6 +110,15 @@ export default function CadastroScreen() {
     }
   };
 
+  useEffect(() => {
+    if (erro) {
+      scrollViewRef.current?.scrollTo({
+        y: 0,
+        animated: true,
+      });
+    }
+  }, [erro]);
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -125,13 +137,14 @@ export default function CadastroScreen() {
         >
           <View style={{ flex: 1 }}>
             <ScrollView
+              ref={scrollViewRef}
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
               onScroll={handleScroll}
-              scrollEventThrottle={16}
+              scrollEventThrottle={32}
             >
               <HeaderCadastro
-                tipoVeiculo={tipoVeiculo as any}
+                tipoVeiculo={tipoVeiculo as TipoVeiculo}
               />
 
               {/* O RestaurarFluxoCadastro agora conseguirá mostrar o alerta nesta tela */}
@@ -154,7 +167,7 @@ export default function CadastroScreen() {
               />
 
               <VeiculoSecao
-                tipo={tipoVeiculo as any}
+                tipo={tipoVeiculo as TipoVeiculo}
                 setTipo={setTipoVeiculo as any}
                 marca={marca}
                 setMarca={setMarca}
@@ -238,7 +251,7 @@ export default function CadastroScreen() {
                   disabled={!aceitouTermos}
                 >
                   <Text style={styles.btnSalvarText}>
-                    Começar o corre
+                    Começar o Korre
                   </Text>
                   <ChevronRight size={24} color="#0A0A0A" />
                 </TouchableOpacity>

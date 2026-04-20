@@ -1,9 +1,9 @@
-// Arquivo: src/hooks/login/useLogin.ts
-import { useState, useEffect, useRef } from 'react';
-import { Alert, Animated } from 'react-native';
-import * as LocalAuthentication from 'expo-local-authentication';
+// MeuCorre/hooks/login/useLogin.ts
 import * as Crypto from 'expo-crypto'; // <-- IMPORTAÇÃO DO CRYPTO
+import * as LocalAuthentication from 'expo-local-authentication';
 import { useRouter } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, Animated } from 'react-native';
 import db from '../../database/DatabaseInit';
 
 export const useLogin = () => {

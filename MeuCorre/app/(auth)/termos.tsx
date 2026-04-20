@@ -1,18 +1,19 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  Platform,
-  StatusBar,
-} from 'react-native';
+// MeuCorre/app/(auth)/termos.tsx
+import { useRouter } from 'expo-router';
 import {
   ArrowLeft,
   ShieldCheck,
 } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
+import React from 'react';
+import {
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useTema } from '../../hooks/modo_tema';
 import { styles } from '../../styles/telas/Termos/termosStyles';
 

@@ -1,3 +1,4 @@
+// MeuCorre/app/(tabs)/origemganhos.tsx
 import {
   ChevronRight,
   Info,
@@ -15,6 +16,7 @@ import {
 import { HeaderOrigem } from '../../components/telas/OrigemGanhos/HeaderOrigem';
 import { ItemOrigem } from '../../components/telas/OrigemGanhos/ItemOrigem';
 import { ModalNovaOrigem } from '../../components/telas/OrigemGanhos/ModalNovaOrigem';
+import { Colors } from '../../constants/theme';
 import { useOrigemGanhos } from '../../hooks/OrigemGanhos/useOrigemGanhos';
 import { useTema } from '../../hooks/modo_tema';
 import { styles } from '../../styles/telas/OrigemGanhos/OrigemGanhosStyles';
@@ -42,37 +44,42 @@ export default function OrigemGanhosScreen() {
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
+  // Centralização de cores usando o tema global
+  const currentColors = isDark ? Colors.dark : Colors.light;
+  const bgColor = isDark
+    ? currentColors.background
+    : currentColors.backgroundSecondary;
+  const cardColor = currentColors.card;
+  const borderColor = currentColors.border;
+  const textColor = currentColors.text;
+  const textMuted = currentColors.textSecondary;
+  const primaryColor = currentColors.primary; // Verde Korre do constants/theme.ts
+
   return (
     <View
       style={[
         styles.container,
-        { backgroundColor: isDark ? '#0A0A0A' : '#F5F5F5' },
+        { backgroundColor: bgColor },
       ]}
     >
       <HeaderOrigem busca={busca} setBusca={setBusca} />
 
       {/* ScrollView principal da tela */}
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* === INÍCIO DA ÁREA ALTERADA === */}
-        {/* Renderização da lista de origens (Limitada a 4 itens visíveis) */}
-        <View style={{ maxHeight: 340 }}>
-          {/* Ajuste este valor se necessário para caber exatamente 4 itens na sua tela */}
-          <ScrollView
-            nestedScrollEnabled={true}
-            showsVerticalScrollIndicator={true}
-            contentContainerStyle={{ padding: 20, gap: 10 }}
-          >
-            {origens.map((item) => (
-              <ItemOrigem
-                key={item.id}
-                item={item}
-                isSelecionado={selecionados.includes(
-                  item.id,
-                )}
-                onToggle={toggleOrigem}
-              />
-            ))}
-          </ScrollView>
+        {/* Renderização da lista de origens (Limitada a 4 itens visíveis com View fixa) */}
+        <View style={{ padding: 20, gap: 10 }}>
+          {origens.slice(0, 4).map((item) => (
+            <ItemOrigem
+              key={item.id}
+              item={item}
+              isSelecionado={selecionados.includes(item.id)}
+              onToggle={toggleOrigem}
+            />
+          ))}
         </View>
         {/* === FIM DA ÁREA ALTERADA === */}
 
@@ -85,10 +92,8 @@ export default function OrigemGanhosScreen() {
             style={[
               styles.btnAddManual,
               {
-                backgroundColor: isDark
-                  ? '#161616'
-                  : '#FFFFFF',
-                borderColor: isDark ? '#222' : '#E0E0E0',
+                backgroundColor: cardColor,
+                borderColor: borderColor,
                 borderWidth: 1,
               },
             ]}
@@ -97,17 +102,17 @@ export default function OrigemGanhosScreen() {
             <View style={styles.btnAddIcon}>
               <Plus
                 size={22}
-                color="#00C853"
+                color={primaryColor}
                 strokeWidth={3}
               />
             </View>
             <Text
               style={[
                 styles.btnAddText,
-                { color: isDark ? '#FFFFFF' : '#000000' },
+                { color: textColor },
               ]}
             >
-              ADICIONAR OUTRA ORIGEM
+              ADICIONAR NOVA PLATAFORMA
             </Text>
           </TouchableOpacity>
         </View>
@@ -117,25 +122,26 @@ export default function OrigemGanhosScreen() {
           style={{
             flexDirection: 'row',
             padding: 20,
-            backgroundColor: isDark ? '#161616' : '#FFFFFF',
+            backgroundColor: cardColor,
             margin: 20,
             borderRadius: 12,
             alignItems: 'center',
             borderWidth: isDark ? 0 : 1,
-            borderColor: '#E0E0E0',
+            borderColor: borderColor,
           }}
         >
-          <Info size={20} color="#00C853" />
+          <Info size={20} color={primaryColor} />
           <Text
             style={{
-              color: isDark ? '#888' : '#555',
+              color: textMuted,
               marginLeft: 10,
               flex: 1,
               fontSize: 12,
             }}
           >
             Cada cor e ícone escolhido será usado no seu
-            Dashboard para organizar os seus lucros.
+            Dashboard para organizar os seus ganhos no
+            Korre.
           </Text>
         </View>
       </ScrollView>
@@ -145,13 +151,13 @@ export default function OrigemGanhosScreen() {
         style={{
           padding: 20,
           borderTopWidth: 1,
-          borderColor: isDark ? '#161616' : '#E0E0E0',
+          borderColor: isDark ? cardColor : borderColor,
         }}
       >
         <TouchableOpacity
           style={[
             {
-              backgroundColor: '#00C853',
+              backgroundColor: primaryColor,
               padding: 15,
               borderRadius: 12,
               flexDirection: 'row',
@@ -171,7 +177,7 @@ export default function OrigemGanhosScreen() {
               marginRight: 10,
             }}
           >
-            Concluir Configuração
+            Finalizar Escolha
           </Text>
           <ChevronRight size={20} color="#0A0A0A" />
         </TouchableOpacity>

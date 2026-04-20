@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Linking,
-  SafeAreaView, // <-- Importado para respeitar a área segura da tela
-  Platform, // <-- Importado para saber se é Android ou iOS
-  StatusBar, // <-- Importado para pegar o tamanho da barra de status
-} from 'react-native';
+// MeuCorre/app/(tabs)/suporte.tsx
+import { useRouter } from 'expo-router';
 import {
   ArrowLeft,
-  Youtube,
-  MessageCircle,
   ChevronDown,
   ChevronUp,
   FileText,
+  MessageCircle,
+  Youtube,
 } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
-import { useTema } from '../../hooks/modo_tema';
+import React, { useState } from 'react';
+import {
+  Linking, // <-- Importado para respeitar a área segura da tela
+  Platform,
+  SafeAreaView,
+  ScrollView, // <-- Importado para saber se é Android ou iOS
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { showCustomAlert } from '../../hooks/alert/useCustomAlert';
+import { useTema } from '../../hooks/modo_tema';
 
 import { styles } from '../../styles/telas/Suporte/suporteStyles';
 

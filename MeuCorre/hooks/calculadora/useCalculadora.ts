@@ -1,3 +1,4 @@
+// MeuCorre/hooks/calculadora/useCalculadora.ts
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import { CalculadoraRepository } from '../../database/repositories/CalculadoraRepository';
