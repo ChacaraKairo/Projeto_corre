@@ -1,27 +1,27 @@
-import React from 'react';
+import { useRouter } from 'expo-router';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import {
-  Zap,
-  Settings,
-  User,
-  Sun,
   Cloud,
   CloudRain,
+  Settings,
+  Sun,
+  User,
+  Zap,
 } from 'lucide-react-native';
-import { useRouter } from 'expo-router';
-import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashboardStyles';
+import React, { useEffect, useState } from 'react';
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useHeaderClimaDashboard } from '../../../hooks/dashboard/useHeaderClimaDashboard';
+import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashboardStyles';
 
 interface HeaderProps {
   nome: string;
   fraseMotivacional: string;
   fotoPerfil?: string | null;
-  onPressConfig?: () => void; // Nova prop para funcionalidade do botão
+  onPressConfig?: () => void;
 }
 
 export const HeaderDashboard: React.FC<HeaderProps> = ({
@@ -32,6 +32,22 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
 }) => {
   const router = useRouter();
   const { clima, loadingClima } = useHeaderClimaDashboard();
+
+  // Estado para controlar se a imagem falhou
+  const [imageError, setImageError] = useState(false);
+
+  // --- LOG 1: O que está chegando no componente? ---
+  useEffect(() => {
+    console.log(
+      '[DEBUG Avatar] Props atualizadas. Valor de fotoPerfil:',
+      fotoPerfil,
+    );
+    setImageError(false); // Tenta recarregar se a prop mudar
+  }, [fotoPerfil]);
+
+  // Regra de segurança: impede strings vazias de tentarem renderizar
+  const isFotoValida =
+    fotoPerfil && fotoPerfil.trim() !== '' && !imageError;
 
   return (
     <View style={styles.header}>
@@ -44,21 +60,42 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
           activeOpacity={0.7}
           onPress={() => router.push('/perfil' as any)}
         >
-          {/* Avatar com suporte a foto local ou fallback */}
           <View style={styles.avatar}>
-            {fotoPerfil ? (
+            {isFotoValida ? (
               <Image
                 source={{ uri: fotoPerfil }}
                 style={{
-                  width: '100%',
-                  height: '100%',
+                  width: 48, // <-- OBRIGATÓRIO: Tamanho fixo para não colapsar
+                  height: 48, // <-- OBRIGATÓRIO: Tamanho fixo para não colapsar
                   borderRadius: 24,
+                  backgroundColor: '#E0E0E0', // Fundo cinza para ver se o espaço existe
+                }}
+                // --- LOGS DE CICLO DE VIDA DA IMAGEM ---
+                onLoadStart={() =>
+                  console.log(
+                    '[DEBUG Avatar] ⏳ Iniciando download da imagem...',
+                  )
+                }
+                onLoad={() =>
+                  console.log(
+                    '[DEBUG Avatar] ✅ Imagem carregada e renderizada com sucesso!',
+                  )
+                }
+                onError={(e) => {
+                  console.error(
+                    '[DEBUG Avatar] ❌ ERRO ao carregar a imagem. Detalhes:',
+                    e.nativeEvent.error,
+                  );
+                  setImageError(true); // Aciona o fallback
                 }}
               />
             ) : (
               <View
                 style={{
-                  flex: 1,
+                  width: 48,
+                  height: 48,
+                  borderRadius: 24,
+                  backgroundColor: 'rgba(0, 200, 83, 0.1)',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
@@ -68,13 +105,12 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
             )}
           </View>
 
-          <View style={{ flex: 1 }}>
-            {/* Nome com peso 900 conforme a nova identidade */}
+          <View style={{ flex: 1, marginLeft: 12 }}>
             <Text
               style={styles.nomeUsuario}
               numberOfLines={1}
             >
-              {nome.split(' ')[0]}
+              {nome ? nome.split(' ')[0] : 'Motorista'}
             </Text>
             <View
               style={[
@@ -88,7 +124,6 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
                 fill="#00C853"
                 style={{ flexShrink: 0, marginTop: 2 }}
               />
-              {/* Esta frase agora virá do frasesService via Dashboard.tsx */}
               <Text
                 style={[
                   styles.textoMotivacional,
@@ -109,7 +144,6 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
             gap: 12,
           }}
         >
-          {/* Widget de Previsão do Tempo para Amanhã */}
           {!loadingClima && clima && (
             <View
               style={{

@@ -1,8 +1,10 @@
 import * as SQLite from 'expo-sqlite';
+import { SelicService } from '../utils/SelicService'; // Certifique-se de que o caminho está correto
 
+// Nome do banco consistente com o projeto
 const db = SQLite.openDatabaseSync('meucorre.db');
 
-// Versão atualizada para 1, focando na criação limpa
+// Versão inicial consolidada
 const DATABASE_VERSION = 1;
 
 export const DatabaseInit = () => {
@@ -13,10 +15,10 @@ export const DatabaseInit = () => {
       ) ?? { user_version: 0 };
 
     console.log(
-      `[BANCO] Versão atual: ${currentDbVersion} | Versão esperada: ${DATABASE_VERSION}`,
+      `[BANCO] Versão atual: ${currentDbVersion} | Versão alvo: ${DATABASE_VERSION}`,
     );
 
-    // Ativa modos de segurança e performance sempre
+    // Ativa performance e integridade
     db.execSync(`
       PRAGMA journal_mode = WAL;
       PRAGMA foreign_keys = ON;
@@ -24,7 +26,7 @@ export const DatabaseInit = () => {
 
     if (currentDbVersion < DATABASE_VERSION) {
       console.log(
-        '[BANCO] Inicializando estrutura das tabelas...',
+        '[BANCO] Criando tabelas do ecossistema MeuCorre...',
       );
       initV1();
 
@@ -32,12 +34,15 @@ export const DatabaseInit = () => {
         `PRAGMA user_version = ${DATABASE_VERSION};`,
       );
       console.log(
-        `[BANCO] Estrutura pronta na versão ${DATABASE_VERSION}.`,
+        `[BANCO] V${DATABASE_VERSION} inicializada com sucesso.`,
       );
     }
+
+    // DISPARO AUTOMÁTICO: Verifica a Selic sempre que o app inicia (Lógica de dia 1 está no Service)
+    SelicService.validarEAtualizarSelic();
   } catch (error) {
     console.error(
-      '[ERRO] Falha na inicialização do banco:',
+      '[ERRO] Falha crítica na inicialização do SQLite:',
       error,
     );
   }
@@ -45,6 +50,15 @@ export const DatabaseInit = () => {
 
 const initV1 = () => {
   db.execSync(`
+    -- 1. CONFIGURAÇÕES DO APP (Selic, Versões de Dados, etc)
+    CREATE TABLE IF NOT EXISTS configuracoes_app (
+      chave TEXT PRIMARY KEY,
+      valor TEXT
+    );
+
+    INSERT OR IGNORE INTO configuracoes_app (chave, valor) VALUES ('taxa_selic_atual', '14.75');
+
+    -- 2. PERFIL DO USUÁRIO
     CREATE TABLE IF NOT EXISTS perfil_usuario (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL,
@@ -58,6 +72,7 @@ const initV1 = () => {
       data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
+    -- 3. VEÍCULOS (Com campos de cache para os Índices Mágicos)
     CREATE TABLE IF NOT EXISTS veiculos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       tipo TEXT CHECK(tipo IN ('moto', 'carro', 'caminhao', 'van', 'bicicleta', 'carro_eletrico')) NOT NULL,
@@ -77,12 +92,13 @@ const initV1 = () => {
       FOREIGN KEY (id_user) REFERENCES perfil_usuario (id) ON DELETE CASCADE
     );
 
+    -- 4. PARÂMETROS FINANCEIROS (Inputs da Calculadora)
     CREATE TABLE IF NOT EXISTS parametros_financeiros (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       veiculo_id INTEGER UNIQUE NOT NULL,
       estado_uf TEXT DEFAULT 'SP',
       tipo_aquisicao TEXT DEFAULT 'proprio_quitado',
-      valor_veiculo_fipe REAL,
+      valor_veiculo_fipe REAL DEFAULT 0,
       depreciacao_real_estimada REAL DEFAULT 0,
       custo_oportunidade_selic REAL DEFAULT 0,
       juros_financiamento_mensal REAL DEFAULT 0,
@@ -99,7 +115,7 @@ const initV1 = () => {
       seguro_comercial_anual REAL DEFAULT 0,
       rastreador_telemetria_mensal REAL DEFAULT 0,
       plano_dados_mensal REAL DEFAULT 0,
-      rendimento_energia_unidade REAL DEFAULT 0,
+      rendimento_energia_unidade REAL DEFAULT 0, 
       preco_energia_unidade REAL DEFAULT 0,
       valor_oleo_filtros REAL DEFAULT 0,
       intervalo_oleo_filtros_km REAL DEFAULT 0,
@@ -135,6 +151,7 @@ const initV1 = () => {
       FOREIGN KEY (veiculo_id) REFERENCES veiculos (id) ON DELETE CASCADE
     );
 
+    -- 5. CATEGORIAS FINANCEIRAS
     CREATE TABLE IF NOT EXISTS categorias_financeiras (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL UNIQUE,
@@ -143,6 +160,7 @@ const initV1 = () => {
       cor TEXT       
     );
 
+    -- 6. TRANSAÇÕES FINANCEIRAS
     CREATE TABLE IF NOT EXISTS transacoes_financeiras (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       veiculo_id INTEGER,
@@ -155,6 +173,7 @@ const initV1 = () => {
       FOREIGN KEY (categoria_id) REFERENCES categorias_financeiras (id)
     );
 
+    -- 7. ITENS DE MANUTENÇÃO (REVISÃO)
     CREATE TABLE IF NOT EXISTS itens_manutencao (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       veiculo_id INTEGER NOT NULL,
@@ -168,6 +187,7 @@ const initV1 = () => {
       FOREIGN KEY (veiculo_id) REFERENCES veiculos (id) ON DELETE CASCADE
     );
 
+    -- 8. HISTÓRICO DE SERVIÇOS
     CREATE TABLE IF NOT EXISTS historico_manutencao (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       veiculo_id INTEGER NOT NULL,
@@ -181,6 +201,7 @@ const initV1 = () => {
       FOREIGN KEY (item_id) REFERENCES itens_manutencao (id) ON DELETE SET NULL
     );
 
+    -- 9. SISTEMA DE NOTIFICAÇÕES
     CREATE TABLE IF NOT EXISTS notificacoes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       titulo TEXT NOT NULL,
@@ -190,14 +211,11 @@ const initV1 = () => {
       data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
-    -- Categorias padrão
+    -- INSERÇÃO DE CATEGORIAS PADRÃO
     INSERT OR IGNORE INTO categorias_financeiras (nome, tipo, icone, cor) VALUES 
     ('Combustível', 'despesa', 'Fuel', '#EF4444'),
     ('Manutenção', 'despesa', 'Wrench', '#F59E0B'),
     ('Alimentação', 'despesa', 'Utensils', '#3B82F6'),
-    ('iFood', 'ganho', 'ShoppingBag', '#00C853'),
-    ('Uber', 'ganho', 'Navigation', '#00C853'),
-    ('99', 'ganho', 'Navigation2', '#00C853'),
     ('Outros Ganhos', 'ganho', 'PlusCircle', '#00C853'),
     ('Outras Despesas', 'despesa', 'MinusCircle', '#6B7280');
   `);

@@ -1,6 +1,7 @@
 // Arquivo: src/hooks/oficina/useOficinaData.ts
-import { useState, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
+import { DeviceEventEmitter } from 'react-native';
 import db from '../../database/DatabaseInit';
 import { MANUTENCOES_PADRAO } from '../../type/typeManutencoes';
 import { TipoVeiculo } from '../../type/typeVeiculos';
@@ -123,6 +124,21 @@ export function useOficinaData() {
     await carregarDados();
     setRefreshing(false);
   }, [carregarDados]);
+
+  // Listener para atualizações de KM vindas de fora (Dashboard)
+  useEffect(() => {
+    const subscription = DeviceEventEmitter.addListener(
+      'KM_UPDATED',
+      (event) => {
+        addLog(
+          `[EVENTO] KM atualizado detectado: ${event.novoKm}. Recarregando oficina...`,
+        );
+        carregarDados(); // Dispara o refresh dos cálculos
+      },
+    );
+
+    return () => subscription.remove();
+  }, [carregarDados, addLog]);
 
   useFocusEffect(
     useCallback(() => {
