@@ -27,6 +27,11 @@ export const useDashboard = () => {
     setLoading(true);
     try {
       // 1. Dados Básicos
+      // ADICIONADO: Busca o perfil do usuário no banco SQLite
+      const usuarioPerfil = await db.getFirstAsync(
+        'SELECT * FROM perfil_usuario LIMIT 1',
+      );
+
       const veiculoAtivo =
         await CalculadoraRepository.getVeiculoAtivo();
       const frase = getFraseDoMomento();
@@ -52,6 +57,7 @@ export const useDashboard = () => {
 
         setData((prev) => ({
           ...prev,
+          usuario: usuarioPerfil, // <-- O estado agora recebe os dados reais da tabela
           veiculo: veiculoAtivo,
           frase,
           movimentacoes: ultimas,
@@ -59,10 +65,22 @@ export const useDashboard = () => {
             ganhos: resGanhos?.total || 0,
             gastos: resGastos?.total || 0,
             qtdGanhos: resGanhos?.qtd || 0,
-            meta: 0, // Buscar do perfil do usuário futuramente
+            meta: (usuarioPerfil as any)?.meta_diaria || 0, // <-- Bônus: já puxa a meta real configurada
           },
         }));
+      } else if (usuarioPerfil) {
+        // Fallback de segurança: Caso o app tenha um usuário logado, mas nenhum veículo ativo cadastrado ainda
+        setData((prev) => ({
+          ...prev,
+          usuario: usuarioPerfil,
+          frase,
+        }));
       }
+    } catch (error) {
+      console.error(
+        '[Dashboard] Erro ao carregar dados:',
+        error,
+      );
     } finally {
       setLoading(false);
     }

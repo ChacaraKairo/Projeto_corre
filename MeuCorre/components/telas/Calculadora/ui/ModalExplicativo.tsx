@@ -1,14 +1,14 @@
+import { Info, X } from 'lucide-react-native';
 import React from 'react';
 import {
   Modal,
-  View,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
+  View,
 } from 'react-native';
-import { X, Info } from 'lucide-react-native';
-import { useTema } from '../../../hooks/modo_tema';
+import { useTema } from '../../../../hooks/modo_tema';
 
 interface ModalExplicativoProps {
   visible: boolean;

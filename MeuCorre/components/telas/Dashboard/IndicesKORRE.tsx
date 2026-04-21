@@ -6,7 +6,7 @@ import {
   HelpCircle,
   MapPin,
   Target,
-  TrendingUp, // Novo ícone para o ganho por hora
+  TrendingUp,
 } from 'lucide-react-native';
 import React from 'react';
 import {
@@ -20,9 +20,9 @@ import { useTema } from '../../../hooks/modo_tema';
 import { styles as baseStyles } from '../../../styles/telas/Dashboard/indicesMCCardStyles';
 
 interface Props {
-  custoPorKm: number; // O IKM (Só desgaste e insumo)
-  custoPorMinuto: number; // O IMIN (Custo Fixo de Existência)
-  metaPorMinuto: number; // O IMIN + Pró-Labore (Sobrevivência + Lucro)
+  custoPorKm: number;
+  custoPorMinuto: number;
+  metaPorMinuto: number;
 }
 
 export const IndicesMCCard = ({
@@ -43,17 +43,14 @@ export const IndicesMCCard = ({
 
   // Cálculo do Faturamento Ideal por Hora
   const metaPorHora = metaPorMinuto * 60;
-
   const handleAjuda = () => {
     const exKm = 8;
     const exMin = 15;
 
-    // Cálculos de Custo Base (Linha de Empate/Sobrevivência)
     const calcKmCusto = custoPorKm * exKm;
     const calcMinCusto = custoPorMinuto * exMin;
     const custoTotal = calcKmCusto + calcMinCusto;
 
-    // Cálculos de Meta (Custos pagos + Dinheiro no bolso)
     const calcMinMeta = metaPorMinuto * exMin;
     const metaTotal = calcKmCusto + calcMinMeta;
 
@@ -83,6 +80,7 @@ export const IndicesMCCard = ({
         {
           backgroundColor: bgColor,
           borderColor: borderColor,
+          padding: 16, // Garantindo um bom respiro geral
         },
       ]}
     >
@@ -134,7 +132,7 @@ export const IndicesMCCard = ({
         </View>
       </View>
 
-      {/* Valores em Destaque - As 3 colunas base */}
+      {/* Valores em Destaque - As 3 colunas base ajustadas */}
       <View style={styles.trindadeRow}>
         {/* 1. Custo por KM */}
         <View
@@ -143,21 +141,23 @@ export const IndicesMCCard = ({
             { backgroundColor: boxBg, borderColor },
           ]}
         >
-          <View style={baseStyles.indiceHeader}>
-            <MapPin size={12} color={textMuted} />
-            <Text
-              style={[
-                baseStyles.indiceLabel,
-                { color: textMuted, fontSize: 10 },
-              ]}
-            >
-              IKM (Movimento)
-            </Text>
-          </View>
+          <MapPin size={14} color={textMuted} />
           <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
             style={[
-              baseStyles.indiceValue,
-              { color: textColor, fontSize: 14 },
+              styles.labelTrindade,
+              { color: textMuted },
+            ]}
+          >
+            IKM (Mov.)
+          </Text>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={[
+              styles.valueTrindade,
+              { color: textColor },
             ]}
           >
             R$ {custoPorKm.toFixed(2).replace('.', ',')}
@@ -171,21 +171,23 @@ export const IndicesMCCard = ({
             { backgroundColor: boxBg, borderColor },
           ]}
         >
-          <View style={baseStyles.indiceHeader}>
-            <Clock size={12} color={textMuted} />
-            <Text
-              style={[
-                baseStyles.indiceLabel,
-                { color: textMuted, fontSize: 10 },
-              ]}
-            >
-              IMIN (Parado)
-            </Text>
-          </View>
+          <Clock size={14} color={textMuted} />
           <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
             style={[
-              baseStyles.indiceValue,
-              { color: textColor, fontSize: 14 },
+              styles.labelTrindade,
+              { color: textMuted },
+            ]}
+          >
+            IMIN (Par.)
+          </Text>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={[
+              styles.valueTrindade,
+              { color: textColor },
             ]}
           >
             R$ {custoPorMinuto.toFixed(2).replace('.', ',')}
@@ -202,29 +204,23 @@ export const IndicesMCCard = ({
             },
           ]}
         >
-          <View style={baseStyles.indiceHeader}>
-            <Target size={12} color="#00C853" />
-            <Text
-              style={[
-                baseStyles.indiceLabel,
-                {
-                  color: '#00C853',
-                  fontSize: 10,
-                  fontWeight: 'bold',
-                },
-              ]}
-            >
-              Meta/Min
-            </Text>
-          </View>
+          <Target size={14} color="#00C853" />
           <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
             style={[
-              baseStyles.indiceValue,
-              {
-                color: '#00C853',
-                fontSize: 14,
-                fontWeight: '900',
-              },
+              styles.labelTrindade,
+              { color: '#00C853', fontWeight: 'bold' },
+            ]}
+          >
+            Meta/Min
+          </Text>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={[
+              styles.valueTrindade,
+              { color: '#00C853', fontWeight: '900' },
             ]}
           >
             R$ {metaPorMinuto.toFixed(2).replace('.', ',')}
@@ -247,16 +243,19 @@ export const IndicesMCCard = ({
             flexDirection: 'row',
             alignItems: 'center',
             gap: 8,
+            flex: 1,
           }}
         >
-          <TrendingUp size={18} color="#00C853" />
+          <TrendingUp size={20} color="#00C853" />
           <Text
+            numberOfLines={2} // Permite quebrar em duas linhas se a tela for minúscula
             style={[
               baseStyles.indiceLabel,
               {
                 color: '#00C853',
                 fontSize: 13,
                 fontWeight: 'bold',
+                flexShrink: 1,
               },
             ]}
           >
@@ -264,12 +263,15 @@ export const IndicesMCCard = ({
           </Text>
         </View>
         <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
           style={[
             baseStyles.indiceValue,
             {
               color: '#00C853',
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: '900',
+              marginLeft: 8,
             },
           ]}
         >
@@ -299,21 +301,34 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 8,
     marginTop: 16,
-    marginBottom: 12,
+    marginBottom: 16, // Um pouco mais de espaço antes da barra inferior
   },
   indiceBoxTrindade: {
     flex: 1,
-    padding: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 6,
     borderRadius: 12,
     borderWidth: 1,
-    alignItems: 'flex-start',
+    alignItems: 'center', // Centraliza tudo para economizar espaço
     justifyContent: 'center',
+    gap: 4, // Espaçamento suave entre ícone, título e valor
+  },
+  labelTrindade: {
+    fontSize: 10,
+    textAlign: 'center',
+  },
+  valueTrindade: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 2,
   },
   hourlyBox: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
     borderRadius: 12,
     borderWidth: 1,
     marginBottom: 16,

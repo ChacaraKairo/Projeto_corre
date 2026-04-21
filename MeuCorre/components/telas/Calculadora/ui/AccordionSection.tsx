@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
 import {
   ChevronDown,
   ChevronUp,
   HelpCircle,
 } from 'lucide-react-native';
-import { useTema } from '../../../hooks/modo_tema';
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { useTema } from '../../../../hooks/modo_tema';
 
 interface AccordionSectionProps {
   title: string;

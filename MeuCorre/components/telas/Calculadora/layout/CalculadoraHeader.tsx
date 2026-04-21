@@ -17,7 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useTema } from '../../../hooks/modo_tema';
+import { useTema } from '../../../../hooks/modo_tema';
 
 // --- Helper para renderização dinâmica do ícone ---
 const getIconeVeiculo = (

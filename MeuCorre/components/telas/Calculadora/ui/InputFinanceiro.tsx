@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { HelpCircle } from 'lucide-react-native';
-import { styles } from '../../../styles/telas/Calculadora/calculadoraStyles';
-import { useTema } from '../../../hooks/modo_tema';
+import { styles } from '../../../../styles/telas/Calculadora/calculadoraStyles';
+import { useTema } from '../../../../hooks/modo_tema';
 
 interface Props {
   label: string;

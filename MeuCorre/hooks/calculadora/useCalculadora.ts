@@ -3,6 +3,11 @@ import { useCallback, useEffect, useState } from 'react';
 import db from '../../database/DatabaseInit';
 // IMPORTANTE: Agora usamos a Fonte Única de Verdade (SSOT)
 import { FormularioViabilidade } from '../../type/viabilidadeCorrida';
+// IMPORTANTE: Trazendo as regras de IPVA
+import {
+  REGRAS_IPVA_ESTADOS,
+  SiglaEstado,
+} from '../../type/ipvaEstados';
 import { showCustomAlert } from '../alert/useCustomAlert';
 import { CalculadoraService } from './service/CalculadoraService';
 
@@ -30,9 +35,10 @@ export function useCalculadora() {
 
   const handleChange = useCallback(
     (
-      campo: keyof FormularioViabilidade, // Tipagem atualizada
+      campo: keyof FormularioViabilidade,
       valor: string | number,
     ) => {
+      // Ignora a máscara para campos de texto/seleção
       if (
         campo === 'tipo_aquisicao' ||
         campo === 'estado_uf'
@@ -40,13 +46,34 @@ export function useCalculadora() {
         setForm((prev) => ({ ...prev, [campo]: valor }));
         return;
       }
-      const valorNumerico =
-        typeof valor === 'string'
-          ? parseFloat(valor.replace(',', '.')) || 0
-          : valor;
+
+      // Previne erros se por acaso o valor já for um número (via código interno)
+      if (typeof valor === 'number') {
+        setForm((prev) => ({
+          ...prev,
+          [campo]: valor as any,
+        }));
+        return;
+      }
+
+      // 1. Transforma o que foi digitado em string e troca vírgula por ponto (padrão decimal)
+      // Usando String() por segurança para o TypeScript não reclamar do replace
+      let textoLimpo = String(valor).replace(',', '.');
+
+      // 2. Remove letras e caracteres inválidos (deixa apenas números e o ponto)
+      textoLimpo = textoLimpo.replace(/[^0-9.]/g, '');
+
+      // 3. Impede que o usuário digite mais de um ponto (ex: 10..5)
+      const partes = textoLimpo.split('.');
+      if (partes.length > 2) {
+        textoLimpo =
+          partes[0] + '.' + partes.slice(1).join('');
+      }
+
+      // 4. Salva no estado a string exata que o usuário está digitando (permitindo "10.")
       setForm((prev) => ({
         ...prev,
-        [campo]: valorNumerico,
+        [campo]: textoLimpo as any,
       }));
     },
     [],
@@ -129,7 +156,7 @@ export function useCalculadora() {
   const mudarVeiculoAtivo = (veiculo: any) =>
     carregarFormularioVeiculo(veiculo);
 
-  // BUG CORRIGIDO: Agora as validações apontam para as chaves reais do banco de dados
+  // Validações apontando para as chaves reais do banco de dados
   const validarStatusSecoes = useCallback(() => {
     const operacaoCompleta =
       !!form.rendimento_energia_unidade &&
@@ -156,12 +183,86 @@ export function useCalculadora() {
     };
   }, [form]);
 
-  const calcularIPVAAutomatico = useCallback(() => {
-    showCustomAlert(
-      'Em Breve',
-      'O preenchimento automático da FIPE e IPVA estará disponível numa atualização futura.',
-    );
-  }, []);
+  // MOTOR IPVA INTEGRADO 🚀
+  // MOTOR IPVA INTEGRADO 🚀
+  const calcularIPVAAutomatico = useCallback(
+    (ufSelecionada?: SiglaEstado) => {
+      // 1. Usa o estado selecionado no modal OU o que já está salvo no formulário
+      const estado =
+        ufSelecionada ||
+        (form.estado_uf as SiglaEstado) ||
+        'SP';
+      const valorFipe = Number(form.valor_veiculo_fipe);
+      const tipoVeiculo = veiculoAtivo?.tipo;
+      const anoVeiculo = veiculoAtivo?.ano;
+
+      // 2. Se o usuário escolheu um estado novo pelo Modal, atualizamos o formulário
+      if (
+        ufSelecionada &&
+        ufSelecionada !== form.estado_uf
+      ) {
+        handleChange('estado_uf', ufSelecionada);
+      }
+
+      // 3. Validação de dados básicos
+      if (!valorFipe || !tipoVeiculo) {
+        showCustomAlert(
+          'Dados Insuficientes',
+          'Informe o valor FIPE do veículo primeiro para calcularmos o IPVA.',
+        );
+        return;
+      }
+
+      const regra = REGRAS_IPVA_ESTADOS[estado];
+      if (!regra) return;
+
+      // 4. Verificação de Isenção por Idade
+      const anoAtual = new Date().getFullYear();
+      const idadeVeiculo =
+        anoAtual - Number(anoVeiculo || anoAtual);
+
+      if (idadeVeiculo >= regra.anos_isencao_idade) {
+        handleChange('ipva_anual', '0');
+        showCustomAlert(
+          'Veículo Isento',
+          `Em ${estado}, veículos com ${regra.anos_isencao_idade} anos ou mais não pagam IPVA.`,
+        );
+        return;
+      }
+
+      // 5. Seleção da Alíquota correta baseada no tipo do veículo
+      let aliquota = regra.aliquota_carro; // Padrão para carro passeio
+
+      if (tipoVeiculo === 'moto') {
+        aliquota = regra.aliquota_moto;
+      } else if (tipoVeiculo === 'carro_eletrico') {
+        aliquota = regra.aliquota_eletrico;
+      } else if (
+        ['van', 'caminhao'].includes(tipoVeiculo)
+      ) {
+        aliquota = regra.aliquota_van;
+      }
+
+      // 6. Cálculo e Atualização do Formulário
+      const valorCalculado = (valorFipe * aliquota).toFixed(
+        2,
+      );
+
+      // Salvamos o valor calculado no estado
+      handleChange('ipva_anual', valorCalculado);
+
+      showCustomAlert(
+        'Cálculo Concluído',
+        `IPVA para ${estado} calculado com alíquota de ${(aliquota * 100).toFixed(1)}%.\n\nValor estimado: R$ ${valorCalculado.replace('.', ',')}`,
+      );
+    },
+    [
+      form.estado_uf,
+      form.valor_veiculo_fipe,
+      veiculoAtivo,
+      handleChange,
+    ],
+  );
 
   return {
     loading,
