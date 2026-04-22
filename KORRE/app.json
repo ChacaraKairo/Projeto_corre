@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Korre",
-    "slug": "korre",
+    "slug": "MeuCorre",
     "version": "1.2.0",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
@@ -61,7 +61,9 @@
       "typedRoutes": true,
       "reactCompiler": true
     },
+    "owner": "chacara",
     "extra": {
+      "router": {},
       "eas": {
         "projectId": "a079f691-cad7-4b77-8dcd-3595dc7854c6"
       }
