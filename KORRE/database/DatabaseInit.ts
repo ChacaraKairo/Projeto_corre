@@ -5,7 +5,7 @@ import { SelicService } from '../utils/SelicService'; // Certifique-se de que o 
 const db = SQLite.openDatabaseSync('korre.db');
 
 // Versão inicial consolidada
-export const DATABASE_VERSION = 2;
+export const DATABASE_VERSION = 3;
 
 export const DatabaseInit = () => {
   try {
@@ -40,6 +40,13 @@ export const DatabaseInit = () => {
       db.execSync('PRAGMA user_version = 2;');
       currentDbVersion = 2;
       console.log('[BANCO] Migracao V2 aplicada com sucesso.');
+    }
+
+    if (currentDbVersion < 3) {
+      migrateToV3();
+      db.execSync('PRAGMA user_version = 3;');
+      currentDbVersion = 3;
+      console.log('[BANCO] Migracao V3 aplicada com sucesso.');
     }
 
     // DISPARO AUTOMÁTICO: Verifica a Selic sempre que o app inicia (Lógica de dia 1 está no Service)
@@ -212,6 +219,10 @@ const initV1 = () => {
       mensagem TEXT NOT NULL,
       tipo TEXT DEFAULT 'info',
       lida INTEGER DEFAULT 0,
+      origem TEXT DEFAULT 'local',
+      destino TEXT,
+      dados_json TEXT,
+      dedup_key TEXT,
       data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -241,6 +252,50 @@ const migrateToV2 = () => {
       ALTER TABLE historico_manutencao
       RENAME COLUMN direfenca_tempo_meses TO diferenca_tempo_meses;
     `);
+  }
+};
+
+const migrateToV3 = () => {
+  db.execSync(`
+    CREATE TABLE IF NOT EXISTS notificacao_dedup (
+      chave TEXT PRIMARY KEY,
+      data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS remote_command_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      request_id TEXT UNIQUE,
+      command TEXT NOT NULL,
+      status TEXT NOT NULL,
+      data_recebimento DATETIME DEFAULT CURRENT_TIMESTAMP,
+      resposta_json TEXT
+    );
+  `);
+
+  addColumnIfMissing(
+    'notificacoes',
+    'origem',
+    "TEXT DEFAULT 'local'",
+  );
+  addColumnIfMissing('notificacoes', 'destino', 'TEXT');
+  addColumnIfMissing('notificacoes', 'dados_json', 'TEXT');
+  addColumnIfMissing('notificacoes', 'dedup_key', 'TEXT');
+};
+
+const addColumnIfMissing = (
+  table: string,
+  column: string,
+  definition: string,
+) => {
+  const columns = db.getAllSync<{ name: string }>(
+    `PRAGMA table_info(${table});`,
+  );
+  const exists = columns.some((item) => item.name === column);
+
+  if (!exists) {
+    db.execSync(
+      `ALTER TABLE ${table} ADD COLUMN ${column} ${definition};`,
+    );
   }
 };
 

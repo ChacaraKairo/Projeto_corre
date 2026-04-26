@@ -13,6 +13,7 @@ import {
 import * as Icons from 'lucide-react-native';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
+import { verificarMetaDiaria } from '../../notifications/LocalNotificationScheduler';
 
 export const useFinance = () => {
   const router = useRouter();
@@ -165,6 +166,7 @@ export const useFinance = () => {
         ],
       );
 
+      await verificarMetaDiaria();
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);

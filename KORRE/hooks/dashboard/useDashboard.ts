@@ -5,6 +5,7 @@ import { DeviceEventEmitter } from 'react-native';
 import db from '../../database/DatabaseInit';
 import { CalculadoraRepository } from '../../database/repositories/CalculadoraRepository';
 import { FinanceiroRepository } from '../../database/repositories/FinanceiroRepository';
+import { verificarAlertasManutencao } from '../../notifications/LocalNotificationScheduler';
 import { getFraseDoMomento } from './frasesService';
 
 export const useDashboard = () => {
@@ -104,6 +105,7 @@ export const useDashboard = () => {
 
       // O PULO DO GATO: Avisa o app todo que o KM mudou
       DeviceEventEmitter.emit('KM_UPDATED', { novoKm });
+      await verificarAlertasManutencao();
 
       // Atualização otimista do estado local para maior performance (sem reload completo)
       setData((prev) => ({

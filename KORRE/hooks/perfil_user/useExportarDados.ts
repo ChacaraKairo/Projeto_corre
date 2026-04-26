@@ -61,6 +61,10 @@ export function useExportarDados() {
           dialogTitle: 'Exportar Backup do KORRE',
           UTI: 'public.json',
         });
+        await db.runAsync(
+          'INSERT OR REPLACE INTO configuracoes_app (chave, valor) VALUES (?, ?)',
+          ['ultimo_backup_exportado_em', new Date().toISOString()],
+        );
       } else {
         showCustomAlert(
           'Erro',

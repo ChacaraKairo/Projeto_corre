@@ -11,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import db, { DatabaseInit } from '../database/DatabaseInit';
 import { NotificationHandler } from '../notifications/NotificationHandler';
 import { AppRoutes } from '../constants/routes';
+import { executarVerificacoesLocais } from '../notifications/LocalNotificationScheduler';
 
 import { inlineStyles } from '../styles/generated-inline/app/_layoutInlineStyles';
 import { dynamicInlineStyles } from '../styles/generated-dynamic/app/_layoutDynamicStyles';
@@ -21,26 +22,38 @@ export default function RootLayout() {
   const router = useRouter();
 
   useEffect(() => {
+    const subscriptions: { remove: () => void }[] = [];
+
     async function setup() {
       try {
         DatabaseInit();
         NotificationHandler.setupForegroundHandler();
+        subscriptions.push(
+          NotificationHandler.listenToReceived(),
+        );
         const notificationSub =
           NotificationHandler.listenToClicks();
+        subscriptions.push(notificationSub);
+        await executarVerificacoesLocais();
 
         const result = await db.getAllAsync<{ id: number }>(
           'SELECT id FROM perfil_usuario LIMIT 1;',
         );
 
         setHasUser(result.length > 0);
-        return () => notificationSub.remove();
-      } catch (error) {
+      } catch {
         // Erro silencioso
       } finally {
         setTimeout(() => setIsReady(true), 1000);
       }
     }
     setup();
+
+    return () => {
+      subscriptions.forEach((subscription) =>
+        subscription.remove(),
+      );
+    };
   }, []);
 
   useEffect(() => {

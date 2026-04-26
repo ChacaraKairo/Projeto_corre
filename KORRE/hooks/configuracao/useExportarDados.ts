@@ -42,6 +42,10 @@ export function useExportarDados() {
 
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(fileUri);
+        await db.runAsync(
+          'INSERT OR REPLACE INTO configuracoes_app (chave, valor) VALUES (?, ?)',
+          ['ultimo_backup_exportado_em', new Date().toISOString()],
+        );
       }
     } catch (error) {
       showCustomAlert(

@@ -1,5 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
+import { AppRoutes } from '../constants/routes';
+import { handleRemoteCommand } from './RemoteCommandHandler';
 
 export const NotificationHandler = {
   setupForegroundHandler: () => {
@@ -13,10 +15,31 @@ export const NotificationHandler = {
       }),
     });
   },
+  listenToReceived: () => {
+    return Notifications.addNotificationReceivedListener(
+      async (notification) => {
+        const data = notification.request.content.data;
+        if (data?.kind === 'command') {
+          await handleRemoteCommand(data);
+        }
+      },
+    );
+  },
   listenToClicks: () => {
     return Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        router.push('/notificacoes');
+      async (response) => {
+        const data = response.notification.request.content.data;
+
+        if (data?.kind === 'command') {
+          await handleRemoteCommand(data);
+          return;
+        }
+
+        const destino =
+          typeof data?.destino === 'string'
+            ? data.destino
+            : AppRoutes.notificacoes;
+        router.push(destino as never);
       },
     );
   },

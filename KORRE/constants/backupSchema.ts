@@ -1,7 +1,7 @@
 import type { SQLiteBindValue } from 'expo-sqlite';
 
 export const BACKUP_APP_NAME = 'KORRE';
-export const BACKUP_SCHEMA_VERSION = 2;
+export const BACKUP_SCHEMA_VERSION = 3;
 
 export const BACKUP_TABLES = [
   'perfil_usuario',
@@ -139,6 +139,10 @@ export const BACKUP_COLUMNS: Record<BackupTable, readonly string[]> = {
     'mensagem',
     'tipo',
     'lida',
+    'origem',
+    'destino',
+    'dados_json',
+    'dedup_key',
     'data_criacao',
   ],
 };
