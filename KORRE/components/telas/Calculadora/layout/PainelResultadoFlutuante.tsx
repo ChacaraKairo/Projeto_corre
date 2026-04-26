@@ -1,28 +1,20 @@
-import {
-  Clock,
-  Gauge,
-  TrendingUp,
-} from 'lucide-react-native';
+import { Clock, Gauge, TrendingUp } from 'lucide-react-native';
 import React, { memo, useMemo } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-// IMPORTANTE: Importação da SSOT
+import { Text, View } from 'react-native';
 import { useTema } from '../../../../hooks/modo_tema';
+import { palette } from '../../../../styles/tokens';
+import { painelResultadoFlutuanteStyles as styles } from '../../../../styles/telas/Calculadora/layout/painelResultadoFlutuanteStyles';
 import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida';
 import { CalculadoraMovimento } from '../../../../utils/calculadoraKorreKM';
 import { CalculadoraTempo } from '../../../../utils/calculadoraKorreTempo';
 
 interface Props {
-  form: Partial<FormularioViabilidade>; // Atualizado
+  form: Partial<FormularioViabilidade>;
   veiculoTipo: string;
 }
 
 export const PainelResultadoFlutuante = memo(
-  ({ form, veiculoTipo }: Props) => {
+  ({ form }: Props) => {
     const { tema } = useTema();
     const isDark = tema === 'escuro';
 
@@ -33,40 +25,32 @@ export const PainelResultadoFlutuante = memo(
         const { imin } =
           CalculadoraTempo.calcularCustoMinuto(form as any);
         return { ikm: ikm || 0, imin: imin || 0 };
-      } catch (e) {
+      } catch {
         return { ikm: 0, imin: 0 };
       }
     }, [form]);
 
-    const bgColor = isDark ? '#121212' : '#FFFFFF';
-    const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
-    const subTextColor = isDark ? '#AAA' : '#666';
+    const bgColor = isDark ? palette.surface850 : palette.white;
+    const textColor = isDark ? palette.white : palette.surface750;
+    const subTextColor = isDark
+      ? palette.surface300
+      : palette.surface400;
+    const dividerColor = isDark
+      ? palette.surface600
+      : palette.surface200;
 
     return (
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: bgColor },
-        ]}
-      >
+      <View style={[styles.container, { backgroundColor: bgColor }]}>
         <View style={styles.content}>
-          {/* Índice por KM (IKM) */}
           <View style={styles.card}>
             <View style={styles.iconCircle}>
-              <Gauge size={16} color="#00C853" />
+              <Gauge size={16} color={palette.brand} />
             </View>
             <View>
-              <Text
-                style={[
-                  styles.label,
-                  { color: subTextColor },
-                ]}
-              >
+              <Text style={[styles.label, { color: subTextColor }]}>
                 IKM (Custo KM)
               </Text>
-              <Text
-                style={[styles.value, { color: textColor }]}
-              >
+              <Text style={[styles.value, { color: textColor }]}>
                 R$ {resultados.ikm.toFixed(2)}
               </Text>
             </View>
@@ -75,34 +59,26 @@ export const PainelResultadoFlutuante = memo(
           <View
             style={[
               styles.divider,
-              { backgroundColor: isDark ? '#333' : '#EEE' },
+              { backgroundColor: dividerColor },
             ]}
           />
 
-          {/* Índice por Minuto (IMIN) */}
           <View style={styles.card}>
             <View style={styles.iconCircle}>
-              <Clock size={16} color="#00C853" />
+              <Clock size={16} color={palette.brand} />
             </View>
             <View>
-              <Text
-                style={[
-                  styles.label,
-                  { color: subTextColor },
-                ]}
-              >
+              <Text style={[styles.label, { color: subTextColor }]}>
                 IMIN (Custo Min)
               </Text>
-              <Text
-                style={[styles.value, { color: textColor }]}
-              >
+              <Text style={[styles.value, { color: textColor }]}>
                 R$ {resultados.imin.toFixed(2)}
               </Text>
             </View>
           </View>
 
           <View style={styles.efficiencyBadge}>
-            <TrendingUp size={14} color="#FFF" />
+            <TrendingUp size={14} color={palette.white} />
             <Text style={styles.efficiencyText}>LIVE</Text>
           </View>
         </View>
@@ -111,65 +87,5 @@ export const PainelResultadoFlutuante = memo(
   },
 );
 
-const styles = StyleSheet.create({
-  // ... Mantenha exatamente os mesmos estilos que você já tinha no PainelResultadoFlutuante
-  container: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-      },
-      android: { elevation: 20 },
-    }),
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flex: 1,
-  },
-  iconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0, 200, 83, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: {
-    fontSize: 10,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-  },
-  value: { fontSize: 18, fontWeight: '800' },
-  divider: { width: 1, height: 30, marginHorizontal: 15 },
-  efficiencyBadge: {
-    backgroundColor: '#00C853',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  efficiencyText: {
-    color: '#FFF',
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-});
+PainelResultadoFlutuante.displayName =
+  'PainelResultadoFlutuante';

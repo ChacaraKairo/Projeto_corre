@@ -9,13 +9,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
 } from 'react-native';
 import { X, Check, Landmark } from 'lucide-react-native';
 import { IconeServico } from './ItemManutencaoCard';
 import { useTema } from '../../../hooks/modo_tema';
 import { useModalNovoItem } from '../../../hooks/oficina/useModalNovoItem';
 
+import { styles } from '../../../styles/generated/components/telas/Oficina/ModalNovoItemStyles';
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Oficina/ModalNovoItemInlineStyles';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -92,7 +93,7 @@ export const ModalNovoItem = ({
       onRequestClose={onClose}
     >
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={inlineStyles.inline1}
         behavior={
           Platform.OS === 'ios' ? 'padding' : undefined
         }
@@ -167,13 +168,9 @@ export const ModalNovoItem = ({
               />
 
               <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 12,
-                  marginTop: 16,
-                }}
+                style={inlineStyles.inline2}
               >
-                <View style={{ flex: 1 }}>
+                <View style={inlineStyles.inline3}>
                   <Text
                     style={[
                       styles.label,
@@ -202,7 +199,7 @@ export const ModalNovoItem = ({
                     onChangeText={setIntervalo}
                   />
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={inlineStyles.inline4}>
                   <Text
                     style={[
                       styles.label,
@@ -234,13 +231,9 @@ export const ModalNovoItem = ({
               </View>
 
               <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 12,
-                  marginTop: 16,
-                }}
+                style={inlineStyles.inline5}
               >
-                <View style={{ flex: 1 }}>
+                <View style={inlineStyles.inline6}>
                   <Text
                     style={[
                       styles.label,
@@ -269,7 +262,7 @@ export const ModalNovoItem = ({
                     onChangeText={setUltimaTrocaKm}
                   />
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={inlineStyles.inline7}>
                   <Text
                     style={[
                       styles.label,
@@ -302,14 +295,9 @@ export const ModalNovoItem = ({
               </View>
 
               <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 12,
-                  marginTop: 16,
-                  alignItems: 'flex-end',
-                }}
+                style={inlineStyles.inline8}
               >
-                <View style={{ flex: 1.2 }}>
+                <View style={inlineStyles.inline9}>
                   <Text
                     style={[
                       styles.label,
@@ -457,79 +445,4 @@ export const ModalNovoItem = ({
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'flex-end',
-  },
-  modalContainer: {
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    padding: 24,
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    maxHeight: '90%',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  title: { fontSize: 20, fontWeight: '900' },
-  closeBtn: { padding: 8, borderRadius: 12 },
-  label: {
-    fontSize: 10,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 16,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  financeToggle: {
-    flex: 1,
-    height: 58,
-    borderRadius: 16,
-    borderWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  financeText: { fontSize: 9, fontWeight: '900' },
-  iconGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 24,
-  },
-  iconWrapper: {
-    padding: 12,
-    borderRadius: 16,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnSave: {
-    backgroundColor: '#00C853',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 16,
-    gap: 8,
-    marginBottom: 20,
-  },
-  btnSaveText: {
-    color: '#0A0A0A',
-    fontWeight: '900',
-    fontSize: 14,
-    letterSpacing: 1,
-  },
-});
+

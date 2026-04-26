@@ -49,7 +49,7 @@ export const AcoesGrid = () => {
               borderWidth: 1,
             },
           ]}
-          onPress={() => router.push('/relatorios')}
+          onPress={() => router.push('/(tabs)/relatorios')}
         >
           <BarChart3 size={24} color="#00C853" />
           <Text
@@ -131,7 +131,7 @@ export const AcoesGrid = () => {
             },
           ]}
           // ↓ ALTERE ESTA LINHA ↓
-          onPress={() => router.push('/suporte')}
+          onPress={() => router.push('/(tabs)/suporte')}
         >
           <HelpCircle size={24} color="#00C853" />
           <Text

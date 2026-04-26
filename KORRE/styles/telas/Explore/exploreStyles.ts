@@ -81,4 +81,7 @@ export const exploreStyles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 50,
   },
+  listContent: {
+    paddingBottom: 20,
+  },
 });

@@ -21,6 +21,7 @@ import {
 import { useCadastro } from '../../hooks/cadastro/useCadastro';
 import { styles } from '../../styles/telas/Cadastro/componentes/cadastroStyles';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(auth)/cadastroInlineStyles';
 // Componentes da tela
 import { HeaderCadastro } from '../../components/telas/Cadastro/HeaderCadastro';
 import { MetasSecao } from '../../components/telas/Cadastro/MetasSecao';
@@ -130,12 +131,12 @@ export default function CadastroScreen() {
         behavior={
           Platform.OS === 'ios' ? 'padding' : 'height'
         }
-        style={{ flex: 1 }}
+        style={inlineStyles.inline1}
       >
         <TouchableWithoutFeedback
           onPress={Keyboard.dismiss}
         >
-          <View style={{ flex: 1 }}>
+          <View style={inlineStyles.inline2}>
             <ScrollView
               ref={scrollViewRef}
               contentContainerStyle={styles.scrollContent}
@@ -168,7 +169,7 @@ export default function CadastroScreen() {
 
               <VeiculoSecao
                 tipo={tipoVeiculo as TipoVeiculo}
-                setTipo={setTipoVeiculo as any}
+                setTipo={setTipoVeiculo}
                 marca={marca}
                 setMarca={setMarca}
                 modelo={modelo}
@@ -229,7 +230,7 @@ export default function CadastroScreen() {
                       style={styles.termosDestaque}
                       onPress={(e) => {
                         e.stopPropagation();
-                        router.push('/termos');
+                        router.push('/(auth)/termos');
                       }}
                     >
                       Termos de Uso

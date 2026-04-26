@@ -18,6 +18,8 @@ import { FooterLogin } from '../../components/telas/Login/FooterLogin';
 import { useLogin } from '../../hooks/login/useLogin';
 import { loginStyles as styles } from '../../styles/telas/login/LoginStyles';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(auth)/loginInlineStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(auth)/loginDynamicStyles';
 const LoginScreen: React.FC = () => {
   const router = useRouter();
 
@@ -41,22 +43,7 @@ const LoginScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        style={{
-          position: 'absolute',
-          top: 50,
-          right: 20,
-          zIndex: 50,
-          backgroundColor: '#161616',
-          padding: 10,
-          borderRadius: 12,
-          borderWidth: 1,
-          borderColor: '#333',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-        }}
+        style={inlineStyles.inline1}
         onPress={() =>
           router.push({
             pathname: '/calculadora',
@@ -72,7 +59,7 @@ const LoginScreen: React.FC = () => {
         behavior={
           Platform.OS === 'ios' ? 'padding' : 'height'
         }
-        style={{ flex: 1 }}
+        style={inlineStyles.inline2}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -80,29 +67,15 @@ const LoginScreen: React.FC = () => {
           keyboardShouldPersistTaps="handled"
         >
           <Animated.View
-            style={{
-              alignItems: 'center',
-              marginTop: 60,
-              marginBottom: 30,
-              transform: [{ translateY: bounceAnim }],
-            }}
+            style={dynamicInlineStyles.inline1({ bounceAnim })}
           >
             <Image
               source={require('../../assets/images/android-icon-foreground.png')}
-              style={{
-                width: 110,
-                height: 110,
-                marginBottom: 50,
-              }}
+              style={inlineStyles.inline3}
               resizeMode="contain"
             />
             <Text
-              style={{
-                color: '#888',
-                fontSize: 16,
-                marginTop: -40,
-                fontWeight: '500',
-              }}
+              style={inlineStyles.inline4}
             >
               Você nas ruas, nós no seu bolso.
             </Text>
@@ -129,30 +102,12 @@ const LoginScreen: React.FC = () => {
           />
 
           <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 10,
-              marginBottom: 20,
-            }}
+            style={inlineStyles.inline5}
             onPress={() => setLembrarSenha(!lembrarSenha)}
             activeOpacity={0.7}
           >
             <View
-              style={{
-                width: 20,
-                height: 20,
-                borderRadius: 6,
-                borderWidth: 2,
-                borderColor: '#00C853',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: 8,
-                backgroundColor: lembrarSenha
-                  ? '#00C853'
-                  : 'transparent',
-              }}
+              style={dynamicInlineStyles.inline2({ lembrarSenha })}
             >
               {lembrarSenha && (
                 <Check
@@ -163,9 +118,9 @@ const LoginScreen: React.FC = () => {
               )}
             </View>
             <Text
-              style={{ color: '#888', fontWeight: 'bold' }}
+              style={inlineStyles.inline6}
             >
-              Lembrar minha senha
+              Lembrar minha identificação
             </Text>
           </TouchableOpacity>
 

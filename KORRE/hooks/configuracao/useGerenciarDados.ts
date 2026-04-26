@@ -5,6 +5,11 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
+import {
+  BACKUP_TABLES,
+  BackupTable,
+  sanitizeBackupRow,
+} from '../../constants/backupSchema';
 
 export function useGerenciarDados() {
   const router = useRouter();
@@ -15,29 +20,25 @@ export function useGerenciarDados() {
       await db.execAsync('PRAGMA foreign_keys = OFF;');
       await db.execAsync('BEGIN TRANSACTION;');
 
-      const ordem = [
-        'perfil_usuario',
-        'veiculos',
-        'parametros_financeiros',
-        'categorias_financeiras',
-        'transacoes_financeiras',
-        'itens_manutencao',
-        'historico_manutencao',
-        'notificacoes',
-      ];
-
-      for (const tabela of ordem) {
+      for (const tabela of BACKUP_TABLES) {
         await db.execAsync(`DELETE FROM ${tabela};`);
         const rows = tabelas_data[tabela];
-        if (rows && rows.length > 0) {
-          const colunas = Object.keys(rows[0]);
-          const placeholders = colunas
-            .map(() => '?')
-            .join(', ');
+        if (Array.isArray(rows) && rows.length > 0) {
           for (const row of rows) {
+            const { columns: colunas, values } =
+              sanitizeBackupRow(
+                tabela as BackupTable,
+                row as Record<string, unknown>,
+              );
+
+            if (colunas.length === 0) continue;
+
+            const placeholders = colunas
+              .map(() => '?')
+              .join(', ');
             await db.runAsync(
               `INSERT OR REPLACE INTO ${tabela} (${colunas.join(', ')}) VALUES (${placeholders})`,
-              colunas.map((c) => row[c]),
+              values,
             );
           }
         }
@@ -52,7 +53,7 @@ export function useGerenciarDados() {
         [
           {
             text: 'OK',
-            onPress: () => router.replace('/cadastro'),
+            onPress: () => router.replace('/(tabs)/dashboard'),
           },
         ],
       );
@@ -108,7 +109,7 @@ export function useGerenciarDados() {
             for (const t of tabelas)
               await db.execAsync(`DELETE FROM ${t};`);
             await db.execAsync('PRAGMA foreign_keys = ON;');
-            router.replace('/cadastro');
+            router.replace('/(auth)/cadastro');
           },
         },
       ],

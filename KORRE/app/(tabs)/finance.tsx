@@ -13,6 +13,7 @@ import {
   Check,
 } from 'lucide-react-native';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/financeInlineStyles';
 // Importação do Hook e Estilos
 import { useFinance } from '../../hooks/finance/useFinance';
 import { styles as parentStyles } from '../../styles/telas/Finance/AddTransactionStyles';
@@ -74,7 +75,7 @@ export default function AddTransactionScreen() {
       />
 
       <ScrollView
-        style={{ flex: 1 }}
+        style={inlineStyles.inline1}
         showsVerticalScrollIndicator={false}
       >
         <View style={parentStyles.content}>
@@ -177,7 +178,7 @@ export default function AddTransactionScreen() {
             <Text style={styles.vehicleTitle}>
               Vincular ao Veículo
             </Text>
-            <View style={{ height: 50 }}>
+            <View style={inlineStyles.inline2}>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}

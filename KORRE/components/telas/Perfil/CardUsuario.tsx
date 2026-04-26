@@ -9,6 +9,7 @@ import { Camera, User, Pencil } from 'lucide-react-native';
 import { styles } from '../../../styles/telas/Perfil/perfilStyles';
 import { useTema } from '../../../hooks/modo_tema';
 
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Perfil/CardUsuarioDynamicStyles';
 interface Props {
   usuario: any;
   onEditPress: () => void;
@@ -51,11 +52,7 @@ export const CardUsuario = ({
           {usuario?.foto_uri ? (
             <Image
               source={{ uri: usuario.foto_uri }}
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: 48, // Ajuste para o tamanho exato da sua borda
-              }}
+              style={dynamicInlineStyles.inline1({})}
             />
           ) : (
             <User

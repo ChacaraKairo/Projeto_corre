@@ -1,14 +1,15 @@
-import { Ionicons } from '@expo/vector-icons';
+import {
+  Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import {
   Platform,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { useTema } from '../../../hooks/modo_tema';
 
+import { styles } from '../../../styles/generated/components/telas/CalculadoraFlex/HeaderCalculadoraFlexStyles';
 export default function HeaderCalculadoraFlex({
   setModalAjuda,
   origem,
@@ -27,7 +28,7 @@ export default function HeaderCalculadoraFlex({
     if (origem === 'login') {
       router.replace('/(auth)/login');
     } else {
-      router.replace('/dashboard');
+      router.replace('/(tabs)/dashboard');
     }
   };
 
@@ -75,36 +76,4 @@ export default function HeaderCalculadoraFlex({
   );
 }
 
-const styles = StyleSheet.create({
-  header: {
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingHorizontal: 24,
-    paddingBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderBottomColor: '#161616',
-  },
-  headerBtn: {
-    padding: 8,
-    backgroundColor: '#161616',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#222',
-  },
-  headerTitle: {
-    fontSize: 13,
-    fontWeight: '900',
-    color: '#00C853',
-    textTransform: 'uppercase',
-    letterSpacing: 3,
-  },
-  headerHelpBtn: {
-    padding: 8,
-    backgroundColor: 'rgba(0,200,83,0.1)',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(0,200,83,0.2)',
-  },
-});
+

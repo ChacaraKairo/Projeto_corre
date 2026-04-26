@@ -18,6 +18,8 @@ import {
   TipoVeiculo,
 } from '../../type/typeVeiculos';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/perfilInlineStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(tabs)/perfilDynamicStyles';
 // Sub-componentes
 import { HeaderPerfil } from '../../components/telas/Perfil/HeaderPerfil';
 import { CardUsuario } from '../../components/telas/Perfil/CardUsuario';
@@ -171,51 +173,22 @@ export default function PerfilScreen() {
         onRequestClose={() => setModalTrocaAberto(false)}
       >
         <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            justifyContent: 'center',
-            padding: 20,
-          }}
+          style={inlineStyles.inline1}
         >
           <View
-            style={{
-              backgroundColor: isDark
-                ? '#161616'
-                : '#FFFFFF',
-              borderRadius: 24,
-              padding: 20,
-              borderWidth: 1,
-              borderColor: isDark ? '#333' : '#E0E0E0',
-              maxHeight: '80%',
-            }}
+            style={dynamicInlineStyles.inline1({ isDark })}
           >
             <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 16,
-              }}
+              style={inlineStyles.inline2}
             >
               <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  color: isDark ? '#FFF' : '#000',
-                }}
+                style={dynamicInlineStyles.inline2({ isDark })}
               >
                 Trocar Veículo
               </Text>
               <TouchableOpacity
                 onPress={() => setModalTrocaAberto(false)}
-                style={{
-                  padding: 8,
-                  backgroundColor: isDark
-                    ? '#222'
-                    : '#F5F5F5',
-                  borderRadius: 12,
-                }}
+                style={dynamicInlineStyles.inline3({ isDark })}
               >
                 <X
                   size={20}
@@ -238,34 +211,10 @@ export default function PerfilScreen() {
                   <TouchableOpacity
                     key={v.id}
                     onPress={() => trocarVeiculoAtivo(v.id)}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      padding: 16,
-                      marginBottom: 12,
-                      borderRadius: 16,
-                      borderWidth: 1,
-                      borderColor: isAtivo
-                        ? '#00C853'
-                        : isDark
-                          ? '#333'
-                          : '#E0E0E0',
-                      backgroundColor: isAtivo
-                        ? 'rgba(0,200,83,0.1)'
-                        : isDark
-                          ? '#0A0A0A'
-                          : '#F5F5F5',
-                    }}
+                    style={dynamicInlineStyles.inline4({ isAtivo, isDark })}
                   >
                     <View
-                      style={{
-                        padding: 10,
-                        borderRadius: 12,
-                        backgroundColor: isDark
-                          ? '#161616'
-                          : '#FFF',
-                        marginRight: 12,
-                      }}
+                      style={dynamicInlineStyles.inline5({ isDark })}
                     >
                       <Icone
                         size={24}
@@ -278,21 +227,14 @@ export default function PerfilScreen() {
                         }
                       />
                     </View>
-                    <View style={{ flex: 1 }}>
+                    <View style={inlineStyles.inline3}>
                       <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: 'bold',
-                          color: isDark ? '#FFF' : '#000',
-                        }}
+                        style={dynamicInlineStyles.inline6({ isDark })}
                       >
                         {v.modelo}
                       </Text>
                       <Text
-                        style={{
-                          fontSize: 12,
-                          color: isDark ? '#888' : '#555',
-                        }}
+                        style={dynamicInlineStyles.inline7({ isDark })}
                       >
                         {v.placa || 'Sem placa'}
                       </Text>

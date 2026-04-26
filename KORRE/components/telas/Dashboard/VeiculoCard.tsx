@@ -14,6 +14,7 @@ import {
   TipoVeiculo,
 } from '../../../type/typeVeiculos';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Dashboard/VeiculoCardInlineStyles';
 interface VeiculoProps {
   veiculo: {
     tipo: TipoVeiculo;
@@ -48,11 +49,7 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
     >
       <View style={styles.veiculoHeader}>
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 12,
-          }}
+          style={inlineStyles.inline1}
         >
           <View style={styles.veiculoIconeBadge}>
             {(() => {
@@ -115,7 +112,7 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
                 : '#F5F5F5',
             },
           ]}
-          onPress={() => router.push('/garagem' as any)}
+          onPress={() => router.push('/(tabs)/garagem')}
         >
           <Warehouse size={18} color="#00C853" />
           <Text style={styles.btnAcaoVeiculoTexto}>

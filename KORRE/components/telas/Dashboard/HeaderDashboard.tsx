@@ -17,6 +17,8 @@ import {
 import { useHeaderClimaDashboard } from '../../../hooks/dashboard/useHeaderClimaDashboard';
 import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashboardStyles';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Dashboard/HeaderDashboardInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Dashboard/HeaderDashboardDynamicStyles';
 interface HeaderProps {
   nome: string;
   fraseMotivacional: string;
@@ -58,18 +60,13 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
             { flex: 1, paddingRight: 12 },
           ]}
           activeOpacity={0.7}
-          onPress={() => router.push('/perfil' as any)}
+          onPress={() => router.push('/(tabs)/perfil')}
         >
           <View style={styles.avatar}>
             {isFotoValida ? (
               <Image
                 source={{ uri: fotoPerfil }}
-                style={{
-                  width: 48, // <-- OBRIGATÓRIO: Tamanho fixo para não colapsar
-                  height: 48, // <-- OBRIGATÓRIO: Tamanho fixo para não colapsar
-                  borderRadius: 24,
-                  backgroundColor: '#E0E0E0', // Fundo cinza para ver se o espaço existe
-                }}
+                style={dynamicInlineStyles.inline1({})}
                 // --- LOGS DE CICLO DE VIDA DA IMAGEM ---
                 onLoadStart={() =>
                   console.log(
@@ -91,21 +88,14 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
               />
             ) : (
               <View
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 24,
-                  backgroundColor: 'rgba(0, 200, 83, 0.1)',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                style={inlineStyles.inline1}
               >
                 <User size={24} color="#00C853" />
               </View>
             )}
           </View>
 
-          <View style={{ flex: 1, marginLeft: 12 }}>
+          <View style={inlineStyles.inline2}>
             <Text
               style={styles.nomeUsuario}
               numberOfLines={1}
@@ -122,7 +112,7 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
                 size={10}
                 color="#00C853"
                 fill="#00C853"
-                style={{ flexShrink: 0, marginTop: 2 }}
+                style={inlineStyles.inline3}
               />
               <Text
                 style={[
@@ -138,36 +128,19 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
 
         {/* Container para alinhar o Clima e as Configurações à direita */}
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 12,
-          }}
+          style={inlineStyles.inline4}
         >
           {!loadingClima && clima && (
             <View
-              style={{
-                alignItems: 'flex-end',
-                justifyContent: 'center',
-              }}
+              style={inlineStyles.inline5}
             >
               <Text
-                style={{
-                  color: '#888',
-                  fontSize: 8,
-                  fontWeight: 'bold',
-                  marginBottom: 2,
-                  textTransform: 'uppercase',
-                }}
+                style={inlineStyles.inline6}
               >
                 Previsão de Amanhã
               </Text>
               <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
+                style={inlineStyles.inline7}
               >
                 {clima.condicao === 'sol' && (
                   <Sun size={16} color="#FFEB3B" />
@@ -179,11 +152,7 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
                   <CloudRain size={16} color="#03A9F4" />
                 )}
                 <Text
-                  style={{
-                    color: '#FFF',
-                    fontSize: 11,
-                    fontWeight: '900',
-                  }}
+                  style={inlineStyles.inline8}
                 >
                   {clima.max}° / {clima.min}°
                 </Text>
@@ -191,12 +160,7 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
               {clima.condicao === 'chuva' &&
                 clima.horaChuva && (
                   <Text
-                    style={{
-                      color: '#03A9F4',
-                      fontSize: 9,
-                      fontWeight: 'bold',
-                      marginTop: 2,
-                    }}
+                    style={inlineStyles.inline9}
                   >
                     {clima.horaChuva} (
                     {clima.probabilidadeChuva}%)

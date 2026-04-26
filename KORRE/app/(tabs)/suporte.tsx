@@ -142,7 +142,7 @@ export default function SuporteScreen() {
         <View style={styles.headerContent}>
           <TouchableOpacity
             // <-- Aqui definimos o roteamento direto para a tela de Perfil
-            onPress={() => router.push('/perfil')}
+            onPress={() => router.push('/(tabs)/perfil')}
             style={[
               styles.btnVoltar,
               { backgroundColor: cardColor },
@@ -246,7 +246,7 @@ export default function SuporteScreen() {
         {/* Links Adicionais */}
         <TouchableOpacity
           style={styles.footerLinkBox}
-          onPress={() => router.push('/termos')} // <-- Adicione esta linha!
+          onPress={() => router.push('/(auth)/termos')}
         >
           <FileText
             size={16}

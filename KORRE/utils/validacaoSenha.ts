@@ -3,11 +3,6 @@
 export const validarRegrasSenha = (
   senha: string,
 ): { valida: boolean; erro: string } => {
-  // Log para ver se a senha está chegando com espaços
-  console.log(
-    `[VALIDAÇÃO] Analisando: |${senha}| (Tamanho: ${senha?.length})`,
-  );
-
   if (!senha)
     return { valida: false, erro: 'Senha vazia.' };
 

@@ -17,6 +17,7 @@ import {
 import { useTema } from '../../hooks/modo_tema';
 import { styles } from '../../styles/telas/Termos/termosStyles';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(auth)/termosInlineStyles';
 export default function TermosScreen() {
   const router = useRouter();
   const { tema } = useTema();
@@ -107,7 +108,7 @@ export default function TermosScreen() {
         <Text
           style={[styles.paragraph, { color: textMuted }]}
         >
-          Bem-vindo ao MeuCorre. Ao utilizar este
+          Bem-vindo ao KORRE. Ao utilizar este
           aplicativo, você concorda com os termos descritos
           abaixo. Por favor, leia-os com atenção.
         </Text>
@@ -123,12 +124,12 @@ export default function TermosScreen() {
         <Text
           style={[styles.paragraph, { color: textMuted }]}
         >
-          O MeuCorre é uma ferramenta de gerenciamento e
+          O KORRE é uma ferramenta de gerenciamento e
           anotações pessoais voltada para motoristas e
           entregadores.
         </Text>
         <BulletPoint>
-          <Text style={{ fontWeight: 'bold' }}>
+          <Text style={inlineStyles.inline1}>
             Não somos uma instituição financeira:
           </Text>{' '}
           O aplicativo não realiza, processa ou intermedia
@@ -136,7 +137,7 @@ export default function TermosScreen() {
           tipo de movimentação bancária.
         </BulletPoint>
         <BulletPoint>
-          <Text style={{ fontWeight: 'bold' }}>
+          <Text style={inlineStyles.inline2}>
             Anotações Manuais:
           </Text>{' '}
           Todos os valores de ganhos e gastos exibidos são
@@ -173,7 +174,7 @@ export default function TermosScreen() {
           3. Limitação de Responsabilidade
         </Text>
         <BulletPoint>
-          O MeuCorre fornece estimativas de manutenção e
+          O KORRE fornece estimativas de manutenção e
           lucros baseadas nos dados fornecidos pelo usuário.
           Não nos responsabilizamos por falhas mecânicas,
           erros de cálculo ou decisões financeiras tomadas
@@ -225,7 +226,7 @@ export default function TermosScreen() {
           style={[styles.paragraph, { color: textMuted }]}
         >
           Esta Política de Privacidade explica como o
-          MeuCorre lida com as suas informações.
+          KORRE lida com as suas informações.
         </Text>
 
         <Text
@@ -243,26 +244,26 @@ export default function TermosScreen() {
           funcionamento das funcionalidades de gestão:
         </Text>
         <BulletPoint>
-          <Text style={{ fontWeight: 'bold' }}>
+          <Text style={inlineStyles.inline3}>
             Perfil:
           </Text>{' '}
           Nome e sobrenome.
         </BulletPoint>
         <BulletPoint>
-          <Text style={{ fontWeight: 'bold' }}>
+          <Text style={inlineStyles.inline4}>
             Veículo:
           </Text>{' '}
           Marca, modelo, placa, motorização e quilometragem.
         </BulletPoint>
         <BulletPoint>
-          <Text style={{ fontWeight: 'bold' }}>
+          <Text style={inlineStyles.inline5}>
             Financeiro:
           </Text>{' '}
           Registros de ganhos, despesas e categorias de
           gastos.
         </BulletPoint>
         <BulletPoint>
-          <Text style={{ fontWeight: 'bold' }}>
+          <Text style={inlineStyles.inline6}>
             Security:
           </Text>{' '}
           Senha de acesso armazenada de forma local.
@@ -279,10 +280,10 @@ export default function TermosScreen() {
         <Text
           style={[styles.paragraph, { color: textMuted }]}
         >
-          O MeuCorre prioriza a sua privacidade.
+          O KORRE prioriza a sua privacidade.
         </Text>
         <BulletPoint>
-          <Text style={{ fontWeight: 'bold' }}>
+          <Text style={inlineStyles.inline7}>
             Banco de Dados Local:
           </Text>{' '}
           Os seus dados de faturamento, rotas e gastos são

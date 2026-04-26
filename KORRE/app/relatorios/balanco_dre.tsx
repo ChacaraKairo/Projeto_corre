@@ -18,6 +18,7 @@ import {
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
+import { inlineStyles } from '../../styles/generated-inline/app/relatorios/balanco_dreInlineStyles';
 // Hooks & Estilos
 import { useTema } from '../../hooks/modo_tema';
 import { useBalancoDre } from '../../hooks/relatorios/useBalancoDre';
@@ -71,7 +72,7 @@ export default function BalancoDreScreen() {
         >
           Balanço Geral (DRE)
         </Text>
-        <View style={{ width: 36 }} />
+        <View style={inlineStyles.inline1} />
       </View>
 
       <ScrollView
@@ -106,7 +107,7 @@ export default function BalancoDreScreen() {
           <ActivityIndicator
             size="large"
             color="#00C853"
-            style={{ marginTop: 50 }}
+            style={inlineStyles.inline2}
           />
         ) : (
           <>
@@ -221,7 +222,7 @@ export default function BalancoDreScreen() {
             </View>
 
             {/* DETALHAMENTO DOS CUSTOS (Breakdown) */}
-            <View style={{ marginTop: 8 }}>
+            <View style={inlineStyles.inline3}>
               <Text
                 style={[
                   styles.sectionTitle,

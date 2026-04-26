@@ -16,6 +16,7 @@ import { useOficina } from '../../hooks/oficina/useOficina';
 import { styles } from '../../styles/telas/Oficina/oficinaStyles';
 import { useTema } from '../../hooks/modo_tema';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/oficinaInlineStyles';
 // Componentes
 import { CardVeiculoOficina } from '../../components/telas/Oficina/CardVeiculoOficina';
 import { ModalNovoItem } from '../../components/telas/Oficina/ModalNovoItem';
@@ -84,11 +85,7 @@ export default function OficinaScreen() {
 
       {loading ? (
         <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
+          style={inlineStyles.inline1}
         >
           <ActivityIndicator size="large" color="#00C853" />
         </View>
@@ -107,7 +104,7 @@ export default function OficinaScreen() {
           <CardVeiculoOficina
             veiculo={veiculoConsultado}
             statusResumo={statusResumo}
-            onOpenSelector={() => router.push('/garagem')}
+            onOpenSelector={() => router.push('/(tabs)/garagem')}
           />
 
           {/* Grid de Itens com lógica encapsulada */}

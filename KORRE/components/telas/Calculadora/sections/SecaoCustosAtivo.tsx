@@ -7,6 +7,8 @@ import {
 } from 'lucide-react-native';
 import React, { memo } from 'react';
 import { View } from 'react-native';
+import { palette } from '../../../../styles/tokens';
+import { sharedSectionStyles } from '../../../../styles/telas/Calculadora/sections/sharedSectionStyles';
 import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida'; // SSOT
 import { AccordionSection } from '../ui/AccordionSection';
 import { InputFinanceiro } from '../ui/InputFinanceiro';
@@ -31,7 +33,7 @@ export const SecaoCustosAtivo = memo(
     return (
       <AccordionSection
         title="Custos de Movimento (KM)"
-        icon={<Gauge size={20} color="#00C853" />}
+        icon={<Gauge size={20} color={palette.brand} />}
         isComplete={isComplete}
         onHelpClick={() =>
           onHelp(
@@ -40,7 +42,7 @@ export const SecaoCustosAtivo = memo(
           )
         }
       >
-        <View style={{ gap: 12 }}>
+        <View style={sharedSectionStyles.fieldStack}>
           {/* 1. COMBUSTÍVEL / ENERGIA */}
           <InputFinanceiro
             label="Preço do Combustível / kWh"
@@ -49,7 +51,7 @@ export const SecaoCustosAtivo = memo(
               onChange('preco_energia_unidade', v)
             }
             placeholder="R$ 0,00"
-            icon={<Fuel size={18} color="#666" />}
+            icon={<Fuel size={18} color={palette.surface400} />}
             suffix="R$/L ou kWh"
           />
 
@@ -62,7 +64,7 @@ export const SecaoCustosAtivo = memo(
               onChange('rendimento_energia_unidade', v)
             }
             placeholder="0.0"
-            icon={<Gauge size={18} color="#666" />}
+            icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM/L"
           />
 
@@ -74,7 +76,7 @@ export const SecaoCustosAtivo = memo(
               onChange('valor_jogo_pneus', v)
             }
             placeholder="R$ 0,00"
-            icon={<CircleDot size={18} color="#666" />}
+            icon={<CircleDot size={18} color={palette.surface400} />}
             suffix="R$"
           />
 
@@ -85,7 +87,7 @@ export const SecaoCustosAtivo = memo(
               onChange('durabilidade_pneus_km', v)
             }
             placeholder="Ex: 40000"
-            icon={<Gauge size={18} color="#666" />}
+            icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM"
           />
 
@@ -97,7 +99,7 @@ export const SecaoCustosAtivo = memo(
               onChange('valor_oleo_filtros', v)
             }
             placeholder="R$ 0,00"
-            icon={<Droplets size={18} color="#666" />}
+            icon={<Droplets size={18} color={palette.surface400} />}
             suffix="R$"
           />
 
@@ -110,7 +112,7 @@ export const SecaoCustosAtivo = memo(
               onChange('intervalo_oleo_filtros_km', v)
             }
             placeholder="Ex: 10000"
-            icon={<Gauge size={18} color="#666" />}
+            icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM"
           />
 
@@ -124,7 +126,7 @@ export const SecaoCustosAtivo = memo(
               onChange('valor_manutencao_freios', v)
             }
             placeholder="R$ 0,00"
-            icon={<Wrench size={18} color="#666" />}
+            icon={<Wrench size={18} color={palette.surface400} />}
             suffix="R$"
           />
 
@@ -135,7 +137,7 @@ export const SecaoCustosAtivo = memo(
               onChange('intervalo_freios_km', v)
             }
             placeholder="Ex: 20000"
-            icon={<Gauge size={18} color="#666" />}
+            icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM"
           />
 
@@ -147,7 +149,7 @@ export const SecaoCustosAtivo = memo(
               onChange('valor_kit_transmissao', v)
             }
             placeholder="R$ 0,00"
-            icon={<Wrench size={18} color="#666" />}
+            icon={<Wrench size={18} color={palette.surface400} />}
             suffix="R$"
           />
 
@@ -160,7 +162,7 @@ export const SecaoCustosAtivo = memo(
               onChange('durabilidade_transmissao_km', v)
             }
             placeholder="Ex: 35000"
-            icon={<Gauge size={18} color="#666" />}
+            icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM"
           />
         </View>
@@ -168,3 +170,5 @@ export const SecaoCustosAtivo = memo(
     );
   },
 );
+
+SecaoCustosAtivo.displayName = 'SecaoCustosAtivo';

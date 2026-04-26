@@ -14,6 +14,11 @@ import {
 import { useTema } from '../../../hooks/modo_tema';
 import { styles } from '../../../styles/telas/Oficina/oficinaStyles';
 
+import {
+  inlineStyles,
+  itemManutencaoCardDynamicStyles,
+} from '../../../styles/generated-inline/components/telas/Oficina/ItemManutencaoCardInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Oficina/ItemManutencaoCardDynamicStyles';
 export const IconeServico = ({
   id,
   color = '#00C853',
@@ -103,22 +108,12 @@ export const ItemManutencaoCard = ({
           </View>
         </View>
         <View
-          style={{
-            backgroundColor: `${info.cor}15`,
-            paddingHorizontal: 8,
-            paddingVertical: 4,
-            borderRadius: 8,
-            borderWidth: 1,
-            borderColor: `${info.cor}30`,
-          }}
+          style={itemManutencaoCardDynamicStyles.statusBadge(
+            info.cor,
+          )}
         >
           <Text
-            style={{
-              color: info.cor,
-              fontSize: 8,
-              fontWeight: '900',
-              textTransform: 'uppercase',
-            }}
+            style={dynamicInlineStyles.inline1({ info })}
           >
             {info.status}
           </Text>
@@ -127,39 +122,22 @@ export const ItemManutencaoCard = ({
 
       <View>
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-          }}
+          style={inlineStyles.inline2}
         >
           <Text
-            style={{
-              color: isDark ? '#666' : '#888',
-              fontSize: 10,
-              fontWeight: '900',
-              textTransform: 'uppercase',
-            }}
+            style={dynamicInlineStyles.inline2({ isDark })}
           >
             Desgaste Atual
           </Text>
           <Text
-            style={{
-              color: info.cor,
-              fontSize: 12,
-              fontWeight: '900',
-            }}
+            style={dynamicInlineStyles.inline3({ info })}
           >
             {info.infoTexto}
           </Text>
         </View>
         <View style={styles.barraBg}>
           <View
-            style={{
-              height: '100%',
-              width: `${info.percentagemDesgaste}%`,
-              backgroundColor: info.cor,
-            }}
+            style={dynamicInlineStyles.inline4({ info })}
           />
         </View>
       </View>
@@ -179,12 +157,7 @@ export const ItemManutencaoCard = ({
         >
           <RotateCcw size={16} color="#00C853" />
           <Text
-            style={{
-              color: isDark ? '#888' : '#555',
-              fontSize: 10,
-              fontWeight: '900',
-              textTransform: 'uppercase',
-            }}
+            style={dynamicInlineStyles.inline5({ isDark })}
           >
             Realizada
           </Text>

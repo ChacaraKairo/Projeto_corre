@@ -158,7 +158,7 @@ export const VEICULOS_DATABASE = {
       MTB: ['BIG WHEEL', 'HACKER'],
     },
   },
-  eletrico: {
+  carro_eletrico: {
     CARRO: {
       BYD: ['DOLPHIN', 'SEAL'],
       GWM: ['ORA 03'],

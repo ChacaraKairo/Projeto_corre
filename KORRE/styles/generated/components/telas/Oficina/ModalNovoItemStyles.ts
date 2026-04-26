@@ -1,0 +1,78 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    padding: 24,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    maxHeight: '90%',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  title: { fontSize: 20, fontWeight: '900' },
+  closeBtn: { padding: 8, borderRadius: 12 },
+  label: {
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 16,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  financeToggle: {
+    flex: 1,
+    height: 58,
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  financeText: { fontSize: 9, fontWeight: '900' },
+  iconGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginBottom: 24,
+  },
+  iconWrapper: {
+    padding: 12,
+    borderRadius: 16,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnSave: {
+    backgroundColor: '#00C853',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 16,
+    gap: 8,
+    marginBottom: 20,
+  },
+  btnSaveText: {
+    color: '#0A0A0A',
+    fontWeight: '900',
+    fontSize: 14,
+    letterSpacing: 1,
+  },
+});

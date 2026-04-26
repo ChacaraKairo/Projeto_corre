@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { styles } from '../../../styles/telas/Configuracoes/configuracoesStyles';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Configuracoes/HeaderConfiguracoesInlineStyles';
 interface Props {
   isDark: boolean;
   cardColor: string;
@@ -22,7 +23,7 @@ export const HeaderConfiguracoes = ({ isDark, cardColor, borderColor }: Props) =
         <ArrowLeft size={20} color={isDark ? '#FFF' : '#1A1A1A'} />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>AJUSTES</Text>
-      <View style={{ width: 36 }} />
+      <View style={inlineStyles.inline1} />
     </View>
   );
 };

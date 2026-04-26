@@ -9,6 +9,8 @@ import { X, Edit3, Trash2 } from 'lucide-react-native';
 import { useTema } from '../../../hooks/modo_tema';
 import { styles } from '../../../styles/telas/Historico/historicoStyles';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/historico/ModalOpcoesRegistroInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/historico/ModalOpcoesRegistroDynamicStyles';
 export function ModalOpcoesRegistro({
   visible,
   item,
@@ -65,25 +67,15 @@ export function ModalOpcoesRegistro({
           </View>
 
           <View
-            style={{
-              marginBottom: 24,
-              alignItems: 'center',
-            }}
+            style={inlineStyles.inline1}
           >
             <Text
-              style={{ fontSize: 14, color: textMuted }}
+              style={dynamicInlineStyles.inline1({ textMuted })}
             >
               {item.categoria}
             </Text>
             <Text
-              style={{
-                fontSize: 24,
-                fontWeight: '900',
-                color:
-                  item.tipo === 'ganho'
-                    ? '#00C853'
-                    : '#EF4444',
-              }}
+              style={dynamicInlineStyles.inline2({ item })}
             >
               R$ {item.valor.toFixed(2)}
             </Text>

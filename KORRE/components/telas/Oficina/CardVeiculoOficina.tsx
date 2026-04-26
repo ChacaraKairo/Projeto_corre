@@ -11,6 +11,8 @@ import {
 import { styles } from '../../../styles/telas/Oficina/oficinaStyles';
 import { useTema } from '../../../hooks/modo_tema';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Oficina/CardVeiculoOficinaInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Oficina/CardVeiculoOficinaDynamicStyles';
 interface Props {
   veiculo: any;
   statusResumo: { texto: string; cor: string; bg: string };
@@ -38,21 +40,10 @@ export const CardVeiculoOficina = ({
     >
       <View style={styles.veiculoHeader}>
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            flex: 1,
-          }}
+          style={inlineStyles.inline1}
         >
           <View
-            style={{
-              padding: 10,
-              backgroundColor: isDark ? '#111' : '#F5F5F5',
-              borderRadius: 12,
-              marginRight: 12,
-              borderWidth: 1,
-              borderColor: isDark ? '#333' : '#E0E0E0',
-            }}
+            style={dynamicInlineStyles.inline1({ isDark })}
           >
             {(!veiculo?.tipo ||
               veiculo?.tipo === 'moto') && (
@@ -68,7 +59,7 @@ export const CardVeiculoOficina = ({
               <Bus size={24} color="#00C853" />
             )}
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={inlineStyles.inline2}>
             <Text
               style={[
                 styles.labelAviso,
@@ -117,62 +108,32 @@ export const CardVeiculoOficina = ({
       </View>
 
       <View style={styles.veiculoStats}>
-        <View style={{ flex: 1 }}>
+        <View style={inlineStyles.inline3}>
           <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 4,
-              marginBottom: 2,
-            }}
+            style={inlineStyles.inline4}
           >
             <Gauge size={12} color="#444" />
             <Text
-              style={{
-                color: '#444',
-                fontSize: 8,
-                fontWeight: '900',
-                textTransform: 'uppercase',
-              }}
+              style={inlineStyles.inline5}
             >
               KM Atual
             </Text>
           </View>
           <Text
-            style={{
-              color: isDark ? '#FFF' : '#000',
-              fontSize: 16,
-              fontWeight: '900',
-            }}
+            style={dynamicInlineStyles.inline2({ isDark })}
           >
             {veiculo?.km_atual?.toLocaleString() || '0'} km
           </Text>
         </View>
 
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-          }}
+          style={inlineStyles.inline6}
         >
           <View
-            style={{
-              backgroundColor: statusResumo.bg,
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: statusResumo.cor,
-            }}
+            style={dynamicInlineStyles.inline3({ statusResumo })}
           >
             <Text
-              style={{
-                color: statusResumo.cor,
-                fontSize: 10,
-                fontWeight: '900',
-                textTransform: 'uppercase',
-              }}
+              style={dynamicInlineStyles.inline4({ statusResumo })}
             >
               {statusResumo.texto}
             </Text>

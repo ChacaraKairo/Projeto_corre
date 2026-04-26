@@ -6,7 +6,8 @@ import * as Crypto from 'expo-crypto';
 import db from '../../database/DatabaseInit';
 import { validarRegrasSenha } from '../../utils/validacaoSenha';
 import { validarCPF } from '../../utils/validacaoCpf';
-import { VeiculoService } from './veiculoService'; // <-- Importação do novo Serviço
+import { TipoVeiculo } from '../../type/typeVeiculos';
+import { VeiculoService } from './veiculoService';
 
 export const useCadastro = () => {
   const router = useRouter();
@@ -20,9 +21,8 @@ export const useCadastro = () => {
   const [foto, setFoto] = useState<string | null>(null);
 
   // Estados do Veículo
-  const [tipoVeiculo, setTipoVeiculo] = useState<
-    'moto' | 'carro' | 'bicicleta' | 'van' | 'eletrico'
-  >('moto');
+  const [tipoVeiculo, setTipoVeiculo] =
+    useState<TipoVeiculo>('moto');
   const [marca, setMarca] = useState('');
   const [modelo, setModelo] = useState('');
   const [ano, setAno] = useState('');
@@ -45,21 +45,6 @@ export const useCadastro = () => {
     const senhaLimpa = senha.trim();
     const confirmacaoLimpa = confirmarSenha.trim();
     const cpfLimpo = cpf.trim();
-
-    console.log('===== DEBUG CADASTRO =====');
-    console.log(`Nome: |${nomeLimpo}|`);
-    console.log(`Email: |${emailLimpo}|`);
-    console.log(`CPF: |${cpfLimpo}|`);
-    console.log(
-      `Senha: |${senhaLimpa}| (Tamanho: ${senhaLimpa.length})`,
-    );
-    console.log(
-      `Confirmar: |${confirmacaoLimpa}| (Tamanho: ${confirmacaoLimpa.length})`,
-    );
-    console.log(
-      `Senhas são iguais? ${senhaLimpa === confirmacaoLimpa ? 'SIM' : 'NÃO'}`,
-    );
-    console.log('==========================');
 
     setErro(true);
 
@@ -115,10 +100,6 @@ export const useCadastro = () => {
           senhaLimpa,
         );
 
-      console.log(
-        '[CADASTRO] Senha criptografada com sucesso (SHA-256).',
-      );
-
       // 6. Inserir Perfil
       const resultUsuario = await db.runAsync(
         `INSERT INTO perfil_usuario (nome, email, cpf, senha, foto_uri, tipo_meta, meta_diaria, meta_semanal) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
@@ -149,11 +130,7 @@ export const useCadastro = () => {
         id_user: usuarioId, // Relaciona com o usuário recém-criado
       });
 
-      console.log(
-        '[SUCESSO] Cadastro realizado com ID:',
-        usuarioId,
-      );
-      router.replace('/origemganhos');
+      router.replace('/(tabs)/origemganhos');
     } catch (error) {
       console.error('Erro ao salvar no banco:', error);
       Alert.alert(

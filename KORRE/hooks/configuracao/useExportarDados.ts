@@ -4,6 +4,10 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
+import {
+  BACKUP_EXPORT_COLUMNS,
+  BACKUP_TABLES,
+} from '../../constants/backupSchema';
 
 export function useExportarDados() {
   const [isExportando, setIsExportando] = useState(false);
@@ -11,33 +15,24 @@ export function useExportarDados() {
   const exportarDados = async () => {
     setIsExportando(true);
     try {
-      const tabelas = [
-        'perfil_usuario',
-        'veiculos',
-        'parametros_financeiros',
-        'categorias_financeiras',
-        'transacoes_financeiras',
-        'itens_manutencao',
-        'historico_manutencao',
-        'notificacoes',
-      ];
-
       const backupData: any = {
-        app: 'MeuCorre',
+        app: 'KORRE',
         data_exportacao: new Date().toISOString(),
+        versao_banco: 1,
         tabelas: {},
       };
 
-      for (const tabela of tabelas) {
+      for (const tabela of BACKUP_TABLES) {
+        const colunas = BACKUP_EXPORT_COLUMNS[tabela].join(', ');
         const rows = await db.getAllAsync(
-          `SELECT * FROM ${tabela}`,
+          `SELECT ${colunas} FROM ${tabela}`,
         );
         backupData.tabelas[tabela] = rows;
       }
 
       const fileUri =
         FileSystem.documentDirectory +
-        'MeuCorre_Backup.json';
+        'KORRE_Backup_v1.json';
       await FileSystem.writeAsStringAsync(
         fileUri,
         JSON.stringify(backupData, null, 2),

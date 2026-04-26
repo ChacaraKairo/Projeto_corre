@@ -13,6 +13,8 @@ import {
 import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashboardStyles';
 import { useTema } from '../../../hooks/modo_tema';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Dashboard/StatusGridInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Dashboard/StatusGridDynamicStyles';
 interface StatusProps {
   kmAtual: number;
   itensVisiveis: any[];
@@ -137,19 +139,10 @@ export const StatusGrid: React.FC<StatusProps> = ({
         activeOpacity={0.8}
       >
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
+          style={inlineStyles.inline1}
         >
           <View
-            style={{
-              padding: 8,
-              backgroundColor: isDark
-                ? '#202020'
-                : '#F5F5F5',
-              borderRadius: 12,
-            }}
+            style={dynamicInlineStyles.inline1({ isDark })}
           >
             <Gauge size={20} color="#00C853" />
           </View>
@@ -202,10 +195,7 @@ export const StatusGrid: React.FC<StatusProps> = ({
         onPress={onOpenOficina}
       >
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
+          style={inlineStyles.inline2}
         >
           <View
             style={[

@@ -19,6 +19,8 @@ import {
 import { useRouter } from 'expo-router';
 import { PieChart } from 'react-native-chart-kit';
 
+import { inlineStyles } from '../../styles/generated-inline/app/relatorios/receita_plataformaInlineStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/relatorios/receita_plataformaDynamicStyles';
 // Hooks & Estilos
 import { useTema } from '../../hooks/modo_tema';
 import { useReceitaPlataforma } from '../../hooks/relatorios/useReceitaPlataforma';
@@ -110,7 +112,7 @@ export default function ReceitaPlataformaScreen() {
         >
           Receita por Plataforma
         </Text>
-        <View style={{ width: 36 }} />
+        <View style={inlineStyles.inline1} />
       </View>
 
       <ScrollView
@@ -161,7 +163,7 @@ export default function ReceitaPlataformaScreen() {
           <ActivityIndicator
             size="large"
             color="#00C853"
-            style={{ marginTop: 50 }}
+            style={inlineStyles.inline2}
           />
         ) : (
           <>
@@ -215,22 +217,10 @@ export default function ReceitaPlataformaScreen() {
             {/* GRÁFICO DE PIZZA */}
             {plataformas.length > 0 && (
               <View
-                style={{
-                  alignItems: 'center',
-                  marginBottom: 24,
-                  backgroundColor: cardColor,
-                  borderRadius: 24,
-                  paddingVertical: 16,
-                  borderWidth: 1,
-                  borderColor,
-                }}
+                style={dynamicInlineStyles.inline1({ cardColor, borderColor })}
               >
                 <Text
-                  style={{
-                    color: textColor,
-                    fontWeight: 'bold',
-                    marginBottom: 8,
-                  }}
+                  style={dynamicInlineStyles.inline2({ textColor })}
                 >
                   Distribuição de Ganhos
                 </Text>
@@ -261,16 +251,10 @@ export default function ReceitaPlataformaScreen() {
 
             {plataformas.length === 0 ? (
               <View
-                style={{
-                  padding: 20,
-                  alignItems: 'center',
-                }}
+                style={inlineStyles.inline3}
               >
                 <Text
-                  style={{
-                    color: textMuted,
-                    textAlign: 'center',
-                  }}
+                  style={dynamicInlineStyles.inline3({ textMuted })}
                 >
                   Nenhum rendimento registado para este
                   filtro.
@@ -336,12 +320,7 @@ export default function ReceitaPlataformaScreen() {
                             total
                           </Text>
                           <Text
-                            style={{
-                              color: textMuted,
-                              fontSize: 12,
-                              marginTop: 2,
-                              fontWeight: 'bold',
-                            }}
+                            style={dynamicInlineStyles.inline4({ textMuted })}
                           >
                             {plat.qtd} registos de ganho
                           </Text>
@@ -440,10 +419,7 @@ export default function ReceitaPlataformaScreen() {
               onPress={() => setModalPeriodo(false)}
             >
               <Text
-                style={{
-                  color: textMuted,
-                  fontWeight: 'bold',
-                }}
+                style={dynamicInlineStyles.inline5({ textMuted })}
               >
                 Cancelar
               </Text>
@@ -543,10 +519,7 @@ export default function ReceitaPlataformaScreen() {
               onPress={() => setModalVeiculo(false)}
             >
               <Text
-                style={{
-                  color: textMuted,
-                  fontWeight: 'bold',
-                }}
+                style={dynamicInlineStyles.inline6({ textMuted })}
               >
                 Cancelar
               </Text>

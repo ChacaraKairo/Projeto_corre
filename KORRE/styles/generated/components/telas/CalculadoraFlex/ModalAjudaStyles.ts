@@ -1,0 +1,106 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.97)',
+  },
+  modalContent: {
+    padding: 24,
+    paddingTop: 80,
+    paddingBottom: 48,
+    gap: 16,
+  },
+  modalCloseBtn: {
+    position: 'absolute',
+    top: 48,
+    right: 24,
+    padding: 12,
+    backgroundColor: '#161616',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
+  modalHeader: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  modalIconWrap: {
+    padding: 16,
+    backgroundColor: 'rgba(0,200,83,0.1)',
+    borderRadius: 999,
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#fff',
+    textTransform: 'uppercase',
+    letterSpacing: -0.5,
+  },
+  modalSubtitle: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: '#00C853',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+    marginTop: 8,
+    fontStyle: 'italic',
+  },
+  modalCard: {
+    backgroundColor: '#161616',
+    padding: 24,
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: '#222',
+    gap: 8,
+  },
+  modalCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  modalCardTitle: {
+    fontSize: 12,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  modalCardText: {
+    color: '#888',
+    fontSize: 12,
+    lineHeight: 20,
+  },
+  highlight: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+  stepsBox: {
+    backgroundColor: '#0A0A0A',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#222',
+    gap: 8,
+  },
+  stepText: {
+    fontSize: 10,
+    color: '#fff',
+    fontWeight: '700',
+    fontStyle: 'italic',
+  },
+  modalCta: {
+    paddingVertical: 20,
+    backgroundColor: '#00C853',
+    borderRadius: 24,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  modalCtaText: {
+    color: '#0A0A0A',
+    fontSize: 12,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+  },
+});

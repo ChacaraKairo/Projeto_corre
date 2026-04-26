@@ -17,7 +17,9 @@ import {
 } from 'lucide-react-native';
 import { useEditarPerfil } from '../../../hooks/perfil_user/useEditarPerfil';
 import { useTema } from '../../../hooks/modo_tema';
-import { styles } from '../../../styles/telas/Perfil/perfilStyles'; // Usando os teus estilos base
+import { styles } from '../../../styles/telas/Perfil/perfilStyles'; import { inlineStyles } from '../../../styles/generated-inline/components/telas/Perfil/ModalEditarPerfilInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Perfil/ModalEditarPerfilDynamicStyles';
+// Usando os teus estilos base
 
 interface Props {
   visivel: boolean;
@@ -58,46 +60,23 @@ export const ModalEditarPerfil = ({
       animationType="slide"
     >
       <View
-        style={{
-          flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.7)',
-          justifyContent: 'flex-end',
-        }}
+        style={inlineStyles.inline1}
       >
         <View
-          style={{
-            backgroundColor: bgColor,
-            borderTopLeftRadius: 32,
-            borderTopRightRadius: 32,
-            padding: 24,
-            maxHeight: '90%',
-          }}
+          style={dynamicInlineStyles.inline1({ bgColor })}
         >
           {/* Header do Modal */}
           <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 24,
-            }}
+            style={inlineStyles.inline2}
           >
             <Text
-              style={{
-                color: textColor,
-                fontSize: 20,
-                fontWeight: '900',
-              }}
+              style={dynamicInlineStyles.inline2({ textColor })}
             >
               Editar Dados
             </Text>
             <TouchableOpacity
               onPress={onClose}
-              style={{
-                padding: 8,
-                backgroundColor: inputBg,
-                borderRadius: 16,
-              }}
+              style={dynamicInlineStyles.inline3({ inputBg })}
             >
               <X
                 size={20}
@@ -109,41 +88,19 @@ export const ModalEditarPerfil = ({
           <ScrollView showsVerticalScrollIndicator={false}>
             {/* Secção: Dados Pessoais */}
             <Text
-              style={{
-                color: '#888',
-                fontSize: 12,
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                marginBottom: 8,
-              }}
+              style={inlineStyles.inline3}
             >
               Dados Pessoais
             </Text>
             <TextInput
-              style={{
-                backgroundColor: inputBg,
-                color: textColor,
-                padding: 16,
-                borderRadius: 16,
-                marginBottom: 12,
-                borderWidth: 1,
-                borderColor,
-              }}
+              style={dynamicInlineStyles.inline4({ inputBg, textColor, borderColor })}
               value={nome}
               onChangeText={setNome}
               placeholder="O teu nome"
               placeholderTextColor="#666"
             />
             <TextInput
-              style={{
-                backgroundColor: inputBg,
-                color: textColor,
-                padding: 16,
-                borderRadius: 16,
-                marginBottom: 24,
-                borderWidth: 1,
-                borderColor,
-              }}
+              style={dynamicInlineStyles.inline5({ inputBg, textColor, borderColor })}
               value={senha}
               onChangeText={setSenha}
               placeholder="Nova senha (opcional)"
@@ -153,73 +110,29 @@ export const ModalEditarPerfil = ({
 
             {/* Secção: Tipo de Meta */}
             <Text
-              style={{
-                color: '#888',
-                fontSize: 12,
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                marginBottom: 8,
-              }}
+              style={inlineStyles.inline4}
             >
               Tipo de Meta Financeira
             </Text>
             <View
-              style={{
-                flexDirection: 'row',
-                backgroundColor: inputBg,
-                borderRadius: 16,
-                padding: 6,
-                marginBottom: 24,
-                borderWidth: 1,
-                borderColor,
-              }}
+              style={dynamicInlineStyles.inline6({ inputBg, borderColor })}
             >
               <TouchableOpacity
                 onPress={() => setTipoMeta('diaria')}
-                style={{
-                  flex: 1,
-                  padding: 12,
-                  borderRadius: 12,
-                  backgroundColor:
-                    tipoMeta === 'diaria'
-                      ? '#00C853'
-                      : 'transparent',
-                  alignItems: 'center',
-                }}
+                style={dynamicInlineStyles.inline7({ tipoMeta })}
               >
                 <Text
-                  style={{
-                    fontWeight: 'bold',
-                    color:
-                      tipoMeta === 'diaria'
-                        ? '#0A0A0A'
-                        : '#888',
-                  }}
+                  style={dynamicInlineStyles.inline8({ tipoMeta })}
                 >
                   Diária
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setTipoMeta('semanal')}
-                style={{
-                  flex: 1,
-                  padding: 12,
-                  borderRadius: 12,
-                  backgroundColor:
-                    tipoMeta === 'semanal'
-                      ? '#00C853'
-                      : 'transparent',
-                  alignItems: 'center',
-                }}
+                style={dynamicInlineStyles.inline9({ tipoMeta })}
               >
                 <Text
-                  style={{
-                    fontWeight: 'bold',
-                    color:
-                      tipoMeta === 'semanal'
-                        ? '#0A0A0A'
-                        : '#888',
-                  }}
+                  style={dynamicInlineStyles.inline10({ tipoMeta })}
                 >
                   Semanal
                 </Text>
@@ -228,19 +141,13 @@ export const ModalEditarPerfil = ({
 
             {/* Secção: Gerir Veículos */}
             <Text
-              style={{
-                color: '#888',
-                fontSize: 12,
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                marginBottom: 8,
-              }}
+              style={inlineStyles.inline5}
             >
               Gerir Veículos
             </Text>
             {veiculos.length === 0 ? (
               <Text
-                style={{ color: '#666', marginBottom: 24 }}
+                style={inlineStyles.inline6}
               >
                 Nenhum veículo cadastrado.
               </Text>
@@ -248,24 +155,10 @@ export const ModalEditarPerfil = ({
               veiculos.map((v) => (
                 <View
                   key={v.id}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    backgroundColor: inputBg,
-                    padding: 16,
-                    borderRadius: 16,
-                    marginBottom: 12,
-                    borderWidth: 1,
-                    borderColor,
-                  }}
+                  style={dynamicInlineStyles.inline11({ inputBg, borderColor })}
                 >
                   <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 12,
-                    }}
+                    style={inlineStyles.inline7}
                   >
                     {v.tipo === 'carro' ? (
                       <Car size={20} color={textColor} />
@@ -274,18 +167,12 @@ export const ModalEditarPerfil = ({
                     )}
                     <View>
                       <Text
-                        style={{
-                          color: textColor,
-                          fontWeight: 'bold',
-                        }}
+                        style={dynamicInlineStyles.inline12({ textColor })}
                       >
                         {v.modelo}
                       </Text>
                       <Text
-                        style={{
-                          color: '#666',
-                          fontSize: 12,
-                        }}
+                        style={inlineStyles.inline8}
                       >
                         {v.placa}
                       </Text>
@@ -295,7 +182,7 @@ export const ModalEditarPerfil = ({
                     onPress={() =>
                       apagarVeiculo(v.id, v.modelo)
                     }
-                    style={{ padding: 8 }}
+                    style={inlineStyles.inline9}
                   >
                     <Trash2 size={20} color="#F44336" />
                   </TouchableOpacity>
@@ -308,17 +195,7 @@ export const ModalEditarPerfil = ({
           <TouchableOpacity
             onPress={salvarDados}
             disabled={loading}
-            style={{
-              backgroundColor: '#00C853',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: 18,
-              borderRadius: 20,
-              marginTop: 16,
-              gap: 8,
-              opacity: loading ? 0.7 : 1,
-            }}
+            style={dynamicInlineStyles.inline13({ loading })}
           >
             {loading ? (
               <ActivityIndicator color="#0A0A0A" />
@@ -326,12 +203,7 @@ export const ModalEditarPerfil = ({
               <Save size={20} color="#0A0A0A" />
             )}
             <Text
-              style={{
-                color: '#0A0A0A',
-                fontSize: 16,
-                fontWeight: '900',
-                textTransform: 'uppercase',
-              }}
+              style={inlineStyles.inline10}
             >
               Salvar Alterações
             </Text>

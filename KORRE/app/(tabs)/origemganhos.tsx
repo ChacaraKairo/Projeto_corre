@@ -12,6 +12,8 @@ import {
   View,
 } from 'react-native';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/origemganhosInlineStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(tabs)/origemganhosDynamicStyles';
 // Importando a Lógica, Estilos e Componentes
 import { HeaderOrigem } from '../../components/telas/OrigemGanhos/HeaderOrigem';
 import { ItemOrigem } from '../../components/telas/OrigemGanhos/ItemOrigem';
@@ -66,12 +68,12 @@ export default function OrigemGanhosScreen() {
 
       {/* ScrollView principal da tela */}
       <ScrollView
-        style={{ flex: 1 }}
+        style={inlineStyles.inline1}
         keyboardShouldPersistTaps="handled"
       >
         {/* === INÍCIO DA ÁREA ALTERADA === */}
         {/* Renderização da lista de origens (Limitada a 4 itens visíveis com View fixa) */}
-        <View style={{ padding: 20, gap: 10 }}>
+        <View style={inlineStyles.inline2}>
           {origens.slice(0, 4).map((item) => (
             <ItemOrigem
               key={item.id}
@@ -85,7 +87,7 @@ export default function OrigemGanhosScreen() {
 
         {/* Botão de Adicionar Nova Origem */}
         <View
-          style={{ paddingHorizontal: 20, marginTop: 5 }}
+          style={inlineStyles.inline3}
         >
           <TouchableOpacity
             onPress={() => setModalAberto(true)}
@@ -119,25 +121,11 @@ export default function OrigemGanhosScreen() {
 
         {/* Info Box */}
         <View
-          style={{
-            flexDirection: 'row',
-            padding: 20,
-            backgroundColor: cardColor,
-            margin: 20,
-            borderRadius: 12,
-            alignItems: 'center',
-            borderWidth: isDark ? 0 : 1,
-            borderColor: borderColor,
-          }}
+          style={dynamicInlineStyles.inline1({ cardColor, isDark, borderColor })}
         >
           <Info size={20} color={primaryColor} />
           <Text
-            style={{
-              color: textMuted,
-              marginLeft: 10,
-              flex: 1,
-              fontSize: 12,
-            }}
+            style={dynamicInlineStyles.inline2({ textMuted })}
           >
             Cada cor e ícone escolhido será usado no seu
             Dashboard para organizar os seus ganhos no
@@ -148,11 +136,7 @@ export default function OrigemGanhosScreen() {
 
       {/* Footer com botão de Concluir */}
       <View
-        style={{
-          padding: 20,
-          borderTopWidth: 1,
-          borderColor: isDark ? cardColor : borderColor,
-        }}
+        style={dynamicInlineStyles.inline3({ isDark, borderColor })}
       >
         <TouchableOpacity
           style={[
@@ -170,12 +154,7 @@ export default function OrigemGanhosScreen() {
           disabled={selecionados.length === 0}
         >
           <Text
-            style={{
-              color: '#0A0A0A',
-              fontWeight: 'bold',
-              fontSize: 16,
-              marginRight: 10,
-            }}
+            style={inlineStyles.inline4}
           >
             Finalizar Escolha
           </Text>

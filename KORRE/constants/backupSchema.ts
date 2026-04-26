@@ -1,0 +1,182 @@
+export const BACKUP_TABLES = [
+  'perfil_usuario',
+  'veiculos',
+  'parametros_financeiros',
+  'categorias_financeiras',
+  'transacoes_financeiras',
+  'itens_manutencao',
+  'historico_manutencao',
+  'notificacoes',
+] as const;
+
+export type BackupTable = (typeof BACKUP_TABLES)[number];
+
+export const BACKUP_COLUMNS: Record<BackupTable, readonly string[]> = {
+  perfil_usuario: [
+    'id',
+    'nome',
+    'email',
+    'cpf',
+    'senha',
+    'foto_uri',
+    'meta_diaria',
+    'tipo_meta',
+    'meta_semanal',
+    'data_cadastro',
+  ],
+  veiculos: [
+    'id',
+    'tipo',
+    'marca',
+    'modelo',
+    'ano',
+    'motor',
+    'placa',
+    'km_atual',
+    'combustivel_padrao',
+    'id_user',
+    'ativo',
+    'custo_km_calculado',
+    'custo_minuto_calculado',
+    'meta_ganho_minuto_calculado',
+    'taxa_completude',
+  ],
+  parametros_financeiros: [
+    'id',
+    'veiculo_id',
+    'estado_uf',
+    'tipo_aquisicao',
+    'valor_veiculo_fipe',
+    'depreciacao_real_estimada',
+    'custo_oportunidade_selic',
+    'juros_financiamento_mensal',
+    'diaria_aluguel',
+    'caucao_aluguel_mensalizado',
+    'taxa_administracao_consorcio',
+    'custo_reparacao_emprestimo',
+    'ipva_anual',
+    'licenciamento_detran_anual',
+    'imposto_mei_mensal',
+    'imposto_renda_mensal',
+    'taxa_vistoria_gnv_anual',
+    'taxas_alvaras_municipais_anual',
+    'seguro_comercial_anual',
+    'rastreador_telemetria_mensal',
+    'plano_dados_mensal',
+    'rendimento_energia_unidade',
+    'preco_energia_unidade',
+    'valor_oleo_filtros',
+    'intervalo_oleo_filtros_km',
+    'valor_jogo_pneus',
+    'durabilidade_pneus_km',
+    'valor_manutencao_freios',
+    'intervalo_freios_km',
+    'valor_kit_transmissao',
+    'durabilidade_transmissao_km',
+    'fundo_depreciacao_bateria_por_km',
+    'manutencao_imprevista_mensal',
+    'limpeza_higienizacao_mensal',
+    'alimentacao_diaria',
+    'consumo_apoio_diario',
+    'plano_saude_mensal',
+    'fundo_emergencia_percentual',
+    'provisao_ferias_mensal',
+    'provisao_decimo_terceiro_mensal',
+    'salario_liquido_mensal_desejado',
+    'valor_smartphone',
+    'vida_util_smartphone_meses',
+    'custo_powerbanks_cabos_mensal',
+    'custo_suportes_capas_mensal',
+    'custo_bag_mochila_mensal',
+    'custo_vestuario_protecao_mensal',
+    'percentual_dead_miles',
+    'tempo_espera_medio_minutos',
+    'taxas_saque_antecipacao_mensal',
+    'provisao_multas_mensal',
+    'dias_trabalhados_semana',
+    'horas_por_dia',
+    'km_por_dia',
+  ],
+  categorias_financeiras: ['id', 'nome', 'tipo', 'icone', 'cor'],
+  transacoes_financeiras: [
+    'id',
+    'veiculo_id',
+    'categoria_id',
+    'descricao',
+    'valor',
+    'data_transacao',
+    'tipo',
+  ],
+  itens_manutencao: [
+    'id',
+    'veiculo_id',
+    'nome',
+    'icone',
+    'ultima_troca_km',
+    'intervalo_km',
+    'ultima_troca_data',
+    'intervalo_meses',
+    'criticidade',
+  ],
+  historico_manutencao: [
+    'id',
+    'veiculo_id',
+    'item_id',
+    'descricao',
+    'valor',
+    'km_servico',
+    'direfenca_tempo_meses',
+    'data_servico',
+  ],
+  notificacoes: [
+    'id',
+    'titulo',
+    'mensagem',
+    'tipo',
+    'lida',
+    'data_criacao',
+  ],
+};
+
+export const BACKUP_EXPORT_COLUMNS: Record<
+  BackupTable,
+  readonly string[]
+> = {
+  ...BACKUP_COLUMNS,
+  perfil_usuario: BACKUP_COLUMNS.perfil_usuario.filter(
+    (column) => column !== 'senha',
+  ),
+};
+
+export const sanitizeBackupRow = (
+  table: BackupTable,
+  row: Record<string, unknown>,
+) => {
+  const allowed = BACKUP_COLUMNS[table];
+  const columns = allowed.filter((column) =>
+    Object.prototype.hasOwnProperty.call(row, column),
+  );
+
+  return {
+    columns,
+    values: columns.map((column) =>
+      toSQLiteBindValue(row[column]),
+    ),
+  };
+};
+
+const toSQLiteBindValue = (value: unknown): SQLiteBindValue => {
+  if (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    value === null ||
+    value instanceof Uint8Array
+  ) {
+    return value;
+  }
+
+  if (value === undefined) return null;
+  return String(value);
+};
+import type { SQLiteBindValue } from 'expo-sqlite';

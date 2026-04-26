@@ -1,0 +1,35 @@
+import { Platform, StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  header: {
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingHorizontal: 24,
+    paddingBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#161616',
+  },
+  headerBtn: {
+    padding: 8,
+    backgroundColor: '#161616',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
+  headerTitle: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#00C853',
+    textTransform: 'uppercase',
+    letterSpacing: 3,
+  },
+  headerHelpBtn: {
+    padding: 8,
+    backgroundColor: 'rgba(0,200,83,0.1)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0,200,83,0.2)',
+  },
+});

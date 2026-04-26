@@ -1,15 +1,18 @@
-import { Save } from 'lucide-react-native';
-import React, { useState } from 'react';
+import {
+  Save } from 'lucide-react-native';
+import React,
+  { useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   View,
 } from 'react-native';
 
+import { styles } from '../../styles/generated/app/(tabs)/calculadora_korreStyles';
+import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/calculadora_korreInlineStyles';
 // Hooks
 import { useCalculadora } from '../../hooks/calculadora/useCalculadora';
 import { useTema } from '../../hooks/modo_tema';
@@ -84,9 +87,9 @@ export default function CalculadoraScreen() {
         behavior={
           Platform.OS === 'ios' ? 'padding' : 'height'
         }
-        style={{ flex: 1 }}
+        style={inlineStyles.inline1}
       >
-        <View style={{ flex: 1 }}>
+        <View style={inlineStyles.inline2}>
           <CalculadoraHeader
             veiculoAtivo={veiculoAtivo}
             veiculosDisponiveis={veiculosDisponiveis}
@@ -162,14 +165,4 @@ export default function CalculadoraScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  scrollContent: { paddingBottom: 120 }, // Espaço para o Painel Flutuante
-  formContainer: { padding: 20, gap: 8 },
-  buttonWrapper: { marginTop: 10, marginBottom: 20 },
-});
+

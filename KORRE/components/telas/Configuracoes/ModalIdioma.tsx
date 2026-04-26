@@ -9,6 +9,8 @@ import {
 import { Check } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Configuracoes/ModalIdiomaInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Configuracoes/ModalIdiomaDynamicStyles';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -36,60 +38,27 @@ export const ModalIdioma = ({
       onRequestClose={onClose}
     >
       <View
-        style={{
-          flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.6)',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 20,
-        }}
+        style={inlineStyles.inline1}
       >
         <View
-          style={{
-            width: '100%',
-            backgroundColor: cardColor,
-            borderRadius: 24,
-            padding: 20,
-            borderWidth: 1,
-            borderColor,
-          }}
+          style={dynamicInlineStyles.inline1({ cardColor, borderColor })}
         >
           <Text
-            style={{
-              fontSize: 18,
-              fontWeight: 'bold',
-              color: isDark ? '#FFF' : '#000',
-              marginBottom: 20,
-              textAlign: 'center',
-            }}
+            style={dynamicInlineStyles.inline2({ isDark })}
           >
             Selecione o Idioma (Futuro)
           </Text>
           {idiomas.map((lang) => (
             <TouchableOpacity
               key={lang.code}
-              style={{
-                paddingVertical: 16,
-                borderBottomWidth: 1,
-                borderBottomColor: borderColor,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}
+              style={dynamicInlineStyles.inline3({ borderColor })}
               onPress={() => {
                 i18n.changeLanguage(lang.code);
                 onClose();
               }}
             >
               <Text
-                style={{
-                  fontSize: 16,
-                  color:
-                    i18n.language === lang.code
-                      ? '#00C853'
-                      : isDark
-                        ? '#FFF'
-                        : '#000',
-                }}
+                style={dynamicInlineStyles.inline4({ i18n, lang, isDark })}
               >
                 {lang.label}
               </Text>
@@ -99,20 +68,11 @@ export const ModalIdioma = ({
             </TouchableOpacity>
           ))}
           <TouchableOpacity
-            style={{
-              marginTop: 20,
-              paddingVertical: 14,
-              backgroundColor: '#00C853',
-              borderRadius: 12,
-              alignItems: 'center',
-            }}
+            style={inlineStyles.inline2}
             onPress={onClose}
           >
             <Text
-              style={{
-                color: '#0A0A0A',
-                fontWeight: 'bold',
-              }}
+              style={inlineStyles.inline3}
             >
               Fechar
             </Text>

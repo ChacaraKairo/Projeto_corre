@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   StatusBar,
-  StyleSheet,
   View,
   BackHandler,
 } from 'react-native';
@@ -14,6 +13,7 @@ import MainCalculadoraFlex from '../../components/telas/CalculadoraFlex/MainCalc
 import ModalAjuda from '../../components/telas/CalculadoraFlex/ModalAjuda';
 import { useTema } from '../../hooks/modo_tema';
 
+import { styles } from '../../styles/generated/app/(tabs)/calculadoraStyles';
 export default function CalculadoraFlexScreen() {
   const [modalAjuda, setModalAjuda] = useState(false);
   const { tema } = useTema();
@@ -26,7 +26,7 @@ export default function CalculadoraFlexScreen() {
       if (origem === 'login') {
         router.replace('/(auth)/login');
       } else {
-        router.replace('/dashboard');
+        router.replace('/(tabs)/dashboard');
       }
       return true; // Impede o comportamento padrão de voltar do sistema
     };
@@ -64,9 +64,4 @@ export default function CalculadoraFlexScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0A0A0A',
-  },
-});
+

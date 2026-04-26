@@ -29,7 +29,9 @@ export const useHeaderClimaDashboard = () => {
             await Location.requestForegroundPermissionsAsync();
           if (status === 'granted') {
             const location =
-              await Location.getCurrentPositionAsync({});
+              await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.Low,
+              });
             lat = location.coords.latitude;
             lon = location.coords.longitude;
 

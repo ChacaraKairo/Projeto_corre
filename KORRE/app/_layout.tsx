@@ -11,6 +11,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import db, { DatabaseInit } from '../database/DatabaseInit';
 import { NotificationHandler } from '../notifications/NotificationHandler';
 
+import { inlineStyles } from '../styles/generated-inline/app/_layoutInlineStyles';
+import { dynamicInlineStyles } from '../styles/generated-dynamic/app/_layoutDynamicStyles';
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const [hasUser, setHasUser] = useState(false);
@@ -50,9 +52,9 @@ export default function RootLayout() {
 
     if (isAtRoot) {
       if (hasUser) {
-        router.replace('/(auth)/login' as any);
+        router.replace('/(auth)/login');
       } else {
-        router.replace('/(auth)/cadastro' as any);
+        router.replace('/(auth)/cadastro');
       }
     }
   }, [isReady, hasUser, segments, router]);
@@ -78,7 +80,7 @@ export default function RootLayout() {
       { nome: 'DB', path: '/(tabs)/explore' },
       { nome: 'Calc', path: '/calculadora' },
       { nome: 'Termos', path: '/(auth)/termos' },
-      { nome: 'Suporte', path: '/suporte' },
+      { nome: 'Suporte', path: '/(tabs)/suporte' },
       { nome: 'Histórico', path: '/(tabs)/historico' },
       { nome: 'Gastos', path: '/finance/gastos' },
       { nome: 'Ganhos', path: '/finance/ganhos' },
@@ -86,55 +88,26 @@ export default function RootLayout() {
 
     return (
       <View
-        style={{
-          position: 'absolute',
-          bottom: 0, // Fixado embaixo
-          left: 0,
-          right: 0,
-          backgroundColor: 'rgba(0,0,0,0.9)', // Fundo escuro para destacar o verde neon
-          paddingVertical: 10,
-          borderTopWidth: 1,
-          borderColor: '#39FF14',
-          zIndex: 9999,
-        }}
+        style={dynamicInlineStyles.inline1({})}
       >
         <Text
-          style={{
-            color: '#39FF14',
-            fontSize: 9,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: 5,
-          }}
+          style={inlineStyles.inline1}
         >
           KORRE DEV BAR
         </Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 10 }}
+          contentContainerStyle={inlineStyles.devMenuContent}
         >
           {rotas.map((rota) => (
             <TouchableOpacity
               key={rota.path}
               onPress={() => router.push(rota.path as any)}
-              style={{
-                backgroundColor: '#1A1A1A',
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 8,
-                borderWidth: 1,
-                borderColor: '#333',
-                marginRight: 8,
-                paddingBottom: 50,
-              }}
+              style={inlineStyles.inline2}
             >
               <Text
-                style={{
-                  color: '#fff',
-                  fontSize: 11,
-                  fontWeight: '600',
-                }}
+                style={inlineStyles.inline3}
               >
                 {rota.nome}
               </Text>
@@ -147,7 +120,7 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider
-      style={{ flex: 1, backgroundColor: '#000' }}
+      style={inlineStyles.inline4}
     >
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />

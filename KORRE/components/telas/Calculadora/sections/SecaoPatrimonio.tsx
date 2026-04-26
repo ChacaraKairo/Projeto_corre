@@ -6,6 +6,8 @@ import {
 } from 'lucide-react-native';
 import React, { memo } from 'react';
 import { View } from 'react-native';
+import { palette } from '../../../../styles/tokens';
+import { sharedSectionStyles } from '../../../../styles/telas/Calculadora/sections/sharedSectionStyles';
 // IMPORTANTE: Importando a Fonte Única de Verdade (SSOT)
 import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida';
 import { AccordionSection } from '../ui/AccordionSection';
@@ -31,7 +33,7 @@ export const SecaoPatrimonio = memo(
     return (
       <AccordionSection
         title="Patrimônio e Capital"
-        icon={<Coins size={20} color="#00C853" />}
+        icon={<Coins size={20} color={palette.brand} />}
         isComplete={isComplete}
         onHelpClick={() =>
           onHelp(
@@ -40,7 +42,7 @@ export const SecaoPatrimonio = memo(
           )
         }
       >
-        <View style={{ gap: 12 }}>
+        <View style={sharedSectionStyles.fieldStack}>
           {/* 1. VALOR DO ATIVO */}
           <InputFinanceiro
             label="Valor do Veículo (Tabela FIPE)"
@@ -49,7 +51,7 @@ export const SecaoPatrimonio = memo(
               onChange('valor_veiculo_fipe', v)
             }
             placeholder="R$ 0,00"
-            icon={<Landmark size={18} color="#666" />}
+            icon={<Landmark size={18} color={palette.surface400} />}
             suffix="R$"
             onHelp={() =>
               onHelp(
@@ -69,7 +71,7 @@ export const SecaoPatrimonio = memo(
               onChange('depreciacao_real_estimada', v)
             }
             placeholder="Ex: 10"
-            icon={<TrendingDown size={18} color="#666" />}
+            icon={<TrendingDown size={18} color={palette.surface400} />}
             suffix="%"
             onHelp={() =>
               onHelp(
@@ -90,7 +92,7 @@ export const SecaoPatrimonio = memo(
             }
             placeholder="Ex: 10.75"
             icon={
-              <BadgePercent size={18} color="#00C853" />
+              <BadgePercent size={18} color={palette.brand} />
             }
             suffix="%"
             onHelp={() =>
@@ -105,3 +107,5 @@ export const SecaoPatrimonio = memo(
     );
   },
 );
+
+SecaoPatrimonio.displayName = 'SecaoPatrimonio';

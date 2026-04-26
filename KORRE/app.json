@@ -9,24 +9,33 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "androidStatusBar": {
-      "translucent": true,
-      "backgroundColor": "#00000000",
+      "translucent": false,
+      "backgroundColor": "#000000",
       "barStyle": "light-content"
     },
     "androidNavigationBar": {
-      "visible": "always",
-      "backgroundColor": "#00000000"
+      "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.chacara.korre",
-      "buildNumber": "1.2.0"
+      "buildNumber": "1.2.0",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "O KORRE usa Face ID para proteger o acesso aos seus dados locais.",
+        "NSPhotoLibraryUsageDescription": "O KORRE acessa suas fotos apenas quando você escolhe uma imagem para o perfil.",
+        "NSCameraUsageDescription": "O KORRE usa a câmera apenas quando você escolhe tirar uma foto de perfil.",
+        "NSLocationWhenInUseUsageDescription": "O KORRE usa sua localização aproximada, com o app aberto, para mostrar previsão do tempo no dashboard."
+      }
     },
     "android": {
       "package": "com.chacara.korre",
       "versionCode": 10,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
@@ -53,6 +62,31 @@
           }
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O KORRE acessa suas fotos apenas quando você escolhe uma imagem para o perfil.",
+          "cameraPermission": "O KORRE usa a câmera apenas quando você escolhe tirar uma foto de perfil."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "O KORRE usa sua localização aproximada, com o app aberto, para mostrar previsão do tempo no dashboard.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#00C853",
+          "defaultChannel": "default",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ],
+      "expo-local-authentication",
+      "expo-document-picker",
       "expo-sqlite",
       "expo-web-browser",
       "@react-native-community/datetimepicker"

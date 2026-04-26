@@ -1,5 +1,8 @@
-import { PropsWithChildren, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  PropsWithChildren,
+  useState } from 'react';
+import {   TouchableOpacity,
+} from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -7,6 +10,8 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
+import { styles } from '../../styles/generated/components/ui/collapsibleStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/components/ui/collapsibleDynamicStyles';
 export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorScheme() ?? 'light';
@@ -22,7 +27,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
           size={18}
           weight="medium"
           color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}
-          style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
+          style={dynamicInlineStyles.inline1({ isOpen })}
         />
 
         <ThemedText type="defaultSemiBold">{title}</ThemedText>
@@ -32,14 +37,4 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
   );
 }
 
-const styles = StyleSheet.create({
-  heading: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  content: {
-    marginTop: 6,
-    marginLeft: 24,
-  },
-});
+

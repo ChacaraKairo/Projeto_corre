@@ -114,7 +114,7 @@ export default function DatabaseViewerScreen() {
       <FlatList
         data={dados}
         keyExtractor={(_, index) => index.toString()}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <Text style={styles.emptyText}>
             Nenhum registro encontrado.

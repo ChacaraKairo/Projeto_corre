@@ -13,6 +13,8 @@ import {
 import { useRouter } from 'expo-router';
 import { showCustomAlert } from '../../hooks/alert/useCustomAlert';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/relatoriosInlineStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(tabs)/relatoriosDynamicStyles';
 // Hooks & Estilos
 import { useTema } from '../../hooks/modo_tema';
 import { useRelatorios } from '../../hooks/relatorios/useRelatorios';
@@ -85,7 +87,7 @@ export default function RelatoriosScreen() {
         >
           Meus Relatórios
         </Text>
-        <View style={{ width: 36 }} />
+        <View style={inlineStyles.inline1} />
       </View>
 
       <ScrollView
@@ -227,10 +229,7 @@ export default function RelatoriosScreen() {
           >
             Dica: Aceda ao relatório{' '}
             <Text
-              style={{
-                fontWeight: 'bold',
-                color: isDark ? '#FFF' : '#000',
-              }}
+              style={dynamicInlineStyles.inline1({ isDark })}
             >
               Termômetro MEI
             </Text>{' '}

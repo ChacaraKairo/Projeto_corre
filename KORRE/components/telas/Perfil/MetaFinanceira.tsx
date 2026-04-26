@@ -9,6 +9,8 @@ import { Target, Check, Pencil } from 'lucide-react-native';
 import { styles } from '../../../styles/telas/Perfil/perfilStyles';
 import { useTema } from '../../../hooks/modo_tema';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Perfil/MetaFinanceiraInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Perfil/MetaFinanceiraDynamicStyles';
 interface Props {
   meta: string;
   setMeta: (texto: string) => void;
@@ -44,7 +46,7 @@ export const MetaFinanceira = ({
   };
 
   return (
-    <View style={{ marginBottom: 24 }}>
+    <View style={inlineStyles.inline1}>
       <Text
         style={[
           styles.secaoTitle,
@@ -78,11 +80,7 @@ export const MetaFinanceira = ({
       >
         {/* Esquerda: Ícone e Textos/Input */}
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            flex: 1,
-          }}
+          style={inlineStyles.inline2}
         >
           <View
             style={[
@@ -93,7 +91,7 @@ export const MetaFinanceira = ({
             <Target size={20} color="#00C853" />
           </View>
 
-          <View style={{ flex: 1 }}>
+          <View style={inlineStyles.inline3}>
             {/* Texto Dinâmico baseado no banco */}
             <Text
               style={[
@@ -113,29 +111,16 @@ export const MetaFinanceira = ({
 
             {isEditing ? (
               <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
+                style={inlineStyles.inline4}
               >
                 <Text
-                  style={{
-                    color: isDark ? '#888' : '#555',
-                    fontWeight: 'bold',
-                    marginRight: 4,
-                  }}
+                  style={dynamicInlineStyles.inline1({ isDark })}
                 >
                   R$
                 </Text>
                 <TextInput
                   ref={inputRef}
-                  style={{
-                    color: isDark ? '#00C853' : '#00A040',
-                    fontSize: 20,
-                    fontWeight: '900',
-                    padding: 0,
-                    flex: 1,
-                  }}
+                  style={dynamicInlineStyles.inline2({ isDark })}
                   value={meta}
                   onChangeText={setMeta}
                   keyboardType="numeric"
@@ -148,11 +133,7 @@ export const MetaFinanceira = ({
               </View>
             ) : (
               <Text
-                style={{
-                  color: isDark ? '#FFFFFF' : '#000000',
-                  fontSize: 18,
-                  fontWeight: '900',
-                }}
+                style={dynamicInlineStyles.inline3({ isDark })}
               >
                 R$ {meta || '0,00'}
               </Text>
@@ -177,7 +158,7 @@ export const MetaFinanceira = ({
               />
             </TouchableOpacity>
           ) : (
-            <View style={{ padding: 10 }}>
+            <View style={inlineStyles.inline5}>
               <Pencil
                 size={18}
                 color={isDark ? '#666' : '#999'}

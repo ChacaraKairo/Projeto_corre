@@ -4,6 +4,10 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
+import {
+  BACKUP_EXPORT_COLUMNS,
+  BACKUP_TABLES,
+} from '../../constants/backupSchema';
 
 export function useExportarDados() {
   const [isExportando, setIsExportando] = useState(false);
@@ -11,31 +15,18 @@ export function useExportarDados() {
   const exportarDados = async () => {
     setIsExportando(true);
     try {
-      // 1. Lista de todas as tabelas para garantir exportação total
-      const tabelas = [
-        'perfil_usuario',
-        'veiculos',
-        'parametros_financeiros', // Adicionado para salvar custos da calculadora
-        'categorias_financeiras',
-        'transacoes_financeiras',
-        'itens_manutencao',
-        'historico_manutencao',
-        'notificacoes',
-      ];
-
       const backupData: any = {};
 
-      // 2. Busca dinâmica de dados para evitar repetição de código
-      for (const tabela of tabelas) {
+      for (const tabela of BACKUP_TABLES) {
+        const colunas = BACKUP_EXPORT_COLUMNS[tabela].join(', ');
         const rows = await db.getAllAsync(
-          `SELECT * FROM ${tabela}`,
+          `SELECT ${colunas} FROM ${tabela}`,
         );
         backupData[tabela] = rows;
       }
 
-      // 3. Montar o "Super Objeto" formatado
       const backupCompleto = {
-        app: 'MeuCorre',
+        app: 'KORRE',
         data_exportacao: new Date().toISOString(),
         versao_banco: 1,
         tabelas: backupData,
@@ -47,10 +38,9 @@ export function useExportarDados() {
         2,
       );
 
-      // 4. Caminho do arquivo
       const fileUri =
         FileSystem.documentDirectory +
-        'MeuCorre_Backup.json';
+        'KORRE_Backup_v1.json';
 
       // 5. Salvar o arquivo JSON temporariamente
       await FileSystem.writeAsStringAsync(
@@ -66,7 +56,7 @@ export function useExportarDados() {
       if (canShare) {
         await Sharing.shareAsync(fileUri, {
           mimeType: 'application/json',
-          dialogTitle: 'Exportar Backup do MeuCorre',
+          dialogTitle: 'Exportar Backup do KORRE',
           UTI: 'public.json',
         });
       } else {

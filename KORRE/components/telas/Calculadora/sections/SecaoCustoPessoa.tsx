@@ -9,6 +9,8 @@ import {
 } from 'lucide-react-native';
 import React, { memo } from 'react';
 import { View } from 'react-native';
+import { palette } from '../../../../styles/tokens';
+import { sharedSectionStyles } from '../../../../styles/telas/Calculadora/sections/sharedSectionStyles';
 import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida'; // SSOT
 import { AccordionSection } from '../ui/AccordionSection';
 import { InputFinanceiro } from '../ui/InputFinanceiro';
@@ -33,7 +35,7 @@ export const SecaoCustoPessoa = memo(
     return (
       <AccordionSection
         title="Fator Humano (Você)"
-        icon={<User size={20} color="#00C853" />}
+        icon={<User size={20} color={palette.brand} />}
         isComplete={isComplete}
         onHelpClick={() =>
           onHelp(
@@ -42,7 +44,7 @@ export const SecaoCustoPessoa = memo(
           )
         }
       >
-        <View style={{ gap: 12 }}>
+        <View style={sharedSectionStyles.fieldStack}>
           {/* 1. SOBREVIVÊNCIA DIÁRIA */}
           <InputFinanceiro
             label="Alimentação Principal"
@@ -51,7 +53,7 @@ export const SecaoCustoPessoa = memo(
               onChange('alimentacao_diaria', v)
             }
             placeholder="R$ 0,00"
-            icon={<Utensils size={18} color="#666" />}
+            icon={<Utensils size={18} color={palette.surface400} />}
             suffix="R$/Dia"
           />
 
@@ -62,7 +64,7 @@ export const SecaoCustoPessoa = memo(
               onChange('consumo_apoio_diario', v)
             }
             placeholder="R$ 0,00"
-            icon={<Coffee size={18} color="#666" />}
+            icon={<Coffee size={18} color={palette.surface400} />}
             suffix="R$/Dia"
           />
 
@@ -74,7 +76,7 @@ export const SecaoCustoPessoa = memo(
               onChange('plano_saude_mensal', v)
             }
             placeholder="R$ 0,00"
-            icon={<HeartPulse size={18} color="#666" />}
+            icon={<HeartPulse size={18} color={palette.surface400} />}
             suffix="R$/Mês"
           />
 
@@ -88,7 +90,7 @@ export const SecaoCustoPessoa = memo(
               onChange('salario_liquido_mensal_desejado', v)
             }
             placeholder="Ex: 5000"
-            icon={<Banknote size={18} color="#00C853" />}
+            icon={<Banknote size={18} color={palette.brand} />}
             suffix="R$/Mês"
             onHelp={() =>
               onHelp(
@@ -108,7 +110,7 @@ export const SecaoCustoPessoa = memo(
               onChange('dias_trabalhados_semana', v)
             }
             placeholder="Ex: 5"
-            icon={<Calendar size={18} color="#666" />}
+            icon={<Calendar size={18} color={palette.surface400} />}
             suffix="Dias"
           />
 
@@ -119,7 +121,7 @@ export const SecaoCustoPessoa = memo(
               onChange('horas_por_dia', v)
             }
             placeholder="Ex: 8"
-            icon={<Clock size={18} color="#666" />}
+            icon={<Clock size={18} color={palette.surface400} />}
             suffix="Horas"
           />
         </View>
@@ -127,3 +129,5 @@ export const SecaoCustoPessoa = memo(
     );
   },
 );
+
+SecaoCustoPessoa.displayName = 'SecaoCustoPessoa';

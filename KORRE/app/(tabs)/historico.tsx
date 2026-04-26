@@ -9,6 +9,7 @@ import { useTema } from '../../hooks/modo_tema';
 import { useHistorico } from '../../hooks/historico/useHistorico';
 import { styles } from '../../styles/telas/Historico/historicoStyles';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/historicoInlineStyles';
 // Componentes Extraídos e Refatorados
 import { ModalEditarRegistro } from '../../components/telas/historico/ModalEditarRegistro';
 import { ModalOpcoesRegistro } from '../../components/telas/historico/ModalOpcoesRegistro';
@@ -68,7 +69,7 @@ export default function HistoricoScreen() {
         {loading ? (
           <ActivityIndicator
             color="#00C853"
-            style={{ marginTop: 40 }}
+            style={inlineStyles.inline1}
           />
         ) : (
           <>

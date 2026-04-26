@@ -9,36 +9,22 @@ import {
 import { UploadCloud } from 'lucide-react-native';
 import { useRestaurarBackup } from '../../../hooks/cadastro/useRestaurarBackup';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Cadastro/RestaurarFluxoCadastroInlineStyles';
 export function RestaurarFluxoCadastro() {
   const { selecionarArquivo, carregando } =
     useRestaurarBackup();
 
   return (
     <View
-      style={{
-        marginHorizontal: 20,
-        marginTop: 20,
-        padding: 16,
-        backgroundColor: '#161616',
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: '#333',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
+      style={inlineStyles.inline1}
     >
-      <View style={{ flex: 1, marginRight: 10 }}>
+      <View style={inlineStyles.inline2}>
         <Text
-          style={{
-            color: '#FFF',
-            fontWeight: 'bold',
-            fontSize: 14,
-          }}
+          style={inlineStyles.inline3}
         >
-          Já usou o MeuCorre antes?
+          Já usou o KORRE antes?
         </Text>
-        <Text style={{ color: '#888', fontSize: 12 }}>
+        <Text style={inlineStyles.inline4}>
           Importe seu backup para pular o cadastro.
         </Text>
       </View>
@@ -46,15 +32,7 @@ export function RestaurarFluxoCadastro() {
       <TouchableOpacity
         onPress={selecionarArquivo}
         disabled={carregando}
-        style={{
-          backgroundColor: '#00C853',
-          paddingHorizontal: 16,
-          paddingVertical: 10,
-          borderRadius: 12,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8,
-        }}
+        style={inlineStyles.inline5}
       >
         {carregando ? (
           <ActivityIndicator color="#0A0A0A" size="small" />
@@ -62,10 +40,7 @@ export function RestaurarFluxoCadastro() {
           <>
             <UploadCloud size={18} color="#0A0A0A" />
             <Text
-              style={{
-                color: '#0A0A0A',
-                fontWeight: 'bold',
-              }}
+              style={inlineStyles.inline6}
             >
               Importar
             </Text>

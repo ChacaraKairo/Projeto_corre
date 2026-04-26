@@ -4,7 +4,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
   Modal,
   KeyboardAvoidingView,
@@ -29,6 +28,7 @@ import {
   TipoVeiculoKey,
 } from '../../../type/veiculosData';
 
+import { localStyles } from '../../../styles/generated/components/telas/Cadastro/VeiculoSecaoStyles';
 interface VeiculoProps {
   tipo: TipoVeiculo;
   setTipo: (t: TipoVeiculo) => void;
@@ -129,17 +129,17 @@ export const VeiculoSecao: React.FC<VeiculoProps> = ({
 
   // Labels dinâmicos para a categoria Elétrico
   const labelMarca =
-    (tipo as TipoVeiculoKey) === 'eletrico'
+    (tipo as TipoVeiculoKey) === 'carro_eletrico'
       ? 'Categoria'
       : 'Marca';
   const labelModelo =
-    (tipo as TipoVeiculoKey) === 'eletrico'
+    (tipo as TipoVeiculoKey) === 'carro_eletrico'
       ? 'Marca'
       : 'Modelo';
   const labelMotor =
     (tipo as TipoVeiculoKey) === 'bicicleta'
       ? 'Versão'
-      : (tipo as TipoVeiculoKey) === 'eletrico'
+      : (tipo as TipoVeiculoKey) === 'carro_eletrico'
         ? 'Modelo'
         : 'Motor';
 
@@ -380,7 +380,7 @@ export const VeiculoSecao: React.FC<VeiculoProps> = ({
                         { color: '#00C853' },
                       ]}
                     >
-                      Usar: "{modalConfig.valorAtual}"
+                      Usar: {modalConfig.valorAtual}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -406,94 +406,4 @@ export const VeiculoSecao: React.FC<VeiculoProps> = ({
   );
 };
 
-const localStyles = StyleSheet.create({
-  sectionTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 16,
-  },
-  selectorGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 20,
-  },
-  row: { flexDirection: 'row', gap: 12, marginBottom: 12 },
-  flex1: { flex: 1 },
-  selectBtn: {
-    flexBasis: '30%',
-    flexGrow: 1,
-    height: 70,
-    backgroundColor: '#202020',
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: '#333',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  selectBtnAtivo: {
-    borderColor: '#00C853',
-    backgroundColor: 'rgba(0, 200, 83, 0.05)',
-  },
-  selectLabel: {
-    fontSize: 9,
-    fontWeight: '900',
-    color: '#444',
-    marginTop: 6,
-    textTransform: 'uppercase',
-  },
-  selectLabelAtivo: { color: '#00C853' },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.9)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#161616',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 20,
-    height: '80%',
-    borderTopWidth: 1,
-    borderTopColor: '#333',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  modalTitle: {
-    color: '#FFF',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  sugestaoLabel: {
-    color: '#666',
-    fontSize: 12,
-    textTransform: 'uppercase',
-    marginBottom: 10,
-    marginTop: 10,
-  },
-  modalScroll: { flex: 1 },
-  itemLista: {
-    padding: 16,
-    backgroundColor: '#222',
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  itemListaText: { color: '#EEE', fontSize: 16 },
-  btnConfirmar: {
-    backgroundColor: '#00C853',
-    padding: 18,
-    borderRadius: 16,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  btnConfirmarText: {
-    color: '#000',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});
+

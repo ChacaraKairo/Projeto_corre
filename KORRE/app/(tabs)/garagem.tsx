@@ -19,6 +19,7 @@ import { styles } from '../../styles/telas/Garagem/garagemStyles';
 import { CardVeiculoGaragem } from '../../components/telas/Garagem/CardVeiculoGaragem';
 import { ModalNovoVeiculo } from '../../components/telas/Garagem/ModalNovoVeiculo';
 import { useTema } from '../../hooks/modo_tema';
+import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/garagemInlineStyles';
 // Importaremos os modais a seguir
 
 export default function GaragemScreen() {
@@ -55,7 +56,7 @@ export default function GaragemScreen() {
               borderWidth: 1,
             },
           ]}
-          onPress={() => router.push('/dashboard')}
+          onPress={() => router.push('/(tabs)/dashboard')}
         >
           <ArrowLeft
             size={20}
@@ -70,16 +71,12 @@ export default function GaragemScreen() {
         >
           Minha Garagem
         </Text>
-        <View style={{ width: 36 }} />
+        <View style={inlineStyles.inline1} />
       </View>
 
       {loading ? (
         <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
+          style={inlineStyles.inline2}
         >
           <ActivityIndicator size="large" color="#00C853" />
         </View>
@@ -153,10 +150,7 @@ export default function GaragemScreen() {
             >
               Ao alternar entre veículos, o seu{' '}
               <Text
-                style={{
-                  color: '#00C853',
-                  fontWeight: 'bold',
-                }}
+                style={inlineStyles.inline3}
               >
                 Dashboard
               </Text>{' '}

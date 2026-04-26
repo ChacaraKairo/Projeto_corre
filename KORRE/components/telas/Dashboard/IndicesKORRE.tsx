@@ -1,4 +1,5 @@
-import { useRouter } from 'expo-router';
+import {
+  useRouter } from 'expo-router';
 import {
   Calculator,
   ChevronRight,
@@ -7,11 +8,10 @@ import {
   MapPin,
   Target,
   TrendingUp,
-} from 'lucide-react-native';
+  } from 'lucide-react-native';
 import React from 'react';
 import {
-  StyleSheet,
-  Text,
+    Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -19,6 +19,8 @@ import { showCustomAlert } from '../../../hooks/alert/useCustomAlert';
 import { useTema } from '../../../hooks/modo_tema';
 import { styles as baseStyles } from '../../../styles/telas/Dashboard/indicesMCCardStyles';
 
+import { styles } from '../../../styles/generated/components/telas/Dashboard/IndicesKORREStyles';
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Dashboard/IndicesKORREInlineStyles';
 interface Props {
   custoPorKm: number;
   custoPorMinuto: number;
@@ -102,11 +104,7 @@ export const IndicesMCCard = ({
           </Text>
         </View>
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-          }}
+          style={inlineStyles.inline1}
         >
           <View
             style={[
@@ -125,7 +123,7 @@ export const IndicesMCCard = ({
           </View>
           <TouchableOpacity
             onPress={handleAjuda}
-            style={{ padding: 4 }}
+            style={inlineStyles.inline2}
           >
             <HelpCircle size={20} color={textMuted} />
           </TouchableOpacity>
@@ -239,12 +237,7 @@ export const IndicesMCCard = ({
         ]}
       >
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-            flex: 1,
-          }}
+          style={inlineStyles.inline3}
         >
           <TrendingUp size={20} color="#00C853" />
           <Text
@@ -295,42 +288,4 @@ export const IndicesMCCard = ({
   );
 };
 
-const styles = StyleSheet.create({
-  trindadeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
-    marginTop: 16,
-    marginBottom: 16, // Um pouco mais de espaço antes da barra inferior
-  },
-  indiceBoxTrindade: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 6,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignItems: 'center', // Centraliza tudo para economizar espaço
-    justifyContent: 'center',
-    gap: 4, // Espaçamento suave entre ícone, título e valor
-  },
-  labelTrindade: {
-    fontSize: 10,
-    textAlign: 'center',
-  },
-  valueTrindade: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 2,
-  },
-  hourlyBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 16,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginBottom: 16,
-  },
-});
+

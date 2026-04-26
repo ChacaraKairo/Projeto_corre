@@ -15,6 +15,8 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 
+import { inlineStyles } from '../../styles/generated-inline/app/relatorios/carne-leaoInlineStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/relatorios/carne-leaoDynamicStyles';
 // Hooks, Estilos e Componentes Separados
 import { useCarneLeao } from '../../hooks/relatorios/useCarneLeao';
 import { styles } from '../../styles/telas/Relatorios/carneLeaoStyles';
@@ -123,7 +125,7 @@ export default function CarneLeaoScreen() {
           <ActivityIndicator
             size="large"
             color="#2196F3"
-            style={{ marginTop: 50 }}
+            style={inlineStyles.inline1}
           />
         ) : (
           <>
@@ -142,7 +144,7 @@ export default function CarneLeaoScreen() {
                 name="information-circle"
                 size={24}
                 color="#2196F3"
-                style={{ flexShrink: 0 }}
+                style={inlineStyles.inline2}
               />
               <Text style={styles.dicaText}>
                 Dica: Guarde todos os recibos de{' '}
@@ -220,7 +222,7 @@ export default function CarneLeaoScreen() {
         )}
 
         {/* Bottom padding to account for fixed footer */}
-        <View style={{ height: pago ? 32 : 120 }} />
+        <View style={dynamicInlineStyles.inline1({ pago })} />
       </ScrollView>
 
       {/* FIXED FOOTER */}

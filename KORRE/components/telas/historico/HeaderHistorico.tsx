@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StyleSheet,
 } from 'react-native';
 import {
   ArrowLeft,
@@ -16,6 +15,8 @@ import { useRouter } from 'expo-router';
 import { useTema } from '../../../hooks/modo_tema';
 import { styles } from '../../../styles/telas/Historico/historicoStyles';
 
+import { localStyles } from '../../../styles/generated/components/telas/historico/HeaderHistoricoStyles';
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/historico/HeaderHistoricoInlineStyles';
 interface HeaderHistoricoProps {
   getLabelData: () => string;
   navegarData: (direcao: number) => void;
@@ -138,7 +139,7 @@ export function HeaderHistorico({
       >
         <TouchableOpacity
           onPress={() => navegarData(-1)}
-          style={{ padding: 8 }}
+          style={inlineStyles.inline1}
         >
           <ChevronLeft size={20} color={textMuted} />
         </TouchableOpacity>
@@ -157,7 +158,7 @@ export function HeaderHistorico({
 
         <TouchableOpacity
           onPress={() => navegarData(1)}
-          style={{ padding: 8 }}
+          style={inlineStyles.inline2}
         >
           <ChevronRight size={20} color={textMuted} />
         </TouchableOpacity>
@@ -166,24 +167,4 @@ export function HeaderHistorico({
   );
 }
 
-const localStyles = StyleSheet.create({
-  segmentedContainer: {
-    flexDirection: 'row',
-    marginHorizontal: 20,
-    marginTop: 15,
-    borderRadius: 12,
-    padding: 4,
-    height: 45,
-  },
-  segmentButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-  segmentText: {
-    fontSize: 13,
-    fontWeight: '900',
-    textTransform: 'uppercase',
-  },
-});
+

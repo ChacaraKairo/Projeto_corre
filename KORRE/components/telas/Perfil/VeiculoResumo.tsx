@@ -4,7 +4,9 @@ import {
   ArrowLeftRight,
   Settings2,
 } from 'lucide-react-native';
-import { useRouter } from 'expo-router'; // Adicionado para a navegação
+import { useRouter } from 'expo-router'; import { inlineStyles } from '../../../styles/generated-inline/components/telas/Perfil/VeiculoResumoInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Perfil/VeiculoResumoDynamicStyles';
+// Adicionado para a navegação
 import { styles } from '../../../styles/telas/Perfil/perfilStyles';
 import { useTema } from '../../../hooks/modo_tema';
 import {
@@ -28,7 +30,7 @@ export const VeiculoResumo = ({
   const router = useRouter();
 
   return (
-    <View style={{ marginBottom: 24 }}>
+    <View style={inlineStyles.inline1}>
       <Text
         style={[
           styles.secaoTitle,
@@ -60,11 +62,7 @@ export const VeiculoResumo = ({
       >
         {/* Esquerda: Ícone, Modelo e Placa */}
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            flex: 1,
-          }}
+          style={inlineStyles.inline2}
         >
           <View
             style={[
@@ -86,7 +84,7 @@ export const VeiculoResumo = ({
             })()}
           </View>
 
-          <View style={{ flex: 1 }}>
+          <View style={inlineStyles.inline3}>
             <Text
               style={[
                 styles.veiculoModelo,
@@ -117,11 +115,7 @@ export const VeiculoResumo = ({
 
         {/* Direita: Botões de Ação */}
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-          }}
+          style={inlineStyles.inline4}
         >
           {/* Botão: Trocar Veículo */}
           <TouchableOpacity
@@ -133,15 +127,7 @@ export const VeiculoResumo = ({
                   'Abrir modal de troca de veículo',
                 ))
             }
-            style={{
-              padding: 8,
-              backgroundColor: isDark
-                ? '#0A0A0A'
-                : '#F5F5F5',
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: isDark ? '#333' : '#E0E0E0',
-            }}
+            style={dynamicInlineStyles.inline1({ isDark })}
           >
             <ArrowLeftRight
               size={18}
@@ -151,14 +137,8 @@ export const VeiculoResumo = ({
 
           {/* Botão: Ir para a Garagem / Oficina */}
           <TouchableOpacity
-            onPress={() => router.push('/garagem')} // Rota para a tela Oficina/Garagem que criamos antes
-            style={{
-              padding: 8,
-              backgroundColor: 'rgba(0, 200, 83, 0.1)',
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: 'rgba(0, 200, 83, 0.3)',
-            }}
+            onPress={() => router.push('/(tabs)/garagem')}
+            style={inlineStyles.inline5}
           >
             <Settings2 size={18} color="#00C853" />
           </TouchableOpacity>

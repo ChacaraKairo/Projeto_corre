@@ -23,6 +23,8 @@ import { useGerenciarDados } from '../../hooks/configuracao/useGerenciarDados';
 import { showCustomAlert } from '../../hooks/alert/useCustomAlert';
 import { styles } from '../../styles/telas/Configuracoes/configuracoesStyles';
 
+import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/configuracoesInlineStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(tabs)/configuracoesDynamicStyles';
 // Importando os componentes
 import { SettingItem } from '../../components/telas/Configuracoes/SettingItem';
 import { HeaderConfiguracoes } from '../../components/telas/Configuracoes/HeaderConfiguracoes';
@@ -195,33 +197,25 @@ export default function ConfiguracoesScreen() {
               isDark={isDark}
               icon={HelpCircle}
               title="Central de Ajuda"
-              onClick={() => router.push('/suporte')}
+              onClick={() => router.push('/(tabs)/suporte')}
             />
             <SettingItem
               isDark={isDark}
               isLast={true}
               icon={FileText}
               title="Termos de Uso"
-              onClick={() => router.push('/termos')}
+              onClick={() => router.push('/(auth)/termos')}
             />
           </View>
         </View>
 
         <View
-          style={{
-            alignItems: 'center',
-            marginTop: 10,
-            marginBottom: 20,
-          }}
+          style={inlineStyles.inline1}
         >
           <Text
-            style={{
-              color: textMuted,
-              fontSize: 12,
-              fontWeight: 'bold',
-            }}
+            style={dynamicInlineStyles.inline1({ textMuted })}
           >
-            MEUCORRE v1.0.4
+            KORRE v1.2.0
           </Text>
         </View>
       </ScrollView>

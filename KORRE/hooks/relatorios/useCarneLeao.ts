@@ -103,7 +103,7 @@ export function useCarneLeao() {
     setPago(true);
     Alert.alert(
       'Sucesso',
-      'Pagamento registado no MeuCorre!',
+      'Pagamento registado no KORRE!',
     );
   }, []);
 

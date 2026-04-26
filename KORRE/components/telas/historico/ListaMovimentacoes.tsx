@@ -8,6 +8,7 @@ import {
 import { useTema } from '../../../hooks/modo_tema';
 import { styles } from '../../../styles/telas/Historico/historicoStyles';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/historico/ListaMovimentacoesInlineStyles';
 interface ListaProps {
   movimentacoes: any[];
   onSelect: (item: any) => void;
@@ -29,7 +30,7 @@ export function ListaMovimentacoes({
     return null;
 
   return (
-    <View style={{ paddingBottom: 20 }}>
+    <View style={inlineStyles.inline1}>
       {movimentacoes.map((item) => (
         <TouchableOpacity
           key={item.id}

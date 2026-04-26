@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { financeStyles as styles } from '../../../styles/telas/Finance/financeStyles';
 
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/finance/FinanceHeaderDynamicStyles';
 interface FinanceHeaderProps {
   tipo: string;
   mainColor: string;
@@ -20,7 +21,7 @@ export const FinanceHeader = ({
     <View style={styles.headerContainer}>
       <Text style={styles.headerTitle}>
         Anotar{' '}
-        <Text style={{ color: mainColor }}>
+        <Text style={dynamicInlineStyles.inline1({ mainColor })}>
           {tipo === 'ganho' ? 'Ganho' : 'Despesa'}
         </Text>
       </Text>

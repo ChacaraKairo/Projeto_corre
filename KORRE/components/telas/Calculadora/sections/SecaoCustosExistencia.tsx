@@ -11,12 +11,14 @@ import React, { memo, useState } from 'react';
 import {
   FlatList,
   Modal,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { useTema } from '../../../../hooks/modo_tema';
+import { palette } from '../../../../styles/tokens';
+import { secaoCustosExistenciaStyles as styles } from '../../../../styles/telas/Calculadora/sections/secaoCustosExistenciaStyles';
+import { sharedSectionStyles } from '../../../../styles/telas/Calculadora/sections/sharedSectionStyles';
 import {
   REGRAS_IPVA_ESTADOS,
   SiglaEstado,
@@ -66,7 +68,7 @@ export const SecaoCustosExistencia = memo(
       <>
         <AccordionSection
           title="Custos de Existência (Tempo)"
-          icon={<Landmark size={20} color="#00C853" />}
+          icon={<Landmark size={20} color={palette.brand} />}
           isComplete={isComplete}
           onHelpClick={() =>
             onHelp(
@@ -75,10 +77,10 @@ export const SecaoCustosExistencia = memo(
             )
           }
         >
-          <View style={{ gap: 12 }}>
+          <View style={sharedSectionStyles.fieldStack}>
             {/* 1. IMPOSTOS E TAXAS */}
             <View style={styles.row}>
-              <View style={{ flex: 1 }}>
+              <View style={sharedSectionStyles.flex1}>
                 <InputFinanceiro
                   label="IPVA Anual"
                   value={String(form.ipva_anual || '')}
@@ -86,7 +88,7 @@ export const SecaoCustosExistencia = memo(
                     onChange('ipva_anual', v)
                   }
                   placeholder="R$ 0,00"
-                  icon={<FileText size={18} color="#666" />}
+                  icon={<FileText size={18} color={palette.surface400} />}
                   suffix="R$"
                 />
               </View>
@@ -96,18 +98,18 @@ export const SecaoCustosExistencia = memo(
                   styles.autoButton,
                   {
                     backgroundColor: isDark
-                      ? '#1A1A1A'
-                      : '#F0F0F0',
+                      ? palette.surface750
+                      : palette.surface100,
                   },
                 ]}
                 activeOpacity={0.7}
                 onPress={() => setModalUFVisivel(true)}
               >
-                <MapPin size={16} color="#00C853" />
+                <MapPin size={16} color={palette.brand} />
                 <Text
                   style={[
                     styles.autoButtonText,
-                    { color: isDark ? '#FFF' : '#333' },
+                    { color: isDark ? palette.white : palette.surface600 },
                   ]}
                 >
                   CALCULAR ({form.estado_uf || 'SP'}) ▾
@@ -124,7 +126,7 @@ export const SecaoCustosExistencia = memo(
                 onChange('licenciamento_detran_anual', v)
               }
               placeholder="R$ 0,00"
-              icon={<FileText size={18} color="#666" />}
+              icon={<FileText size={18} color={palette.surface400} />}
               suffix="R$/Ano"
             />
 
@@ -138,7 +140,7 @@ export const SecaoCustosExistencia = memo(
                 onChange('seguro_comercial_anual', v)
               }
               placeholder="R$ 0,00"
-              icon={<Shield size={18} color="#666" />}
+              icon={<Shield size={18} color={palette.surface400} />}
               suffix="R$/Ano"
             />
 
@@ -149,7 +151,7 @@ export const SecaoCustosExistencia = memo(
                 onChange('plano_dados_mensal', v)
               }
               placeholder="R$ 0,00"
-              icon={<Wifi size={18} color="#666" />}
+              icon={<Wifi size={18} color={palette.surface400} />}
               suffix="R$/Mês"
             />
 
@@ -161,7 +163,7 @@ export const SecaoCustosExistencia = memo(
                 onChange('valor_smartphone', v)
               }
               placeholder="R$ 0,00"
-              icon={<Smartphone size={18} color="#666" />}
+              icon={<Smartphone size={18} color={palette.surface400} />}
               suffix="R$"
             />
 
@@ -174,7 +176,7 @@ export const SecaoCustosExistencia = memo(
                 onChange('vida_util_smartphone_meses', v)
               }
               placeholder="Ex: 24"
-              icon={<Landmark size={18} color="#666" />}
+              icon={<Landmark size={18} color={palette.surface400} />}
               suffix="Meses"
             />
           </View>
@@ -193,8 +195,8 @@ export const SecaoCustosExistencia = memo(
                 styles.modalContent,
                 {
                   backgroundColor: isDark
-                    ? '#1E1E1E'
-                    : '#FFF',
+                    ? palette.surface700
+                    : palette.white,
                 },
               ]}
             >
@@ -202,7 +204,7 @@ export const SecaoCustosExistencia = memo(
                 <Text
                   style={[
                     styles.modalTitle,
-                    { color: isDark ? '#FFF' : '#333' },
+                    { color: isDark ? palette.white : palette.surface600 },
                   ]}
                 >
                   Selecione o Estado
@@ -210,7 +212,7 @@ export const SecaoCustosExistencia = memo(
                 <TouchableOpacity
                   onPress={() => setModalUFVisivel(false)}
                 >
-                  <X size={24} color="#999" />
+                  <X size={24} color={palette.surface300} />
                 </TouchableOpacity>
               </View>
 
@@ -218,10 +220,7 @@ export const SecaoCustosExistencia = memo(
                 data={listaEstados}
                 keyExtractor={(item) => item}
                 numColumns={4}
-                columnWrapperStyle={{
-                  justifyContent: 'space-between',
-                  marginBottom: 12,
-                }}
+                columnWrapperStyle={styles.columnWrapper}
                 showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => (
                   <TouchableOpacity
@@ -230,10 +229,10 @@ export const SecaoCustosExistencia = memo(
                       {
                         backgroundColor:
                           form.estado_uf === item
-                            ? '#00C853'
+                            ? palette.brand
                             : isDark
-                              ? '#2C2C2C'
-                              : '#F5F5F5',
+                              ? palette.surface600
+                              : palette.surface100,
                       },
                     ]}
                     onPress={() => handleSelecionarUF(item)}
@@ -244,10 +243,10 @@ export const SecaoCustosExistencia = memo(
                         {
                           color:
                             form.estado_uf === item
-                              ? '#FFF'
+                              ? palette.white
                               : isDark
-                                ? '#CCC'
-                                : '#555',
+                                ? palette.surface200
+                                : palette.surface500,
                         },
                       ]}
                     >
@@ -264,62 +263,5 @@ export const SecaoCustosExistencia = memo(
   },
 );
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 8,
-  },
-  autoButton: {
-    height: 52,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    borderWidth: 1,
-    borderColor: '#00C853',
-    marginBottom: 0,
-  },
-  autoButtonText: {
-    fontSize: 11,
-    fontWeight: 'bold',
-  },
-  // Estilos do Modal
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalContent: {
-    width: '100%',
-    maxHeight: '70%',
-    borderRadius: 16,
-    padding: 20,
-    elevation: 5,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  ufButton: {
-    width: '22%', // Cabe 4 colunas com espacamento
-    aspectRatio: 1,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ufButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
+SecaoCustosExistencia.displayName =
+  'SecaoCustosExistencia';

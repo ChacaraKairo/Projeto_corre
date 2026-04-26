@@ -9,7 +9,7 @@ export const FooterLogin: React.FC = () => {
   return (
     <View style={styles.footer}>
       <Text style={styles.footerText}>
-        MeuCorre v1.0 • Dados Protegidos Localmente
+        KORRE v1.2.0 • Dados Protegidos Localmente
       </Text>
     </View>
   );

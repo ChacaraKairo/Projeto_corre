@@ -16,7 +16,9 @@ import { useRouter } from 'expo-router';
 
 import { useTema } from '../hooks/modo_tema';
 import { useNotificacoes } from '../hooks/notificacoes/useNotificacoes';
-import { styles } from '../styles/telas/Perfil/perfilStyles'; // Aproveitando os seus estilos base
+import { styles } from '../styles/telas/Perfil/perfilStyles'; import { inlineStyles } from '../styles/generated-inline/app/notificacoesInlineStyles';
+import { dynamicInlineStyles } from '../styles/generated-dynamic/app/notificacoesDynamicStyles';
+// Aproveitando os seus estilos base
 
 export default function NotificacoesScreen() {
   const router = useRouter();
@@ -50,19 +52,11 @@ export default function NotificacoesScreen() {
       {/* Header */}
       <View style={[styles.header, { paddingBottom: 10 }]}>
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 16,
-          }}
+          style={inlineStyles.inline1}
         >
           <TouchableOpacity
             onPress={() => router.back()}
-            style={{
-              padding: 8,
-              backgroundColor: isDark ? '#161616' : '#FFF',
-              borderRadius: 12,
-            }}
+            style={dynamicInlineStyles.inline1({ isDark })}
           >
             <ArrowLeft
               size={20}
@@ -70,18 +64,14 @@ export default function NotificacoesScreen() {
             />
           </TouchableOpacity>
           <Text
-            style={{
-              color: isDark ? '#FFF' : '#000',
-              fontSize: 20,
-              fontWeight: '900',
-            }}
+            style={dynamicInlineStyles.inline2({ isDark })}
           >
             Notificações
           </Text>
         </View>
         <TouchableOpacity
           onPress={limparHistorico}
-          style={{ padding: 8 }}
+          style={inlineStyles.inline2}
         >
           <Trash2 size={20} color="#F44336" />
         </TouchableOpacity>
@@ -96,34 +86,21 @@ export default function NotificacoesScreen() {
             'sucesso',
           )
         }
-        style={{
-          margin: 20,
-          padding: 16,
-          backgroundColor: '#00C853',
-          borderRadius: 16,
-          alignItems: 'center',
-        }}
+        style={inlineStyles.inline3}
       >
         <Text
-          style={{ color: '#0A0A0A', fontWeight: '900' }}
+          style={inlineStyles.inline4}
         >
           TESTAR NOTIFICAÇÃO 📲
         </Text>
       </TouchableOpacity>
 
       <ScrollView
-        contentContainerStyle={{
-          padding: 20,
-          paddingBottom: 100,
-        }}
+        contentContainerStyle={inlineStyles.listContent}
       >
         {notificacoes.length === 0 ? (
           <Text
-            style={{
-              color: '#666',
-              textAlign: 'center',
-              marginTop: 40,
-            }}
+            style={inlineStyles.inline5}
           >
             Nenhuma notificação no momento.
           </Text>
@@ -132,40 +109,21 @@ export default function NotificacoesScreen() {
             <TouchableOpacity
               key={notif.id}
               onPress={() => marcarComoLida(notif.id)}
-              style={{
-                flexDirection: 'row',
-                backgroundColor: isDark
-                  ? '#161616'
-                  : '#FFF',
-                padding: 16,
-                borderRadius: 16,
-                marginBottom: 12,
-                borderWidth: 1,
-                borderColor: isDark ? '#222' : '#E0E0E0',
-                opacity: notif.lida ? 0.6 : 1, // Fica mais transparente se já foi lida
-              }}
+              style={dynamicInlineStyles.inline3({ isDark, notif })}
             >
               <View
-                style={{ marginRight: 16, marginTop: 4 }}
+                style={inlineStyles.inline6}
               >
                 {getIcone(notif.tipo)}
               </View>
-              <View style={{ flex: 1 }}>
+              <View style={inlineStyles.inline7}>
                 <Text
-                  style={{
-                    color: isDark ? '#FFF' : '#000',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    marginBottom: 4,
-                  }}
+                  style={dynamicInlineStyles.inline4({ isDark })}
                 >
                   {notif.titulo}
                 </Text>
                 <Text
-                  style={{
-                    color: isDark ? '#888' : '#555',
-                    fontSize: 14,
-                  }}
+                  style={dynamicInlineStyles.inline5({ isDark })}
                 >
                   {notif.mensagem}
                 </Text>

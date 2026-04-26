@@ -127,7 +127,7 @@ export function useOrigemGanhos() {
         );
       }
 
-      router.replace('/(tabs)/dashboard' as any);
+      router.replace('/(tabs)/dashboard');
     } catch (error) {
       console.error(
         'Erro ao salvar as categorias financeiras: ',

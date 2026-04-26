@@ -18,6 +18,8 @@ import {
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
+import { inlineStyles } from '../../styles/generated-inline/app/relatorios/fluxo_caixaInlineStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/relatorios/fluxo_caixaDynamicStyles';
 // Hooks & Estilos
 import { useTema } from '../../hooks/modo_tema';
 import { useFluxoCaixa } from '../../hooks/relatorios/useFluxoCaixa';
@@ -79,7 +81,7 @@ export default function FluxoCaixaScreen() {
         >
           Fluxo de Caixa
         </Text>
-        <View style={{ width: 36 }} />
+        <View style={inlineStyles.inline1} />
       </View>
 
       <ScrollView
@@ -88,73 +90,28 @@ export default function FluxoCaixaScreen() {
       >
         {/* FILTROS DE VISÃO */}
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            marginBottom: 16,
-          }}
+          style={inlineStyles.inline2}
         >
           <TouchableOpacity
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 20,
-              backgroundColor:
-                tipoVisao === 'mensal'
-                  ? '#00C853'
-                  : cardColor,
-              marginRight: 8,
-              borderWidth: 1,
-              borderColor:
-                tipoVisao === 'mensal'
-                  ? '#00C853'
-                  : borderColor,
-            }}
+            style={dynamicInlineStyles.inline1({ tipoVisao, cardColor, borderColor })}
             onPress={() =>
               tipoVisao !== 'mensal' && toggleVisao()
             }
           >
             <Text
-              style={{
-                color:
-                  tipoVisao === 'mensal'
-                    ? '#0A0A0A'
-                    : textMuted,
-                fontWeight: 'bold',
-                fontSize: 12,
-              }}
+              style={dynamicInlineStyles.inline2({ tipoVisao, textMuted })}
             >
               Visão Mensal
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 20,
-              backgroundColor:
-                tipoVisao === 'semanal'
-                  ? '#00C853'
-                  : cardColor,
-              borderWidth: 1,
-              borderColor:
-                tipoVisao === 'semanal'
-                  ? '#00C853'
-                  : borderColor,
-            }}
+            style={dynamicInlineStyles.inline3({ tipoVisao, cardColor, borderColor })}
             onPress={() =>
               tipoVisao !== 'semanal' && toggleVisao()
             }
           >
             <Text
-              style={{
-                color:
-                  tipoVisao === 'semanal'
-                    ? '#0A0A0A'
-                    : textMuted,
-                fontWeight: 'bold',
-                fontSize: 12,
-              }}
+              style={dynamicInlineStyles.inline4({ tipoVisao, textMuted })}
             >
               Visão Semanal
             </Text>
@@ -189,7 +146,7 @@ export default function FluxoCaixaScreen() {
           <ActivityIndicator
             size="large"
             color="#00C853"
-            style={{ marginTop: 50 }}
+            style={inlineStyles.inline3}
           />
         ) : (
           <>
@@ -337,16 +294,10 @@ export default function FluxoCaixaScreen() {
 
             {registosDiarios.length === 0 ? (
               <View
-                style={{
-                  padding: 20,
-                  alignItems: 'center',
-                }}
+                style={inlineStyles.inline4}
               >
                 <Text
-                  style={{
-                    color: textMuted,
-                    textAlign: 'center',
-                  }}
+                  style={dynamicInlineStyles.inline5({ textMuted })}
                 >
                   Nenhum registo encontrado neste período.
                 </Text>

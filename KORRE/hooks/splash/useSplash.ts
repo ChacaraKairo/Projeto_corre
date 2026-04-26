@@ -21,8 +21,8 @@ export const useSplash = () => {
         );
         router.replace(
           usuarioExistente
-            ? ('/login' as any)
-            : ('/cadastro' as any),
+            ? '/(auth)/login'
+            : '/(auth)/cadastro',
         );
       } catch (error) {
         console.error(

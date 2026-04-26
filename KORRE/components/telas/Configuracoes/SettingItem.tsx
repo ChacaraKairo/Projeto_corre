@@ -8,6 +8,7 @@ import {
 import { ChevronRight } from 'lucide-react-native';
 import { styles } from '../../../styles/telas/Configuracoes/configuracoesStyles';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Configuracoes/SettingItemInlineStyles';
 interface Props {
   icon: any; // O componente Lucide icon
   title: string;
@@ -61,7 +62,7 @@ export const SettingItem = ({
         >
           <Icon size={20} color="#00C853" />
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={inlineStyles.inline1}>
           <Text
             style={[styles.itemTitle, { color: textColor }]}
           >

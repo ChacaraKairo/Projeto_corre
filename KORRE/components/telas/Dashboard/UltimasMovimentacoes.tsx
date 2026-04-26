@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashboardStyles';
 import { useTema } from '../../../hooks/modo_tema';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Dashboard/UltimasMovimentacoesInlineStyles';
 interface Movimentacao {
   id: number;
   tipo: 'ganho' | 'despesa';
@@ -27,20 +28,12 @@ export const UltimasMovimentacoes = ({
   const router = useRouter();
 
   return (
-    <View style={{ marginTop: 24, paddingBottom: 100 }}>
+    <View style={inlineStyles.inline1}>
       <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginBottom: 16,
-        }}
+        style={inlineStyles.inline2}
       >
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-          }}
+          style={inlineStyles.inline3}
         >
           <Clock size={16} color="#00C853" />
           <Text
@@ -54,7 +47,7 @@ export const UltimasMovimentacoes = ({
         </View>
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => router.push('/historico')}
+          onPress={() => router.push('/(tabs)/historico')}
         >
           <Text style={styles.btnVerTudo}>Ver Tudo</Text>
         </TouchableOpacity>
@@ -86,11 +79,7 @@ export const UltimasMovimentacoes = ({
               ]}
             >
               <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 12,
-                }}
+                style={inlineStyles.inline4}
               >
                 <View
                   style={[

@@ -60,9 +60,9 @@ export default function DashboardScreen() {
   const onPressConfig = () =>
     router.push('/(tabs)/configuracoes' as any);
   const onTrocarVeiculo = () =>
-    router.push('/(tabs)/garagem' as any);
+    router.push('/(tabs)/garagem');
   const onIrParaOficina = () =>
-    router.push('/(tabs)/oficina' as any);
+    router.push('/(tabs)/oficina');
   const abrirCalculadora = () =>
     router.push('/calculadora' as any);
 
@@ -109,7 +109,7 @@ export default function DashboardScreen() {
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={styles.scrollContent}
       >
         {/* Organism: Status do Veículo Ativo */}
         <VeiculoCard

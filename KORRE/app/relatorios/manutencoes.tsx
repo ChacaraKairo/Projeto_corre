@@ -22,6 +22,8 @@ import {
 import { useRouter } from 'expo-router';
 import ViewShot from 'react-native-view-shot';
 
+import { inlineStyles } from '../../styles/generated-inline/app/relatorios/manutencoesInlineStyles';
+import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/relatorios/manutencoesDynamicStyles';
 // Hooks & Estilos
 import { useTema } from '../../hooks/modo_tema';
 import { useManutencoesReport } from '../../hooks/relatorios/useManutencoesReport';
@@ -118,11 +120,7 @@ export default function ManutencoesReportScreen() {
             onPress={() => setModalFiltroVeiculo(true)}
           >
             <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 8,
-              }}
+              style={inlineStyles.inline1}
             >
               <CarFront size={18} color={textMuted} />
               <Text
@@ -135,11 +133,7 @@ export default function ManutencoesReportScreen() {
               </Text>
             </View>
             <Text
-              style={{
-                color: '#00C853',
-                fontSize: 12,
-                fontWeight: 'bold',
-              }}
+              style={inlineStyles.inline2}
             >
               Trocar
             </Text>
@@ -153,11 +147,7 @@ export default function ManutencoesReportScreen() {
             onPress={() => setModalFiltroPeriodo(true)}
           >
             <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 8,
-              }}
+              style={inlineStyles.inline3}
             >
               <Calendar size={18} color={textMuted} />
               <Text
@@ -170,11 +160,7 @@ export default function ManutencoesReportScreen() {
               </Text>
             </View>
             <Text
-              style={{
-                color: '#00C853',
-                fontSize: 12,
-                fontWeight: 'bold',
-              }}
+              style={inlineStyles.inline4}
             >
               Trocar
             </Text>
@@ -183,10 +169,7 @@ export default function ManutencoesReportScreen() {
 
         {/* === MAIN CONTENT === */}
         <View
-          style={{
-            backgroundColor: bgColor,
-            paddingVertical: 10,
-          }}
+          style={dynamicInlineStyles.inline1({ bgColor })}
         >
           {/* RESUMO TOTAL */}
           <View
@@ -231,13 +214,10 @@ export default function ManutencoesReportScreen() {
 
           {dadosAgrupados.length === 0 ? (
             <View
-              style={{ padding: 20, alignItems: 'center' }}
+              style={inlineStyles.inline5}
             >
               <Text
-                style={{
-                  color: textMuted,
-                  textAlign: 'center',
-                }}
+                style={dynamicInlineStyles.inline2({ textMuted })}
               >
                 Nenhum serviço registado para este veículo.
               </Text>
@@ -269,10 +249,7 @@ export default function ManutencoesReportScreen() {
 
                 <View style={styles.itemContent}>
                   <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}
+                    style={inlineStyles.inline6}
                   >
                     <Text
                       style={[
@@ -371,11 +348,7 @@ export default function ManutencoesReportScreen() {
                   Modo Privacidade
                 </Text>
                 <Text
-                  style={{
-                    color: textMuted,
-                    fontSize: 12,
-                    marginTop: 2,
-                  }}
+                  style={dynamicInlineStyles.inline3({ textMuted })}
                 >
                   Esconde os preços (ex: R$ ***)
                 </Text>
@@ -441,10 +414,7 @@ export default function ManutencoesReportScreen() {
               onPress={() => setModalShare(false)}
             >
               <Text
-                style={{
-                  color: textMuted,
-                  fontWeight: 'bold',
-                }}
+                style={dynamicInlineStyles.inline4({ textMuted })}
               >
                 Cancelar
               </Text>
@@ -508,10 +478,7 @@ export default function ManutencoesReportScreen() {
               onPress={() => setModalFiltroVeiculo(false)}
             >
               <Text
-                style={{
-                  color: textMuted,
-                  fontWeight: 'bold',
-                }}
+                style={dynamicInlineStyles.inline5({ textMuted })}
               >
                 Cancelar
               </Text>
@@ -575,10 +542,7 @@ export default function ManutencoesReportScreen() {
               onPress={() => setModalFiltroPeriodo(false)}
             >
               <Text
-                style={{
-                  color: textMuted,
-                  fontWeight: 'bold',
-                }}
+                style={dynamicInlineStyles.inline6({ textMuted })}
               >
                 Cancelar
               </Text>
@@ -594,107 +558,57 @@ export default function ManutencoesReportScreen() {
         animationType="fade"
       >
         <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.85)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
+          style={inlineStyles.inline7}
         >
           <ActivityIndicator
             size="large"
             color="#00C853"
-            style={{ marginBottom: 20 }}
+            style={inlineStyles.inline8}
           />
           <Text
-            style={{ color: '#FFF', fontWeight: 'bold' }}
+            style={inlineStyles.inline9}
           >
             Preparando o teu relatório...
           </Text>
 
           {/* ViewShot posicionado de forma oculta para não poluir a tela do usuário */}
           <View
-            style={{
-              position: 'absolute',
-              // Jogamos o modal para fora da tela em vez de opacity 0.
-              // Isso garante que o motor do Android desenhe as Logos perfeitamente!
-              left: -10000,
-              top: -10000,
-            }}
+            style={dynamicInlineStyles.inline7({})}
           >
             <ViewShot
               ref={viewShotRef}
               options={{ format: 'png', quality: 1 }}
-              style={{
-                width: 400,
-                backgroundColor:
-                  layoutParaPrint === 'mecanico'
-                    ? '#FFFFFF'
-                    : '#0A0A0A',
-                padding: 32,
-              }}
+              style={dynamicInlineStyles.inline8({ layoutParaPrint })}
             >
               {/* LAYOUT REDES SOCIAIS */}
               {layoutParaPrint === 'social' && (
-                <View style={{ gap: 20 }}>
-                  <View style={{ alignItems: 'center' }}>
+                <View style={inlineStyles.inline10}>
+                  <View style={inlineStyles.inline11}>
                     <Image
                       source={require('../../assets/images/android-icon-monochrome.png')}
-                      style={{
-                        width: 180,
-                        height: 60,
-                        resizeMode: 'contain',
-                        tintColor: '#00C853',
-                      }}
+                      style={inlineStyles.inline12}
                     />
                     <Text
-                      style={{
-                        color: '#FFF',
-                        fontSize: 16,
-                        textTransform: 'uppercase',
-                        letterSpacing: 3,
-                        marginTop: 4,
-                      }}
+                      style={inlineStyles.inline13}
                     >
                       Relatório de Cuidados
                     </Text>
                   </View>
 
                   <View
-                    style={{
-                      backgroundColor: '#161616',
-                      padding: 24,
-                      borderRadius: 20,
-                      alignItems: 'center',
-                      borderWidth: 1,
-                      borderColor: '#333',
-                    }}
+                    style={inlineStyles.inline14}
                   >
                     <Text
-                      style={{
-                        color: '#00C853',
-                        fontSize: 26,
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                      }}
+                      style={inlineStyles.inline15}
                     >
                       Motorista de Excelência!
                     </Text>
                     <Text
-                      style={{
-                        color: '#AAA',
-                        fontSize: 16,
-                        textAlign: 'center',
-                        marginTop: 12,
-                        lineHeight: 24,
-                      }}
+                      style={inlineStyles.inline16}
                     >
                       O veículo{' '}
                       <Text
-                        style={{
-                          color: '#FFF',
-                          fontWeight: 'bold',
-                        }}
+                        style={inlineStyles.inline17}
                       >
                         {veiculoSelecionado}
                       </Text>{' '}
@@ -703,71 +617,32 @@ export default function ManutencoesReportScreen() {
                   </View>
 
                   <View
-                    style={{
-                      flexDirection: 'row',
-                      gap: 12,
-                    }}
+                    style={inlineStyles.inline18}
                   >
                     <View
-                      style={{
-                        flex: 1,
-                        backgroundColor: '#161616',
-                        padding: 20,
-                        borderRadius: 20,
-                        borderWidth: 1,
-                        borderColor: '#333',
-                        alignItems: 'center',
-                      }}
+                      style={inlineStyles.inline19}
                     >
                       <Text
-                        style={{
-                          color: '#888',
-                          fontSize: 14,
-                          textTransform: 'uppercase',
-                          fontWeight: 'bold',
-                        }}
+                        style={inlineStyles.inline20}
                       >
                         Investimento
                       </Text>
                       <Text
-                        style={{
-                          color: '#FFF',
-                          fontSize: 24,
-                          fontWeight: '900',
-                          marginTop: 8,
-                        }}
+                        style={inlineStyles.inline21}
                       >
                         {formatarMoeda(totalGasto)}
                       </Text>
                     </View>
                     <View
-                      style={{
-                        flex: 1,
-                        backgroundColor: '#161616',
-                        padding: 20,
-                        borderRadius: 20,
-                        borderWidth: 1,
-                        borderColor: '#333',
-                        alignItems: 'center',
-                      }}
+                      style={inlineStyles.inline22}
                     >
                       <Text
-                        style={{
-                          color: '#888',
-                          fontSize: 14,
-                          textTransform: 'uppercase',
-                          fontWeight: 'bold',
-                        }}
+                        style={inlineStyles.inline23}
                       >
                         Serviços Feitos
                       </Text>
                       <Text
-                        style={{
-                          color: '#00C853',
-                          fontSize: 24,
-                          fontWeight: '900',
-                          marginTop: 8,
-                        }}
+                        style={inlineStyles.inline24}
                       >
                         {totalServicos}
                       </Text>
@@ -775,21 +650,10 @@ export default function ManutencoesReportScreen() {
                   </View>
 
                   <View
-                    style={{
-                      backgroundColor: '#161616',
-                      padding: 20,
-                      borderRadius: 20,
-                      borderWidth: 1,
-                      borderColor: '#333',
-                    }}
+                    style={inlineStyles.inline25}
                   >
                     <Text
-                      style={{
-                        color: '#FFF',
-                        fontWeight: '900',
-                        marginBottom: 16,
-                        fontSize: 16,
-                      }}
+                      style={inlineStyles.inline26}
                     >
                       Últimos Cuidados Realizados:
                     </Text>
@@ -798,40 +662,23 @@ export default function ManutencoesReportScreen() {
                       .map((item) => (
                         <View
                           key={item.id}
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginBottom: 12,
-                          }}
+                          style={inlineStyles.inline27}
                         >
                           <Wrench
                             size={16}
                             color="#00C853"
-                            style={{ marginRight: 12 }}
+                            style={inlineStyles.inline28}
                           />
                           <Text
-                            style={{
-                              color: '#DDD',
-                              flex: 1,
-                              fontSize: 16,
-                            }}
+                            style={inlineStyles.inline29}
                           >
                             {item.nome}
                           </Text>
                           <View
-                            style={{
-                              backgroundColor:
-                                'rgba(0,200,83,0.1)',
-                              paddingHorizontal: 10,
-                              paddingVertical: 4,
-                              borderRadius: 8,
-                            }}
+                            style={inlineStyles.inline30}
                           >
                             <Text
-                              style={{
-                                color: '#00C853',
-                                fontWeight: '900',
-                              }}
+                              style={inlineStyles.inline31}
                             >
                               {item.quantidade}x
                             </Text>
@@ -841,22 +688,12 @@ export default function ManutencoesReportScreen() {
                   </View>
 
                   <View
-                    style={{
-                      alignItems: 'center',
-                      marginTop: 12,
-                      borderTopWidth: 1,
-                      borderTopColor: '#222',
-                      paddingTop: 20,
-                    }}
+                    style={inlineStyles.inline32}
                   >
                     <Text
-                      style={{
-                        color: '#555',
-                        fontSize: 12,
-                        fontWeight: 'bold',
-                      }}
+                      style={inlineStyles.inline33}
                     >
-                      BAIXE O APP MEUCORRE E TENHA O
+                      BAIXE O APP KORRE E TENHA O
                       CONTROLO DA TUA MÁQUINA
                     </Text>
                   </View>
@@ -865,56 +702,31 @@ export default function ManutencoesReportScreen() {
 
               {/* LAYOUT PLANILHA PARA MECÂNICO */}
               {layoutParaPrint === 'mecanico' && (
-                <View style={{ gap: 20 }}>
+                <View style={inlineStyles.inline34}>
                   <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      borderBottomWidth: 3,
-                      borderBottomColor: '#000',
-                      paddingBottom: 20,
-                    }}
+                    style={inlineStyles.inline35}
                   >
                     <View>
                       <Image
                         source={require('../../assets/images/android-icon-monochrome.png')}
-                        style={{
-                          width: 140,
-                          height: 45,
-                          resizeMode: 'contain',
-                          tintColor: '#000000',
-                        }}
+                        style={inlineStyles.inline36}
                       />
                       <Text
-                        style={{
-                          color: '#555',
-                          fontSize: 14,
-                          fontWeight: 'bold',
-                          textTransform: 'uppercase',
-                        }}
+                        style={inlineStyles.inline37}
                       >
                         Ficha Técnica de Oficina
                       </Text>
                     </View>
                     <View
-                      style={{ alignItems: 'flex-end' }}
+                      style={inlineStyles.inline38}
                     >
                       <Text
-                        style={{
-                          color: '#000',
-                          fontWeight: '900',
-                          fontSize: 18,
-                        }}
+                        style={inlineStyles.inline39}
                       >
                         {veiculoSelecionado}
                       </Text>
                       <Text
-                        style={{
-                          color: '#555',
-                          fontSize: 12,
-                          marginTop: 4,
-                        }}
+                        style={inlineStyles.inline40}
                       >
                         Período: {periodo}
                       </Text>
@@ -922,32 +734,18 @@ export default function ManutencoesReportScreen() {
                   </View>
 
                   <View
-                    style={{
-                      backgroundColor: '#F5F5F5',
-                      padding: 16,
-                      borderRadius: 12,
-                      borderWidth: 1,
-                      borderColor: '#EEE',
-                    }}
+                    style={inlineStyles.inline41}
                   >
                     <Text
-                      style={{
-                        color: '#000',
-                        fontWeight: '900',
-                        fontSize: 16,
-                        marginBottom: 4,
-                      }}
+                      style={inlineStyles.inline42}
                     >
                       Resumo do Histórico:
                     </Text>
                     <Text
-                      style={{
-                        color: '#333',
-                        fontSize: 14,
-                      }}
+                      style={inlineStyles.inline43}
                     >
                       Foram registados{' '}
-                      <Text style={{ fontWeight: 'bold' }}>
+                      <Text style={inlineStyles.inline44}>
                         {totalServicos} procedimentos
                       </Text>{' '}
                       de manutenção para este veículo no
@@ -955,45 +753,22 @@ export default function ManutencoesReportScreen() {
                     </Text>
                   </View>
 
-                  <View style={{ marginTop: 8 }}>
+                  <View style={inlineStyles.inline45}>
                     <View
-                      style={{
-                        flexDirection: 'row',
-                        backgroundColor: '#000',
-                        padding: 12,
-                        borderRadius: 8,
-                        marginBottom: 8,
-                      }}
+                      style={inlineStyles.inline46}
                     >
                       <Text
-                        style={{
-                          flex: 2,
-                          fontWeight: 'bold',
-                          color: '#FFF',
-                          fontSize: 14,
-                        }}
+                        style={inlineStyles.inline47}
                       >
                         Serviço Realizado
                       </Text>
                       <Text
-                        style={{
-                          flex: 1.5,
-                          fontWeight: 'bold',
-                          color: '#FFF',
-                          textAlign: 'center',
-                          fontSize: 14,
-                        }}
+                        style={inlineStyles.inline48}
                       >
                         Última Troca
                       </Text>
                       <Text
-                        style={{
-                          flex: 1,
-                          fontWeight: 'bold',
-                          color: '#FFF',
-                          textAlign: 'center',
-                          fontSize: 14,
-                        }}
+                        style={inlineStyles.inline49}
                       >
                         Frequência
                       </Text>
@@ -1002,47 +777,20 @@ export default function ManutencoesReportScreen() {
                     {dadosAgrupados.map((item, index) => (
                       <View
                         key={item.id}
-                        style={{
-                          flexDirection: 'row',
-                          paddingVertical: 12,
-                          paddingHorizontal: 12,
-                          backgroundColor:
-                            index % 2 === 0
-                              ? '#FFF'
-                              : '#F9F9F9',
-                          borderBottomWidth: 1,
-                          borderBottomColor: '#EEE',
-                          alignItems: 'center',
-                        }}
+                        style={dynamicInlineStyles.inline9({ index })}
                       >
                         <Text
-                          style={{
-                            flex: 2,
-                            color: '#000',
-                            fontSize: 14,
-                            fontWeight: '500',
-                          }}
+                          style={inlineStyles.inline50}
                         >
                           {item.nome}
                         </Text>
                         <Text
-                          style={{
-                            flex: 1.5,
-                            color: '#555',
-                            textAlign: 'center',
-                            fontSize: 12,
-                          }}
+                          style={inlineStyles.inline51}
                         >
                           {item.ultimaData}
                         </Text>
                         <Text
-                          style={{
-                            flex: 1,
-                            color: '#000',
-                            textAlign: 'center',
-                            fontWeight: '900',
-                            fontSize: 14,
-                          }}
+                          style={inlineStyles.inline52}
                         >
                           {item.quantidade}
                         </Text>
@@ -1051,23 +799,13 @@ export default function ManutencoesReportScreen() {
                   </View>
 
                   <View
-                    style={{
-                      marginTop: 40,
-                      borderTopWidth: 1,
-                      borderTopColor: '#CCC',
-                      paddingTop: 20,
-                      alignItems: 'center',
-                    }}
+                    style={inlineStyles.inline53}
                   >
                     <Text
-                      style={{
-                        color: '#888',
-                        fontSize: 10,
-                        fontWeight: 'bold',
-                      }}
+                      style={inlineStyles.inline54}
                     >
                       DOCUMENTO GERADO DE FORMA AUTOMÁTICA
-                      PELO APLICATIVO MEUCORRE
+                      PELO APLICATIVO KORRE
                     </Text>
                   </View>
                 </View>

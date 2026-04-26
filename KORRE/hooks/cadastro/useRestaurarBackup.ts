@@ -5,13 +5,17 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert'; // Verifique se o caminho está correto
+import {
+  BACKUP_TABLES,
+  BackupTable,
+  sanitizeBackupRow,
+} from '../../constants/backupSchema';
 
 export function useRestaurarBackup() {
   const router = useRouter();
   const [carregando, setCarregando] = useState(false);
 
   const executarRestauracao = async (data: any) => {
-    console.log('[RESTORE] Iniciando processo...');
     setCarregando(true);
 
     const tabelas_data = data.tabelas ? data.tabelas : data;
@@ -20,18 +24,7 @@ export function useRestaurarBackup() {
       await db.execAsync('PRAGMA foreign_keys = OFF;');
       await db.execAsync('BEGIN TRANSACTION;');
 
-      const ordem = [
-        'perfil_usuario',
-        'veiculos',
-        'parametros_financeiros',
-        'categorias_financeiras',
-        'transacoes_financeiras',
-        'itens_manutencao',
-        'historico_manutencao',
-        'notificacoes',
-      ];
-
-      for (const tabela of ordem) {
+      for (const tabela of BACKUP_TABLES) {
         await db.execAsync(`DELETE FROM ${tabela};`);
         const rows = tabelas_data[tabela];
 
@@ -40,17 +33,23 @@ export function useRestaurarBackup() {
           Array.isArray(rows) &&
           rows.length > 0
         ) {
-          const colunas = Object.keys(rows[0]);
-          const placeholders = colunas
-            .map(() => '?')
-            .join(', ');
-          const colunasStr = colunas.join(', ');
-
           for (const row of rows) {
-            const valores = colunas.map((col) => row[col]);
+            const { columns: colunas, values } =
+              sanitizeBackupRow(
+                tabela as BackupTable,
+                row as Record<string, unknown>,
+              );
+
+            if (colunas.length === 0) continue;
+
+            const placeholders = colunas
+              .map(() => '?')
+              .join(', ');
+            const colunasStr = colunas.join(', ');
+
             await db.runAsync(
               `INSERT OR REPLACE INTO ${tabela} (${colunasStr}) VALUES (${placeholders})`,
-              valores,
+              values,
             );
           }
         }
@@ -91,53 +90,31 @@ export function useRestaurarBackup() {
 
   const selecionarArquivo = async () => {
     try {
-      console.log('[PICKER] Abrindo seletor...');
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/json',
         copyToCacheDirectory: true, // OBRIGATÓRIO para garantir acesso ao arquivo
       });
 
       if (result.canceled || !result.assets) {
-        console.log(
-          '[PICKER] Seleção cancelada pelo usuário.',
-        );
         return;
       }
 
       const asset = result.assets[0];
-      console.log(
-        '[PICKER] Arquivo detectado:',
-        asset.name,
-      );
-      console.log('[PICKER] URI do arquivo:', asset.uri);
 
       // Tenta ler o conteúdo
-      console.log('[PICKER] Tentando ler conteúdo...');
       const conteudo = await FileSystem.readAsStringAsync(
         asset.uri,
       );
 
       if (!conteudo) {
-        console.log(
-          '[PICKER] ERRO: Conteúdo do arquivo veio vazio.',
-        );
         return;
       }
-      console.log(
-        '[PICKER] Leitura concluída. Tamanho:',
-        conteudo.length,
-      );
 
       // Tenta converter para JSON
-      console.log('[PICKER] Fazendo Parse do JSON...');
       const dados = JSON.parse(conteudo);
-      console.log('[PICKER] Parse realizado com sucesso.');
 
       // Dispara o Alerta (com um pequeno delay para não conflitar com o fechar do picker)
       setTimeout(() => {
-        console.log(
-          '[PICKER] Disparando showCustomAlert...',
-        );
         showCustomAlert(
           'Restaurar Dados',
           `Deseja importar o backup "${asset.name}"?`,
@@ -146,7 +123,6 @@ export function useRestaurarBackup() {
             {
               text: 'Sim, Restaurar',
               onPress: () => {
-                console.log('[ALERT] Botão Sim clicado.');
                 executarRestauracao(dados);
               },
             },

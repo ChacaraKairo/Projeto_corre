@@ -9,6 +9,7 @@ import { HelpCircle } from 'lucide-react-native';
 import { styles } from '../../../../styles/telas/Calculadora/calculadoraStyles';
 import { useTema } from '../../../../hooks/modo_tema';
 
+import { inlineStyles } from '../../../../styles/generated-inline/components/telas/Calculadora/ui/InputFinanceiroInlineStyles';
 interface Props {
   label: string;
   value: string;
@@ -41,12 +42,7 @@ export const InputFinanceiro = ({
   return (
     <View style={styles.inputWrapper}>
       <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 8,
-        }}
+        style={inlineStyles.inline1}
       >
         <Text
           style={[
@@ -60,7 +56,7 @@ export const InputFinanceiro = ({
           <TouchableOpacity
             onPress={onHelp}
             activeOpacity={0.6}
-            style={{ padding: 2 }}
+            style={inlineStyles.inline2}
           >
             <HelpCircle size={14} color={textMuted} />
           </TouchableOpacity>

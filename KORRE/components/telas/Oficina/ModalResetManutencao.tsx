@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -14,6 +13,8 @@ import { X, Check } from 'lucide-react-native';
 import { useTema } from '../../../hooks/modo_tema';
 import { IconeServico } from './ItemManutencaoCard';
 
+import { styles } from '../../../styles/generated/components/telas/Oficina/ModalResetManutencaoStyles';
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Oficina/ModalResetManutencaoInlineStyles';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -128,7 +129,7 @@ export const ModalResetManutencao = ({
       onRequestClose={onClose}
     >
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={inlineStyles.inline1}
         behavior={
           Platform.OS === 'ios' ? 'padding' : undefined
         }
@@ -176,10 +177,7 @@ export const ModalResetManutencao = ({
               showsVerticalScrollIndicator={false}
             >
               <View
-                style={{
-                  alignItems: 'center',
-                  marginBottom: 20,
-                }}
+                style={inlineStyles.inline2}
               >
                 <View
                   style={[
@@ -207,13 +205,9 @@ export const ModalResetManutencao = ({
               </View>
 
               <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 12,
-                  marginBottom: 16,
-                }}
+                style={inlineStyles.inline3}
               >
-                <View style={{ flex: 1 }}>
+                <View style={inlineStyles.inline4}>
                   <Text
                     style={[
                       styles.label,
@@ -242,7 +236,7 @@ export const ModalResetManutencao = ({
                     </Text>
                   </View>
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={inlineStyles.inline5}>
                   <Text
                     style={[
                       styles.label,
@@ -275,23 +269,10 @@ export const ModalResetManutencao = ({
 
               {isVirtual && (
                 <View
-                  style={{
-                    marginBottom: 16,
-                    padding: 12,
-                    backgroundColor:
-                      'rgba(255, 193, 7, 0.1)',
-                    borderRadius: 12,
-                    borderWidth: 1,
-                    borderColor: 'rgba(255, 193, 7, 0.3)',
-                  }}
+                  style={inlineStyles.inline6}
                 >
                   <Text
-                    style={{
-                      color: '#FFC107',
-                      fontSize: 12,
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                    }}
+                    style={inlineStyles.inline7}
                   >
                     Primeira Vez: Confere os intervalos
                     desta manutenção para a tua máquina.
@@ -301,13 +282,9 @@ export const ModalResetManutencao = ({
               )}
 
               <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 12,
-                  marginBottom: 16,
-                }}
+                style={inlineStyles.inline8}
               >
-                <View style={{ flex: 1 }}>
+                <View style={inlineStyles.inline9}>
                   <Text
                     style={[
                       styles.label,
@@ -340,7 +317,7 @@ export const ModalResetManutencao = ({
                     keyboardType="numeric"
                   />
                 </View>
-                <View style={{ flex: 1 }}>
+                <View style={inlineStyles.inline10}>
                   <Text
                     style={[
                       styles.label,
@@ -406,13 +383,7 @@ export const ModalResetManutencao = ({
               />
               {ultimoValor > 0 && (
                 <Text
-                  style={{
-                    fontSize: 12,
-                    color: '#888',
-                    marginTop: 8,
-                    fontStyle: 'italic',
-                    textAlign: 'center',
-                  }}
+                  style={inlineStyles.inline11}
                 >
                   Último valor pago: R${' '}
                   {ultimoValor.toFixed(2).replace('.', ',')}
@@ -440,75 +411,4 @@ export const ModalResetManutencao = ({
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'flex-end',
-  },
-  modalContainer: {
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    padding: 24,
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    maxHeight: '90%',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  title: { fontSize: 20, fontWeight: '900' },
-  closeBtn: { padding: 8, borderRadius: 12 },
-  iconWrap: {
-    padding: 16,
-    borderRadius: 999,
-    marginBottom: 12,
-  },
-  itemNome: { fontSize: 18, fontWeight: 'bold' },
-  label: {
-    fontSize: 10,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-    marginBottom: 8,
-  },
-  readOnlyBox: {
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  readOnlyText: {
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 16,
-    fontSize: 20,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  btnSave: {
-    backgroundColor: '#00C853',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 16,
-    gap: 8,
-    marginBottom: 20,
-  },
-  btnSaveText: {
-    color: '#0A0A0A',
-    fontWeight: '900',
-    fontSize: 14,
-    letterSpacing: 1,
-  },
-});
+

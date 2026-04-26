@@ -19,6 +19,8 @@ import {
   TipoVeiculo,
 } from '../../../type/typeVeiculos';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Garagem/CardVeiculoGaragemInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Garagem/CardVeiculoGaragemDynamicStyles';
 interface Props {
   v: any;
   onAtivar: (v: any) => void;
@@ -70,11 +72,7 @@ export const CardVeiculoGaragem = ({
         {/* Cabeçalho do Card */}
         <View style={styles.cardHeaderInfo}>
           <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 12,
-            }}
+            style={inlineStyles.inline1}
           >
             <View
               style={[
@@ -99,12 +97,7 @@ export const CardVeiculoGaragem = ({
             </View>
             <View>
               <Text
-                style={{
-                  color: isAtivo ? '#00C853' : '#666',
-                  fontSize: 10,
-                  fontWeight: '700',
-                  textTransform: 'uppercase',
-                }}
+                style={dynamicInlineStyles.inline1({ isAtivo })}
               >
                 {v.marca || 'Marca n/d'}
               </Text>
@@ -124,18 +117,13 @@ export const CardVeiculoGaragem = ({
               >
                 {v.modelo}{' '}
                 <Text
-                  style={{ fontSize: 12, color: '#666' }}
+                  style={inlineStyles.inline2}
                 >
                   • {v.motor}
                 </Text>
               </Text>
               <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 6,
-                  marginTop: 2,
-                }}
+                style={inlineStyles.inline3}
               >
                 <Text
                   style={[
@@ -146,20 +134,16 @@ export const CardVeiculoGaragem = ({
                   {v.placa}
                 </Text>
                 <Text
-                  style={{ color: '#444', fontSize: 12 }}
+                  style={inlineStyles.inline4}
                 >
                   |
                 </Text>
                 <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 4,
-                  }}
+                  style={inlineStyles.inline5}
                 >
                   <Calendar size={12} color="#666" />
                   <Text
-                    style={{ color: '#666', fontSize: 12 }}
+                    style={inlineStyles.inline6}
                   >
                     {v.ano}
                   </Text>
@@ -198,7 +182,7 @@ export const CardVeiculoGaragem = ({
               ]}
             >
               {v.km_atual?.toLocaleString() || '0'}{' '}
-              <Text style={{ fontSize: 10, color: '#666' }}>
+              <Text style={inlineStyles.inline7}>
                 km
               </Text>
             </Text>
@@ -233,30 +217,18 @@ export const CardVeiculoGaragem = ({
 
         {/* Status de Saúde */}
         <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 6,
-            marginTop: 12,
-            marginBottom: 16,
-          }}
+          style={inlineStyles.inline8}
         >
           <AlertCircle
             size={14}
             color={isAtivo ? '#00C853' : '#444'}
           />
           <Text
-            style={{
-              color: isDark ? '#666' : '#888',
-              fontSize: 12,
-            }}
+            style={dynamicInlineStyles.inline2({ isDark })}
           >
             Status:{' '}
             <Text
-              style={{
-                color: isAtivo ? '#00C853' : '#666',
-                fontWeight: 'bold',
-              }}
+              style={dynamicInlineStyles.inline3({ isAtivo })}
             >
               {isAtivo
                 ? 'Excelente (Operacional)'
@@ -289,7 +261,7 @@ export const CardVeiculoGaragem = ({
           ) : (
             <TouchableOpacity
               style={styles.btnGerir}
-              onPress={() => router.push('/oficina')}
+              onPress={() => router.push('/(tabs)/oficina')}
               activeOpacity={0.8}
             >
               <Settings2 size={18} color="#0A0A0A" />

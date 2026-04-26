@@ -5,8 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
-  StyleSheet,
-  KeyboardAvoidingView,
+    KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import {

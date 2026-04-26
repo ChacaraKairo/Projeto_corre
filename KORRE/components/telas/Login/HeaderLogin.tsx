@@ -27,7 +27,7 @@ export const HeaderLogin: React.FC<HeaderLoginProps> = ({
           strokeWidth={2.5}
         />
       </Animated.View>
-      <Text style={styles.titulo}>MeuCorre</Text>
+      <Text style={styles.titulo}>KORRE</Text>
       <Text style={styles.subtitulo}>
         Aceda à sua conta para continuar.
       </Text>

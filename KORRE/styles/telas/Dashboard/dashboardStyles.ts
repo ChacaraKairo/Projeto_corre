@@ -341,4 +341,7 @@ export const dashboardStyles = StyleSheet.create({
     fontWeight: '900',
     textTransform: 'uppercase',
   },
+  scrollContent: {
+    paddingBottom: 100,
+  },
 });

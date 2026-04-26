@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/finance/TypeSelectorInlineStyles';
+import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/finance/TypeSelectorDynamicStyles';
 interface TypeSelectorProps {
   tipo: 'ganho' | 'despesa';
   setTipo: (tipo: 'ganho' | 'despesa') => void;
@@ -10,58 +12,26 @@ export const TypeSelector = ({
   tipo,
   setTipo,
 }: TypeSelectorProps) => (
-  <View style={{ paddingHorizontal: 24, marginBottom: 16 }}>
+  <View style={inlineStyles.inline1}>
     <View
-      style={{
-        backgroundColor: 'rgba(33, 33, 33, 0.5)',
-        padding: 6,
-        borderRadius: 16,
-        flexDirection: 'row',
-        gap: 4,
-        borderColor: '#333',
-        borderWidth: 1,
-      }}
+      style={inlineStyles.inline2}
     >
       <TouchableOpacity
         onPress={() => setTipo('ganho')}
-        style={{
-          flex: 1,
-          paddingVertical: 12,
-          borderRadius: 12,
-          backgroundColor:
-            tipo === 'ganho' ? '#00C853' : 'transparent',
-          alignItems: 'center',
-        }}
+        style={dynamicInlineStyles.inline1({ tipo })}
       >
         <Text
-          style={{
-            fontSize: 10,
-            fontWeight: '900',
-            textTransform: 'uppercase',
-            color: tipo === 'ganho' ? '#000' : '#888',
-          }}
+          style={dynamicInlineStyles.inline2({ tipo })}
         >
           Entrada (+)
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setTipo('despesa')}
-        style={{
-          flex: 1,
-          paddingVertical: 12,
-          borderRadius: 12,
-          backgroundColor:
-            tipo === 'despesa' ? '#D50000' : 'transparent',
-          alignItems: 'center',
-        }}
+        style={dynamicInlineStyles.inline3({ tipo })}
       >
         <Text
-          style={{
-            fontSize: 10,
-            fontWeight: '900',
-            textTransform: 'uppercase',
-            color: tipo === 'despesa' ? '#FFF' : '#888',
-          }}
+          style={dynamicInlineStyles.inline4({ tipo })}
         >
           Saída (-)
         </Text>
