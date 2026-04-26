@@ -3,13 +3,14 @@ import {
   Droplets,
   Fuel,
   Gauge,
+  Sparkles,
   Wrench,
 } from 'lucide-react-native';
 import React, { memo } from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import { palette } from '../../../../styles/tokens';
 import { sharedSectionStyles } from '../../../../styles/telas/Calculadora/sections/sharedSectionStyles';
-import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida'; // SSOT
+import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida';
 import { AccordionSection } from '../ui/AccordionSection';
 import { InputFinanceiro } from '../ui/InputFinanceiro';
 
@@ -43,7 +44,6 @@ export const SecaoCustosAtivo = memo(
         }
       >
         <View style={sharedSectionStyles.fieldStack}>
-          {/* 1. COMBUSTÍVEL / ENERGIA */}
           <InputFinanceiro
             label="Preço do Combustível / kWh"
             value={String(form.preco_energia_unidade || '')}
@@ -68,7 +68,6 @@ export const SecaoCustosAtivo = memo(
             suffix="KM/L"
           />
 
-          {/* 2. PNEUS */}
           <InputFinanceiro
             label="Valor do Jogo de Pneus"
             value={String(form.valor_jogo_pneus || '')}
@@ -76,7 +75,9 @@ export const SecaoCustosAtivo = memo(
               onChange('valor_jogo_pneus', v)
             }
             placeholder="R$ 0,00"
-            icon={<CircleDot size={18} color={palette.surface400} />}
+            icon={
+              <CircleDot size={18} color={palette.surface400} />
+            }
             suffix="R$"
           />
 
@@ -91,7 +92,6 @@ export const SecaoCustosAtivo = memo(
             suffix="KM"
           />
 
-          {/* 3. ÓLEO E FILTROS */}
           <InputFinanceiro
             label="Custo Óleo e Filtros"
             value={String(form.valor_oleo_filtros || '')}
@@ -116,7 +116,6 @@ export const SecaoCustosAtivo = memo(
             suffix="KM"
           />
 
-          {/* 4. FREIOS E TRANSMISSÃO (Novos inputs para precisão!) */}
           <InputFinanceiro
             label="Valor Freios (Pastilha/Disco)"
             value={String(
@@ -141,7 +140,6 @@ export const SecaoCustosAtivo = memo(
             suffix="KM"
           />
 
-          {/* Kit Relação (Motos) ou Correia Dentada (Carros) */}
           <InputFinanceiro
             label="Kit Transmissão / Correia"
             value={String(form.valor_kit_transmissao || '')}
@@ -164,6 +162,150 @@ export const SecaoCustosAtivo = memo(
             placeholder="Ex: 35000"
             icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM"
+          />
+
+          <Text style={sharedSectionStyles.subsectionTitle}>
+            Desgaste real e reservas
+          </Text>
+
+          <InputFinanceiro
+            label="KM estimado por mês"
+            value={String(form.km_estimado_mes || '')}
+            onChangeText={(v) => onChange('km_estimado_mes', v)}
+            placeholder="Ex: 1500"
+            icon={<Gauge size={18} color={palette.surface400} />}
+            suffix="KM"
+            onHelp={() =>
+              onHelp(
+                'KM estimado por mês',
+                'Se vazio, o KORRE calcula usando km por dia × dias por semana.',
+              )
+            }
+          />
+
+          <InputFinanceiro
+            label="Depreciação mensal estimada"
+            value={String(
+              form.depreciacao_real_estimada || '',
+            )}
+            onChangeText={(v) =>
+              onChange('depreciacao_real_estimada', v)
+            }
+            placeholder="R$ 0,00"
+            icon={<Wrench size={18} color={palette.surface400} />}
+            suffix="R$"
+            onHelp={() =>
+              onHelp(
+                'Depreciação mensal estimada',
+                'Quanto o veículo perde de valor por mês pelo uso.',
+              )
+            }
+          />
+
+          <InputFinanceiro
+            label="Depreciação por km"
+            value={String(form.depreciacao_por_km || '')}
+            onChangeText={(v) =>
+              onChange('depreciacao_por_km', v)
+            }
+            placeholder="R$ 0,00"
+            icon={<Gauge size={18} color={palette.surface400} />}
+            suffix="R$/KM"
+            onHelp={() =>
+              onHelp(
+                'Depreciação por km',
+                'Use apenas se você já sabe o valor exato por km. Se preencher, ele tem prioridade sobre a depreciação mensal.',
+              )
+            }
+          />
+
+          <InputFinanceiro
+            label="Reserva mensal para imprevistos"
+            value={String(
+              form.manutencao_imprevista_mensal || '',
+            )}
+            onChangeText={(v) =>
+              onChange('manutencao_imprevista_mensal', v)
+            }
+            placeholder="R$ 0,00"
+            icon={<Wrench size={18} color={palette.surface400} />}
+            suffix="R$"
+            onHelp={() =>
+              onHelp(
+                'Reserva mensal para imprevistos',
+                'Valor reservado para problemas não previstos.',
+              )
+            }
+          />
+
+          <InputFinanceiro
+            label="Imprevistos por km"
+            value={String(
+              form.manutencao_imprevista_por_km || '',
+            )}
+            onChangeText={(v) =>
+              onChange('manutencao_imprevista_por_km', v)
+            }
+            placeholder="R$ 0,00"
+            icon={<Gauge size={18} color={palette.surface400} />}
+            suffix="R$/KM"
+            onHelp={() =>
+              onHelp(
+                'Imprevistos por km',
+                'Use se preferir informar diretamente por km.',
+              )
+            }
+          />
+
+          <InputFinanceiro
+            label="Mão de obra preventiva por km"
+            value={String(
+              form.mao_obra_preventiva_por_km || '',
+            )}
+            onChangeText={(v) =>
+              onChange('mao_obra_preventiva_por_km', v)
+            }
+            placeholder="R$ 0,00"
+            icon={<Sparkles size={18} color={palette.surface400} />}
+            suffix="R$/KM"
+            onHelp={() =>
+              onHelp(
+                'Mão de obra preventiva por km',
+                'Valor médio de mão de obra diluído por km.',
+              )
+            }
+          />
+
+          <InputFinanceiro
+            label="Limpeza/higienização mensal"
+            value={String(
+              form.limpeza_higienizacao_mensal || '',
+            )}
+            onChangeText={(v) =>
+              onChange('limpeza_higienizacao_mensal', v)
+            }
+            placeholder="R$ 0,00"
+            icon={<Droplets size={18} color={palette.surface400} />}
+            suffix="R$"
+          />
+
+          <InputFinanceiro
+            label="Limpeza por km"
+            value={String(
+              form.limpeza_higienizacao_por_km || '',
+            )}
+            onChangeText={(v) =>
+              onChange('limpeza_higienizacao_por_km', v)
+            }
+            placeholder="R$ 0,00"
+            icon={<Droplets size={18} color={palette.surface400} />}
+            suffix="R$/KM"
+            onHelp={() =>
+              onHelp(
+                'Limpeza por km',
+                'Use se quiser informar diretamente por km.',
+              )
+            }
           />
         </View>
       </AccordionSection>

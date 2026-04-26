@@ -15,6 +15,7 @@ export interface CustosCapital {
   tipo_aquisicao: TipoAquisicao;
   valor_veiculo_fipe: number;
   depreciacao_real_estimada: number;
+  depreciacao_por_km: number;
   custo_oportunidade_selic: number;
   juros_financiamento_mensal: number;
   diaria_aluguel: number;
@@ -39,6 +40,7 @@ export interface CustosExistencia {
 }
 
 export interface CustosAtivo {
+  km_estimado_mes: number;
   rendimento_energia_unidade: number;
   preco_energia_unidade: number;
   valor_oleo_filtros: number;
@@ -51,7 +53,10 @@ export interface CustosAtivo {
   durabilidade_transmissao_km: number;
   fundo_depreciacao_bateria_por_km: number;
   manutencao_imprevista_mensal: number;
+  manutencao_imprevista_por_km: number;
+  mao_obra_preventiva_por_km: number;
   limpeza_higienizacao_mensal: number;
+  limpeza_higienizacao_por_km: number;
 }
 
 export interface CustosPessoa {

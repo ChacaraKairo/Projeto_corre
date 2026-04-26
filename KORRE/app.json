@@ -21,6 +21,7 @@
       "bundleIdentifier": "com.chacara.korre",
       "buildNumber": "1.2.0",
       "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "O KORRE usa Face ID para proteger o acesso aos seus dados locais.",
         "NSPhotoLibraryUsageDescription": "O KORRE acessa suas fotos apenas quando você escolhe uma imagem para o perfil.",
         "NSCameraUsageDescription": "O KORRE usa a câmera apenas quando você escolhe tirar uma foto de perfil."

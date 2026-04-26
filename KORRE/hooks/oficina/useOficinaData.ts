@@ -2,8 +2,8 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { DeviceEventEmitter } from 'react-native';
+import { MANUTENCOES_PADRAO } from '../../constants/manutencaoPadrao';
 import db from '../../database/DatabaseInit';
-import { MANUTENCOES_PADRAO } from '../../type/typeManutencoes';
 import { TipoVeiculo } from '../../type/typeVeiculos';
 
 export function useOficinaData() {

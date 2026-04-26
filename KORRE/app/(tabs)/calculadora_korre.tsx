@@ -23,6 +23,7 @@ import { PainelResultadoFlutuante } from '../../components/telas/Calculadora/lay
 
 // Sections (Os blocos do formulário)
 import { SecaoCustoPessoa } from '../../components/telas/Calculadora/sections/SecaoCustoPessoa';
+import { SecaoComposicaoCustoKm } from '../../components/telas/Calculadora/sections/SecaoComposicaoCustoKm';
 import { SecaoCustosAtivo } from '../../components/telas/Calculadora/sections/SecaoCustosAtivo';
 import { SecaoCustosExistencia } from '../../components/telas/Calculadora/sections/SecaoCustosExistencia';
 import { SecaoPatrimonio } from '../../components/telas/Calculadora/sections/SecaoPatrimonio';
@@ -39,6 +40,8 @@ export default function CalculadoraScreen() {
     loading,
     veiculoAtivo,
     veiculosDisponiveis,
+    breakdownKm,
+    avisosKm,
     mudarVeiculoAtivo,
     validarStatusSecoes,
     calcularIPVAAutomatico,
@@ -119,6 +122,11 @@ export default function CalculadoraScreen() {
                 onChange={handleChange}
                 onHelp={handleOpenHelp}
                 isComplete={status.operacaoCompleta}
+              />
+
+              <SecaoComposicaoCustoKm
+                breakdown={breakdownKm}
+                avisos={avisosKm}
               />
 
               <SecaoCustosExistencia

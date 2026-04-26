@@ -5,7 +5,7 @@ import { SelicService } from '../utils/SelicService'; // Certifique-se de que o 
 const db = SQLite.openDatabaseSync('korre.db');
 
 // Versão inicial consolidada
-export const DATABASE_VERSION = 3;
+export const DATABASE_VERSION = 4;
 
 export const DatabaseInit = () => {
   try {
@@ -47,6 +47,13 @@ export const DatabaseInit = () => {
       db.execSync('PRAGMA user_version = 3;');
       currentDbVersion = 3;
       console.log('[BANCO] Migracao V3 aplicada com sucesso.');
+    }
+
+    if (currentDbVersion < 4) {
+      migrateToV4();
+      db.execSync('PRAGMA user_version = 4;');
+      currentDbVersion = 4;
+      console.log('[BANCO] Migracao V4 aplicada com sucesso.');
     }
 
     // DISPARO AUTOMÁTICO: Verifica a Selic sempre que o app inicia (Lógica de dia 1 está no Service)
@@ -137,8 +144,13 @@ const initV1 = () => {
       valor_kit_transmissao REAL DEFAULT 0,
       durabilidade_transmissao_km REAL DEFAULT 0,
       fundo_depreciacao_bateria_por_km REAL DEFAULT 0,
+      km_estimado_mes REAL DEFAULT 0,
+      depreciacao_por_km REAL DEFAULT 0,
       manutencao_imprevista_mensal REAL DEFAULT 0,
+      manutencao_imprevista_por_km REAL DEFAULT 0,
+      mao_obra_preventiva_por_km REAL DEFAULT 0,
       limpeza_higienizacao_mensal REAL DEFAULT 0,
+      limpeza_higienizacao_por_km REAL DEFAULT 0,
       alimentacao_diaria REAL DEFAULT 0,
       consumo_apoio_diario REAL DEFAULT 0,
       plano_saude_mensal REAL DEFAULT 0,
@@ -280,6 +292,34 @@ const migrateToV3 = () => {
   addColumnIfMissing('notificacoes', 'destino', 'TEXT');
   addColumnIfMissing('notificacoes', 'dados_json', 'TEXT');
   addColumnIfMissing('notificacoes', 'dedup_key', 'TEXT');
+};
+
+const migrateToV4 = () => {
+  addColumnIfMissing(
+    'parametros_financeiros',
+    'km_estimado_mes',
+    'REAL DEFAULT 0',
+  );
+  addColumnIfMissing(
+    'parametros_financeiros',
+    'depreciacao_por_km',
+    'REAL DEFAULT 0',
+  );
+  addColumnIfMissing(
+    'parametros_financeiros',
+    'manutencao_imprevista_por_km',
+    'REAL DEFAULT 0',
+  );
+  addColumnIfMissing(
+    'parametros_financeiros',
+    'mao_obra_preventiva_por_km',
+    'REAL DEFAULT 0',
+  );
+  addColumnIfMissing(
+    'parametros_financeiros',
+    'limpeza_higienizacao_por_km',
+    'REAL DEFAULT 0',
+  );
 };
 
 const addColumnIfMissing = (

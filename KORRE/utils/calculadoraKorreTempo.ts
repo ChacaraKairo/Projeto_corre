@@ -65,6 +65,7 @@ export const CalculadoraTempo = {
       CONFIG_MERCADO.HORAS_TRABALHO_PADRAO_MES;
     const totalMinutosMes = totalHorasMes * 60;
 
+    // Custos fixos por tempo: diluidos por minuto trabalhado.
     // A. Custo Capital Mensal
     let custoCapitalMensal = 0;
     switch (form.tipo_aquisicao) {
@@ -142,6 +143,9 @@ export const CalculadoraTempo = {
     const custoSobrevivenciaMensal =
       custoAlimentacaoMensal +
       toNumber(form.plano_saude_mensal);
+
+    // Custos variaveis por km, como limpeza/higienizacao por uso,
+    // entram no IKM para evitar dupla contagem no IMIN.
 
     // E. Fechamento
     const custoTotalTempoMensal =

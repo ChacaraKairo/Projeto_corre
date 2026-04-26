@@ -1,13 +1,15 @@
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import db from '../../database/DatabaseInit';
-// IMPORTANTE: Agora usamos a Fonte Única de Verdade (SSOT)
 import { FormularioViabilidade } from '../../type/viabilidadeCorrida';
-// IMPORTANTE: Trazendo as regras de IPVA
 import {
   REGRAS_IPVA_ESTADOS,
   SiglaEstado,
 } from '../../type/ipvaEstados';
+import {
+  BreakdownCustoKm,
+  CalculadoraMovimento,
+} from '../../utils/calculadoraKorreKM';
 import { showCustomAlert } from '../alert/useCustomAlert';
 import { CalculadoraService } from './service/CalculadoraService';
 
@@ -17,7 +19,11 @@ const ESTADO_INICIAL_VAZIO: Partial<FormularioViabilidade> =
     tipo_aquisicao: 'proprio_quitado',
     imposto_mei_mensal: 86,
     vida_util_smartphone_meses: 18,
-    // Os demais campos serão preenchidos pelo banco ou manual
+    km_estimado_mes: 0,
+    depreciacao_por_km: 0,
+    manutencao_imprevista_por_km: 0,
+    mao_obra_preventiva_por_km: 0,
+    limpeza_higienizacao_por_km: 0,
   };
 
 export function useCalculadora() {
@@ -27,11 +33,20 @@ export function useCalculadora() {
     useState<any[]>([]);
   const [veiculoAtivo, setVeiculoAtivo] =
     useState<any>(null);
-
-  // O estado do formulário agora é fortemente tipado pela SSOT
   const [form, setForm] = useState<
     Partial<FormularioViabilidade>
   >(ESTADO_INICIAL_VAZIO);
+  const [breakdownKm, setBreakdownKm] =
+    useState<BreakdownCustoKm | null>(null);
+  const [avisosKm, setAvisosKm] = useState<string[]>([]);
+
+  useEffect(() => {
+    const resultadoKm = CalculadoraMovimento.calcularCustoKm(
+      form as any,
+    );
+    setBreakdownKm(resultadoKm.breakdown);
+    setAvisosKm(resultadoKm.avisos);
+  }, [form]);
 
   const handleChange = useCallback(
     (
@@ -99,10 +114,7 @@ export function useCalculadora() {
           return novoForm as Partial<FormularioViabilidade>;
         });
       } catch (error) {
-        console.error(
-          'Erro ao carregar formulário:',
-          error,
-        );
+        console.error('Erro ao carregar formulario:', error);
       } finally {
         setLoading(false);
       }
@@ -110,7 +122,6 @@ export function useCalculadora() {
     [],
   );
 
-  // ATUALIZADO: Busca todos os veículos e define o inicial corretamente
   const carregarDadosIniciais = useCallback(async () => {
     try {
       setLoading(true);
@@ -119,7 +130,6 @@ export function useCalculadora() {
       );
       setVeiculosDisponiveis(lista);
 
-      // Se houver veículos e nenhum ativo selecionado ainda, define o padrão
       if (lista.length > 0 && !veiculoAtivo) {
         const ativo =
           lista.find((v) => v.ativo === 1) || lista[0];
@@ -127,7 +137,7 @@ export function useCalculadora() {
       }
     } catch (error) {
       console.error(
-        'Erro na carga inicial de veículos:',
+        'Erro na carga inicial de veiculos:',
         error,
       );
     } finally {
@@ -139,7 +149,6 @@ export function useCalculadora() {
     carregarDadosIniciais();
   }, []);
 
-  // ATUALIZADO: Função robusta para trocar o veículo no Header
   const mudarVeiculoAtivo = useCallback(
     async (veiculo: any) => {
       if (veiculo.id === veiculoAtivo?.id) return;
@@ -151,17 +160,21 @@ export function useCalculadora() {
   const calcularESalvar = async () => {
     if (!veiculoAtivo) return;
     try {
-      await CalculadoraService.processarESalvarCalculos(
-        veiculoAtivo.id,
-        form,
-      );
+      const resultado =
+        await CalculadoraService.processarESalvarCalculos(
+          veiculoAtivo.id,
+          form,
+        );
+      setBreakdownKm(resultado.breakdownKm);
+      setAvisosKm(resultado.avisosKm);
+
       showCustomAlert(
         'Atualizado!',
         'Cálculos de viabilidade sincronizados.',
       );
       router.back();
     } catch (error) {
-      console.error('[Hook] Erro na orquestração:', error);
+      console.error('[Hook] Erro na orquestracao:', error);
       showCustomAlert(
         'Erro',
         'Não foi possível processar a inteligência financeira.',
@@ -172,7 +185,9 @@ export function useCalculadora() {
   const validarStatusSecoes = useCallback(() => {
     const operacaoCompleta =
       !!form.rendimento_energia_unidade &&
-      !!form.preco_energia_unidade;
+      !!form.preco_energia_unidade &&
+      !!form.km_por_dia &&
+      !!form.dias_trabalhados_semana;
     const burocraciaCompleta =
       !!form.ipva_anual &&
       !!form.licenciamento_detran_anual;
@@ -265,6 +280,8 @@ export function useCalculadora() {
     veiculoAtivo,
     veiculosDisponiveis,
     form,
+    breakdownKm,
+    avisosKm,
     handleChange,
     calcularESalvar,
     mudarVeiculoAtivo,

@@ -1,7 +1,6 @@
 /**
- * Utilitário de Cálculo Financeiro: MOVIMENTO (MeuCorre)
+ * Utilitario de Calculo Financeiro: MOVIMENTO (MeuCorre)
  * Foca no custo de desgaste do ativo e queima de insumos (Custo por KM).
- * Refatorado 100% alinhado com a Fonte Única de Verdade (viabilidadeCorrida.ts).
  */
 
 import { divisaoSegura, toNumber } from './indices/util';
@@ -11,103 +10,222 @@ export interface PecaPeriodica {
   intervalo_troca_km: number | string;
 }
 
-// Interface agora espelha EXATAMENTE os campos do banco de dados (CustosAtivo)
+export interface BreakdownCustoKm {
+  energiaKm: number;
+  pneusKm: number;
+  oleoKm: number;
+  freiosKm: number;
+  transmissaoKm: number;
+  pecasExtrasKm: number;
+  bateriaEletricaKm: number;
+  depreciacaoKm: number;
+  manutencaoImprevistaKm: number;
+  maoObraPreventivaKm: number;
+  limpezaKm: number;
+}
+
+export interface ResultadoCustoKm {
+  ikm: number;
+  breakdown: BreakdownCustoKm;
+  avisos: string[];
+}
+
+// Interface espelha os campos de movimento do banco/SSOT.
 export interface FormularioMovimento {
-  // 1. Energia
   preco_energia_unidade: number | string;
   rendimento_energia_unidade: number | string;
-
-  // 2. Manutenção Preventiva Base
   valor_jogo_pneus: number | string;
   durabilidade_pneus_km: number | string;
-
   valor_oleo_filtros: number | string;
-  intervalo_oleo_filtros_km: number | string; // Nomenclatura corrigida
-
-  valor_manutencao_freios: number | string; // Nomenclatura corrigida
-  intervalo_freios_km: number | string; // Nomenclatura corrigida
-
-  valor_kit_transmissao: number | string; // Adicionado (Reflete o SSOT)
-  durabilidade_transmissao_km: number | string; // Adicionado (Reflete o SSOT)
-
+  intervalo_oleo_filtros_km: number | string;
+  valor_manutencao_freios: number | string;
+  intervalo_freios_km: number | string;
+  valor_kit_transmissao: number | string;
+  durabilidade_transmissao_km: number | string;
   pecas_periodicas_extras?: PecaPeriodica[];
-
-  // 3. Imprevistos e Veículos Elétricos
-  fundo_depreciacao_bateria_por_km: number | string; // Nomenclatura corrigida
+  fundo_depreciacao_bateria_por_km: number | string;
+  km_estimado_mes?: number | string;
+  km_por_dia?: number | string;
+  dias_trabalhados_semana?: number | string;
+  depreciacao_real_estimada?: number | string;
+  depreciacao_por_km?: number | string;
+  manutencao_imprevista_mensal?: number | string;
+  manutencao_imprevista_por_km?: number | string;
+  mao_obra_preventiva_por_km?: number | string;
+  limpeza_higienizacao_mensal?: number | string;
+  limpeza_higienizacao_por_km?: number | string;
 }
+
+const calcularKmMes = (form: FormularioMovimento) => {
+  const kmEstimadoMes = toNumber(form.km_estimado_mes);
+  if (kmEstimadoMes > 0) return kmEstimadoMes;
+
+  const kmPorDia = toNumber(form.km_por_dia);
+  const diasTrabalhadosSemana = toNumber(
+    form.dias_trabalhados_semana,
+  );
+
+  if (kmPorDia > 0 && diasTrabalhadosSemana > 0) {
+    return kmPorDia * diasTrabalhadosSemana * 4.33;
+  }
+
+  return 0;
+};
 
 export const CalculadoraMovimento = {
   /**
-   * Calcula o Custo por Quilômetro (IKM)
+   * Calcula o Custo por Quilometro (IKM).
    */
-  calcularCustoKm: (form: FormularioMovimento) => {
-    // A. Custo Energia KM
+  calcularCustoKm: (
+    form: FormularioMovimento,
+  ): ResultadoCustoKm => {
+    const avisos: string[] = [];
+
     const precoEnergia = toNumber(
       form.preco_energia_unidade,
     );
-    const rendimentoKm =
-      toNumber(form.rendimento_energia_unidade) || 10; // Evita divisões loucas se vier 0
-    const custoEnergiaKM = divisaoSegura(
-      precoEnergia,
-      rendimentoKm,
+    const rendimentoKm = toNumber(
+      form.rendimento_energia_unidade,
     );
+    const energiaKm =
+      rendimentoKm > 0
+        ? divisaoSegura(precoEnergia, rendimentoKm)
+        : 0;
 
-    // B. Custo Manutenção Preventiva KM
-    const custoPneuKm = divisaoSegura(
+    if (rendimentoKm <= 0) {
+      avisos.push('Informe o rendimento do veículo.');
+    }
+
+    const pneusKm = divisaoSegura(
       toNumber(form.valor_jogo_pneus),
       toNumber(form.durabilidade_pneus_km),
     );
-    const custoOleoKm = divisaoSegura(
+    const oleoKm = divisaoSegura(
       toNumber(form.valor_oleo_filtros),
       toNumber(form.intervalo_oleo_filtros_km),
     );
-    const custoFreioKm = divisaoSegura(
+    const freiosKm = divisaoSegura(
       toNumber(form.valor_manutencao_freios),
       toNumber(form.intervalo_freios_km),
     );
-    const custoTransmissaoKm = divisaoSegura(
+    const transmissaoKm = divisaoSegura(
       toNumber(form.valor_kit_transmissao),
       toNumber(form.durabilidade_transmissao_km),
     );
 
-    let somatorioPecasKM = 0;
-    if (
-      form.pecas_periodicas_extras &&
-      form.pecas_periodicas_extras.length > 0
-    ) {
-      form.pecas_periodicas_extras.forEach((peca) => {
-        somatorioPecasKM += divisaoSegura(
+    const pecasExtrasKm = (form.pecas_periodicas_extras ?? [])
+      .map((peca) =>
+        divisaoSegura(
           toNumber(peca.valor_peca),
           toNumber(peca.intervalo_troca_km),
-        );
-      });
-    }
+        ),
+      )
+      .reduce((total, valor) => total + valor, 0);
 
-    const custoManutencaoPreventivaKM =
-      custoPneuKm +
-      custoOleoKm +
-      custoFreioKm +
-      custoTransmissaoKm +
-      somatorioPecasKM;
-
-    // C. Fundo de Bateria (Exclusivo Elétricos, já vem por KM do banco)
-    const fundoBateriaEletricaKm = toNumber(
+    const bateriaEletricaKm = toNumber(
       form.fundo_depreciacao_bateria_por_km,
     );
 
-    // D. Fechamento do IKM (Puro custo de movimento)
-    const ikm =
-      custoEnergiaKM +
-      custoManutencaoPreventivaKM +
-      fundoBateriaEletricaKm;
+    const kmMes = calcularKmMes(form);
+    const depreciacaoDiretaKm = toNumber(
+      form.depreciacao_por_km,
+    );
+    const depreciacaoMensal = toNumber(
+      form.depreciacao_real_estimada,
+    );
+    const depreciacaoKm =
+      depreciacaoDiretaKm > 0
+        ? depreciacaoDiretaKm
+        : depreciacaoMensal > 0 && kmMes > 0
+          ? divisaoSegura(depreciacaoMensal, kmMes)
+          : 0;
 
-    return { ikm };
+    const imprevistosDiretoKm = toNumber(
+      form.manutencao_imprevista_por_km,
+    );
+    const imprevistosMensal = toNumber(
+      form.manutencao_imprevista_mensal,
+    );
+    const manutencaoImprevistaKm =
+      imprevistosDiretoKm > 0
+        ? imprevistosDiretoKm
+        : imprevistosMensal > 0 && kmMes > 0
+          ? divisaoSegura(imprevistosMensal, kmMes)
+          : 0;
+
+    const limpezaDiretaKm = toNumber(
+      form.limpeza_higienizacao_por_km,
+    );
+    const limpezaMensal = toNumber(
+      form.limpeza_higienizacao_mensal,
+    );
+    const limpezaKm =
+      limpezaDiretaKm > 0
+        ? limpezaDiretaKm
+        : limpezaMensal > 0 && kmMes > 0
+          ? divisaoSegura(limpezaMensal, kmMes)
+          : 0;
+
+    const maoObraPreventivaKm = toNumber(
+      form.mao_obra_preventiva_por_km,
+    );
+
+    const precisaDiluirMensais =
+      (depreciacaoMensal > 0 && depreciacaoDiretaKm <= 0) ||
+      (imprevistosMensal > 0 && imprevistosDiretoKm <= 0) ||
+      (limpezaMensal > 0 && limpezaDiretaKm <= 0);
+
+    if (precisaDiluirMensais && kmMes <= 0) {
+      avisos.push(
+        'Informe KM por dia e dias trabalhados por semana para diluir custos mensais.',
+      );
+    }
+    if (depreciacaoKm <= 0) {
+      avisos.push(
+        'Informe depreciação mensal ou depreciação por km.',
+      );
+    }
+    if (manutencaoImprevistaKm <= 0) {
+      avisos.push(
+        'Informe reserva de manutenção imprevista.',
+      );
+    }
+
+    const ikm =
+      energiaKm +
+      pneusKm +
+      oleoKm +
+      freiosKm +
+      transmissaoKm +
+      pecasExtrasKm +
+      bateriaEletricaKm +
+      depreciacaoKm +
+      manutencaoImprevistaKm +
+      maoObraPreventivaKm +
+      limpezaKm;
+
+    return {
+      ikm,
+      breakdown: {
+        energiaKm,
+        pneusKm,
+        oleoKm,
+        freiosKm,
+        transmissaoKm,
+        pecasExtrasKm,
+        bateriaEletricaKm,
+        depreciacaoKm,
+        manutencaoImprevistaKm,
+        maoObraPreventivaKm,
+        limpezaKm,
+      },
+      avisos,
+    };
   },
 
   calcularCompletudeMovimento: (
     form: FormularioMovimento,
   ) => {
-    // Chaves atualizadas para refletir a nova interface e o banco
     const camposCriticos: (keyof FormularioMovimento)[] = [
       'preco_energia_unidade',
       'rendimento_energia_unidade',
@@ -115,6 +233,8 @@ export const CalculadoraMovimento = {
       'durabilidade_pneus_km',
       'valor_oleo_filtros',
       'intervalo_oleo_filtros_km',
+      'km_por_dia',
+      'dias_trabalhados_semana',
     ];
 
     let preenchidos = 0;

@@ -93,17 +93,18 @@ export const ItemManutencaoCard = ({
                 { color: isDark ? '#888' : '#555' },
               ]}
             >
-              Ciclo:{' '}
-              {[
-                item.intervalo_km
-                  ? `${item.intervalo_km} km`
-                  : null,
-                item.intervalo_meses
-                  ? `${item.intervalo_meses} meses`
-                  : null,
-              ]
-                .filter(Boolean)
-                .join(' ou ')}
+              {item.isVirtual
+                ? 'Sugestão para adicionar'
+                : `Ciclo: ${[
+                    item.intervalo_km
+                      ? `${item.intervalo_km} km`
+                      : null,
+                    item.intervalo_meses
+                      ? `${item.intervalo_meses} meses`
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .join(' ou ')}`}
             </Text>
           </View>
         </View>

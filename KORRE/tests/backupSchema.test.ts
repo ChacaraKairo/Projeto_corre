@@ -27,6 +27,13 @@ describe('backup schema validation', () => {
   });
 
   it('aceita backup KORRE v3', () => {
+    const tabelas = validateBackupPayload(
+      makeBackup(BACKUP_APP_NAME, 3),
+    );
+    assert.deepEqual(tabelas.perfil_usuario, []);
+  });
+
+  it('aceita backup KORRE v4', () => {
     const tabelas = validateBackupPayload(makeBackup());
     assert.deepEqual(tabelas.perfil_usuario, []);
   });

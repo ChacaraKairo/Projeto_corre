@@ -11,6 +11,7 @@ export interface ParametrosFinanceiros {
   tipo_aquisicao: string;
   valor_veiculo_fipe: number;
   depreciacao_real_estimada: number;
+  depreciacao_por_km: number;
   custo_oportunidade_selic: number;
   juros_financiamento_mensal: number;
   diaria_aluguel: number;
@@ -37,8 +38,12 @@ export interface ParametrosFinanceiros {
   valor_kit_transmissao: number;
   durabilidade_transmissao_km: number;
   fundo_depreciacao_bateria_por_km: number;
+  km_estimado_mes: number;
   manutencao_imprevista_mensal: number;
+  manutencao_imprevista_por_km: number;
+  mao_obra_preventiva_por_km: number;
   limpeza_higienizacao_mensal: number;
+  limpeza_higienizacao_por_km: number;
   alimentacao_diaria: number;
   consumo_apoio_diario: number;
   plano_saude_mensal: number;
