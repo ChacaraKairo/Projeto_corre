@@ -5,7 +5,9 @@ import * as Sharing from 'expo-sharing';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
 import {
+  BACKUP_APP_NAME,
   BACKUP_EXPORT_COLUMNS,
+  BACKUP_SCHEMA_VERSION,
   BACKUP_TABLES,
 } from '../../constants/backupSchema';
 
@@ -16,9 +18,9 @@ export function useExportarDados() {
     setIsExportando(true);
     try {
       const backupData: any = {
-        app: 'KORRE',
+        app: BACKUP_APP_NAME,
         data_exportacao: new Date().toISOString(),
-        versao_banco: 1,
+        versao_banco: BACKUP_SCHEMA_VERSION,
         tabelas: {},
       };
 
@@ -32,7 +34,7 @@ export function useExportarDados() {
 
       const fileUri =
         FileSystem.documentDirectory +
-        'KORRE_Backup_v1.json';
+        `KORRE_Backup_v${BACKUP_SCHEMA_VERSION}.json`;
       await FileSystem.writeAsStringAsync(
         fileUri,
         JSON.stringify(backupData, null, 2),

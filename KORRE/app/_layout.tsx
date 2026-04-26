@@ -1,5 +1,5 @@
 // MeuCorre/app/_layout.tsx
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Href, Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ScrollView,
@@ -10,6 +10,7 @@ import {
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import db, { DatabaseInit } from '../database/DatabaseInit';
 import { NotificationHandler } from '../notifications/NotificationHandler';
+import { AppRoutes } from '../constants/routes';
 
 import { inlineStyles } from '../styles/generated-inline/app/_layoutInlineStyles';
 import { dynamicInlineStyles } from '../styles/generated-dynamic/app/_layoutDynamicStyles';
@@ -52,9 +53,9 @@ export default function RootLayout() {
 
     if (isAtRoot) {
       if (hasUser) {
-        router.replace('/(auth)/login');
+        router.replace(AppRoutes.login);
       } else {
-        router.replace('/(auth)/cadastro');
+        router.replace(AppRoutes.cadastro);
       }
     }
   }, [isReady, hasUser, segments, router]);
@@ -63,27 +64,25 @@ export default function RootLayout() {
   const DevMenu = () => {
     if (!__DEV__) return null;
 
-    const rotas = [
-      { nome: 'Login', path: '/(auth)/login' },
-      { nome: 'Cadastro', path: '/(auth)/cadastro' },
-      { nome: 'Home', path: '/(tabs)/dashboard' },
-      { nome: 'Ganhos', path: '/(tabs)/finance' },
-      { nome: 'Oficina', path: '/(tabs)/oficina' },
-      { nome: 'Garagem', path: '/(tabs)/garagem' },
-      { nome: 'Origem', path: '/(tabs)/origemganhos' },
+    const rotas: { nome: string; path: Href }[] = [
+      { nome: 'Login', path: AppRoutes.login },
+      { nome: 'Cadastro', path: AppRoutes.cadastro },
+      { nome: 'Home', path: AppRoutes.dashboard },
+      { nome: 'Ganhos', path: AppRoutes.finance },
+      { nome: 'Oficina', path: AppRoutes.oficina },
+      { nome: 'Garagem', path: AppRoutes.garagem },
+      { nome: 'Origem', path: AppRoutes.origemGanhos },
       { nome: 'MEI', path: '/relatorios/temometro_mei' },
       { nome: 'Lucro', path: '/relatorios/balanco_dre' },
       { nome: 'Relatórios', path: '/(tabs)/relatorios' },
-      { nome: 'Config', path: '/(tabs)/configuracoes' },
-      { nome: 'Perfil', path: '/(tabs)/perfil' },
-      { nome: 'Notif', path: '/notificacoes' },
+      { nome: 'Config', path: AppRoutes.configuracoes },
+      { nome: 'Perfil', path: AppRoutes.perfil },
+      { nome: 'Notif', path: AppRoutes.notificacoes },
       { nome: 'DB', path: '/(tabs)/explore' },
-      { nome: 'Calc', path: '/calculadora' },
-      { nome: 'Termos', path: '/(auth)/termos' },
-      { nome: 'Suporte', path: '/(tabs)/suporte' },
+      { nome: 'Calc', path: AppRoutes.calculadora },
+      { nome: 'Termos', path: AppRoutes.termos },
+      { nome: 'Suporte', path: AppRoutes.suporte },
       { nome: 'Histórico', path: '/(tabs)/historico' },
-      { nome: 'Gastos', path: '/finance/gastos' },
-      { nome: 'Ganhos', path: '/finance/ganhos' },
     ];
 
     return (
@@ -102,8 +101,8 @@ export default function RootLayout() {
         >
           {rotas.map((rota) => (
             <TouchableOpacity
-              key={rota.path}
-              onPress={() => router.push(rota.path as any)}
+              key={String(rota.path)}
+              onPress={() => router.push(rota.path)}
               style={inlineStyles.inline2}
             >
               <Text

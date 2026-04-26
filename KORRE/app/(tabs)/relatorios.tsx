@@ -11,6 +11,7 @@ import {
   AlertCircle,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import type { Href } from 'expo-router';
 import { showCustomAlert } from '../../hooks/alert/useCustomAlert';
 
 import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/relatoriosInlineStyles';
@@ -46,11 +47,8 @@ export default function RelatoriosScreen() {
   // Função centralizada de clique
   const handleAbrirRelatorio = (rota: string) => {
     if (rota) {
-      router.push(
-        rota.startsWith('/')
-          ? (rota as any)
-          : (`/${rota}` as any),
-      );
+      const href = rota.startsWith('/') ? rota : `/${rota}`;
+      router.push(href as Href);
     } else {
       showCustomAlert(
         'Em Breve',

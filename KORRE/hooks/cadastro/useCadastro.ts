@@ -2,12 +2,13 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import * as Crypto from 'expo-crypto';
 import db from '../../database/DatabaseInit';
 import { validarRegrasSenha } from '../../utils/validacaoSenha';
 import { validarCPF } from '../../utils/validacaoCpf';
 import { TipoVeiculo } from '../../type/typeVeiculos';
 import { VeiculoService } from './veiculoService';
+import { hashPassword } from '../../utils/auth/passwordHash';
+import { AppRoutes } from '../../constants/routes';
 
 export const useCadastro = () => {
   const router = useRouter();
@@ -52,7 +53,6 @@ export const useCadastro = () => {
     if (
       !nomeLimpo ||
       !emailLimpo ||
-      !cpfLimpo ||
       !marca ||
       !modelo ||
       (tipoVeiculo !== 'bicicleta' && !placa) ||
@@ -67,11 +67,13 @@ export const useCadastro = () => {
       return;
     }
 
-    // 3. Validação Matemática do CPF
-    const validacaoCpf = validarCPF(cpfLimpo);
-    if (!validacaoCpf.valida) {
-      Alert.alert('CPF Inválido', validacaoCpf.erro);
-      return;
+    // 3. Validacao matematica do CPF, quando informado.
+    if (cpfLimpo) {
+      const validacaoCpf = validarCPF(cpfLimpo);
+      if (!validacaoCpf.valida) {
+        Alert.alert('CPF Inválido', validacaoCpf.erro);
+        return;
+      }
     }
 
     // 4. Validação de Regras de Senha
@@ -94,11 +96,7 @@ export const useCadastro = () => {
       const valorMeta = parseFloat(meta) || 0;
 
       // Criptografia
-      const senhaCriptografada =
-        await Crypto.digestStringAsync(
-          Crypto.CryptoDigestAlgorithm.SHA256,
-          senhaLimpa,
-        );
+      const senhaCriptografada = await hashPassword(senhaLimpa);
 
       // 6. Inserir Perfil
       const resultUsuario = await db.runAsync(
@@ -106,7 +104,7 @@ export const useCadastro = () => {
         [
           nomeLimpo,
           emailLimpo,
-          cpfLimpo,
+          cpfLimpo || null,
           senhaCriptografada,
           foto,
           tipoMeta,
@@ -130,7 +128,7 @@ export const useCadastro = () => {
         id_user: usuarioId, // Relaciona com o usuário recém-criado
       });
 
-      router.replace('/(tabs)/origemganhos');
+      router.replace(AppRoutes.origemGanhos);
     } catch (error) {
       console.error('Erro ao salvar no banco:', error);
       Alert.alert(

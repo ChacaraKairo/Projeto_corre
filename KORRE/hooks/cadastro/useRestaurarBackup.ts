@@ -9,6 +9,7 @@ import {
   BACKUP_TABLES,
   BackupTable,
   sanitizeBackupRow,
+  validateBackupPayload,
 } from '../../constants/backupSchema';
 
 export function useRestaurarBackup() {
@@ -18,9 +19,8 @@ export function useRestaurarBackup() {
   const executarRestauracao = async (data: any) => {
     setCarregando(true);
 
-    const tabelas_data = data.tabelas ? data.tabelas : data;
-
     try {
+      const tabelas_data = validateBackupPayload(data);
       await db.execAsync('PRAGMA foreign_keys = OFF;');
       await db.execAsync('BEGIN TRANSACTION;');
 

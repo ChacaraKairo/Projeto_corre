@@ -25,6 +25,7 @@ import { ModalUpdateKm } from '../../components/telas/Dashboard/ModalUpdateKm';
 import { StatusGrid } from '../../components/telas/Dashboard/StatusGrid';
 import { UltimasMovimentacoes } from '../../components/telas/Dashboard/UltimasMovimentacoes';
 import { VeiculoCard } from '../../components/telas/Dashboard/VeiculoCard';
+import { AppRoutes } from '../../constants/routes';
 
 export default function DashboardScreen() {
   const { tema } = useTema();
@@ -58,13 +59,13 @@ export default function DashboardScreen() {
 
   // Handlers de Navegação
   const onPressConfig = () =>
-    router.push('/(tabs)/configuracoes' as any);
+    router.push(AppRoutes.configuracoes);
   const onTrocarVeiculo = () =>
-    router.push('/(tabs)/garagem');
+    router.push(AppRoutes.garagem);
   const onIrParaOficina = () =>
-    router.push('/(tabs)/oficina');
+    router.push(AppRoutes.oficina);
   const abrirCalculadora = () =>
-    router.push('/calculadora' as any);
+    router.push(AppRoutes.calculadora);
 
   // Handler do Modal de KM
   const salvarKm = async () => {

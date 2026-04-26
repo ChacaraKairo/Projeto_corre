@@ -2,10 +2,10 @@ import * as SQLite from 'expo-sqlite';
 import { SelicService } from '../utils/SelicService'; // Certifique-se de que o caminho está correto
 
 // Nome do banco consistente com o projeto
-const db = SQLite.openDatabaseSync('meucorre.db');
+const db = SQLite.openDatabaseSync('korre.db');
 
 // Versão inicial consolidada
-const DATABASE_VERSION = 1;
+export const DATABASE_VERSION = 2;
 
 export const DatabaseInit = () => {
   try {
@@ -24,18 +24,22 @@ export const DatabaseInit = () => {
       PRAGMA foreign_keys = ON;
     `);
 
-    if (currentDbVersion < DATABASE_VERSION) {
+    if (currentDbVersion < 1) {
       console.log(
-        '[BANCO] Criando tabelas do ecossistema MeuCorre...',
+        '[BANCO] Criando tabelas do ecossistema KORRE...',
       );
       initV1();
 
-      db.execSync(
-        `PRAGMA user_version = ${DATABASE_VERSION};`,
-      );
-      console.log(
-        `[BANCO] V${DATABASE_VERSION} inicializada com sucesso.`,
-      );
+      db.execSync('PRAGMA user_version = 1;');
+      currentDbVersion = 1;
+      console.log('[BANCO] V1 inicializada com sucesso.');
+    }
+
+    if (currentDbVersion < 2) {
+      migrateToV2();
+      db.execSync('PRAGMA user_version = 2;');
+      currentDbVersion = 2;
+      console.log('[BANCO] Migracao V2 aplicada com sucesso.');
     }
 
     // DISPARO AUTOMÁTICO: Verifica a Selic sempre que o app inicia (Lógica de dia 1 está no Service)
@@ -195,7 +199,7 @@ const initV1 = () => {
       descricao TEXT NOT NULL,
       valor REAL DEFAULT 0,
       km_servico INTEGER NOT NULL,
-      direfenca_tempo_meses INTEGER,
+      diferenca_tempo_meses INTEGER,
       data_servico DATE DEFAULT (date('now', 'localtime')),
       FOREIGN KEY (veiculo_id) REFERENCES veiculos (id) ON DELETE CASCADE,
       FOREIGN KEY (item_id) REFERENCES itens_manutencao (id) ON DELETE SET NULL
@@ -219,6 +223,25 @@ const initV1 = () => {
     ('Outros Ganhos', 'ganho', 'PlusCircle', '#00C853'),
     ('Outras Despesas', 'despesa', 'MinusCircle', '#6B7280');
   `);
+};
+
+const migrateToV2 = () => {
+  const historicoInfo = db.getAllSync<{ name: string }>(
+    'PRAGMA table_info(historico_manutencao);',
+  );
+  const hasTypoColumn = historicoInfo.some(
+    (column) => column.name === 'direfenca_tempo_meses',
+  );
+  const hasCorrectColumn = historicoInfo.some(
+    (column) => column.name === 'diferenca_tempo_meses',
+  );
+
+  if (hasTypoColumn && !hasCorrectColumn) {
+    db.execSync(`
+      ALTER TABLE historico_manutencao
+      RENAME COLUMN direfenca_tempo_meses TO diferenca_tempo_meses;
+    `);
+  }
 };
 
 export default db;

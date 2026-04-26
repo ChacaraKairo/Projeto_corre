@@ -9,14 +9,15 @@ import {
   BACKUP_TABLES,
   BackupTable,
   sanitizeBackupRow,
+  validateBackupPayload,
 } from '../../constants/backupSchema';
 
 export function useGerenciarDados() {
   const router = useRouter();
 
   const executarRestauracao = async (data: any) => {
-    const tabelas_data = data.tabelas ?? data;
     try {
+      const tabelas_data = validateBackupPayload(data);
       await db.execAsync('PRAGMA foreign_keys = OFF;');
       await db.execAsync('BEGIN TRANSACTION;');
 

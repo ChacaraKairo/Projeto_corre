@@ -1,3 +1,8 @@
+import type { SQLiteBindValue } from 'expo-sqlite';
+
+export const BACKUP_APP_NAME = 'KORRE';
+export const BACKUP_SCHEMA_VERSION = 2;
+
 export const BACKUP_TABLES = [
   'perfil_usuario',
   'veiculos',
@@ -125,7 +130,7 @@ export const BACKUP_COLUMNS: Record<BackupTable, readonly string[]> = {
     'descricao',
     'valor',
     'km_servico',
-    'direfenca_tempo_meses',
+    'diferenca_tempo_meses',
     'data_servico',
   ],
   notificacoes: [
@@ -152,17 +157,79 @@ export const sanitizeBackupRow = (
   table: BackupTable,
   row: Record<string, unknown>,
 ) => {
+  const normalizedRow = normalizeLegacyBackupRow(table, row);
   const allowed = BACKUP_COLUMNS[table];
   const columns = allowed.filter((column) =>
-    Object.prototype.hasOwnProperty.call(row, column),
+    Object.prototype.hasOwnProperty.call(normalizedRow, column),
   );
 
   return {
     columns,
     values: columns.map((column) =>
-      toSQLiteBindValue(row[column]),
+      toSQLiteBindValue(normalizedRow[column]),
     ),
   };
+};
+
+export const validateBackupPayload = (data: unknown) => {
+  if (!data || typeof data !== 'object') {
+    throw new Error('Backup invalido.');
+  }
+
+  const payload = data as {
+    app?: unknown;
+    versao_banco?: unknown;
+    tabelas?: unknown;
+  };
+
+  if (payload.app !== BACKUP_APP_NAME) {
+    throw new Error('Backup pertence a outro app.');
+  }
+
+  if (
+    typeof payload.versao_banco !== 'number' ||
+    payload.versao_banco < 1 ||
+    payload.versao_banco > BACKUP_SCHEMA_VERSION
+  ) {
+    throw new Error('Versao de backup incompativel.');
+  }
+
+  if (!payload.tabelas || typeof payload.tabelas !== 'object') {
+    throw new Error('Backup sem tabelas.');
+  }
+
+  const tabelas = payload.tabelas as Record<string, unknown>;
+  for (const table of BACKUP_TABLES) {
+    if (!Array.isArray(tabelas[table])) {
+      throw new Error(`Tabela obrigatoria ausente: ${table}`);
+    }
+  }
+
+  return tabelas;
+};
+
+const normalizeLegacyBackupRow = (
+  table: BackupTable,
+  row: Record<string, unknown>,
+) => {
+  if (
+    table === 'historico_manutencao' &&
+    Object.prototype.hasOwnProperty.call(
+      row,
+      'direfenca_tempo_meses',
+    ) &&
+    !Object.prototype.hasOwnProperty.call(
+      row,
+      'diferenca_tempo_meses',
+    )
+  ) {
+    return {
+      ...row,
+      diferenca_tempo_meses: row.direfenca_tempo_meses,
+    };
+  }
+
+  return row;
 };
 
 const toSQLiteBindValue = (value: unknown): SQLiteBindValue => {
@@ -179,4 +246,3 @@ const toSQLiteBindValue = (value: unknown): SQLiteBindValue => {
   if (value === undefined) return null;
   return String(value);
 };
-import type { SQLiteBindValue } from 'expo-sqlite';

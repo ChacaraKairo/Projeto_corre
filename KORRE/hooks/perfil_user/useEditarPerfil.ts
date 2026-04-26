@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
+import { hashPassword } from '../../utils/auth/passwordHash';
 
 export function useEditarPerfil(
   visivel: boolean,
@@ -30,7 +31,7 @@ export function useEditarPerfil(
       );
       if (user) {
         setNome(user.nome || '');
-        setSenha(user.senha || '');
+        setSenha('');
         setTipoMeta(user.tipo_meta || 'diaria');
       }
 
@@ -67,10 +68,20 @@ export function useEditarPerfil(
       console.log(
         '[EditarPerfil] Tentando atualizar dados do usuário...',
       );
-      await db.runAsync(
-        'UPDATE perfil_usuario SET nome = ?, senha = ?, tipo_meta = ?',
-        [nome.trim(), senha, tipoMeta],
-      );
+      if (senha.trim()) {
+        const senhaCriptografada = await hashPassword(
+          senha.trim(),
+        );
+        await db.runAsync(
+          'UPDATE perfil_usuario SET nome = ?, senha = ?, tipo_meta = ?',
+          [nome.trim(), senhaCriptografada, tipoMeta],
+        );
+      } else {
+        await db.runAsync(
+          'UPDATE perfil_usuario SET nome = ?, tipo_meta = ?',
+          [nome.trim(), tipoMeta],
+        );
+      }
 
       console.log(
         '[EditarPerfil] Perfil atualizado com sucesso.',

@@ -1,9 +1,10 @@
-import * as Crypto from 'expo-crypto';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Animated } from 'react-native';
 import db from '../../database/DatabaseInit';
+import { verifyPassword } from '../../utils/auth/passwordHash';
+import { AppRoutes } from '../../constants/routes';
 
 type UsuarioLogin = {
   id: number;
@@ -120,12 +121,7 @@ export const useLogin = () => {
       );
 
       if (usuario) {
-        const senhaFinal = await Crypto.digestStringAsync(
-          Crypto.CryptoDigestAlgorithm.SHA256,
-          senhaLimpa,
-        );
-
-        if (senhaFinal === usuario.senha) {
+        if (await verifyPassword(senhaLimpa, usuario.senha)) {
           await db.runAsync(
             'INSERT OR REPLACE INTO configuracoes_app (chave, valor) VALUES (?, ?)',
             [
@@ -135,9 +131,9 @@ export const useLogin = () => {
           );
 
           router.replace({
-            pathname: '/(tabs)/dashboard',
+            pathname: AppRoutes.dashboard,
             params: { userId: usuario.id },
-          } as any);
+          });
         } else {
           setErro('Utilizador ou senha incorretos.');
         }
@@ -163,7 +159,7 @@ export const useLogin = () => {
         });
 
       if (result.success) {
-        router.replace('/(tabs)/dashboard');
+        router.replace(AppRoutes.dashboard);
       }
     } catch (e) {
       if (__DEV__) console.error('[LOGIN] Falha na biometria:', e);

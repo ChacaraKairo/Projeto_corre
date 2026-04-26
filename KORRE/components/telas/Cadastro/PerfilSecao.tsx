@@ -155,14 +155,14 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
       />
 
       <Input
-        label="CPF"
+        label="CPF (opcional)"
         placeholder="000.000.000-00"
         value={cpf}
         onChangeText={handleCpfChange}
         keyboardType="numeric"
         maxLength={14}
         Icone={CreditCard}
-        erro={erro && cpf.length < 14}
+        erro={erro && cpf.length > 0 && cpf.length < 14}
       />
 
       {/* CAMPO 1: CRIAR SENHA */}

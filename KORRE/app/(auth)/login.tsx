@@ -17,6 +17,7 @@ import { CardLogin } from '../../components/telas/Login/CardLogin';
 import { FooterLogin } from '../../components/telas/Login/FooterLogin';
 import { useLogin } from '../../hooks/login/useLogin';
 import { loginStyles as styles } from '../../styles/telas/login/LoginStyles';
+import { AppRoutes } from '../../constants/routes';
 
 import { inlineStyles } from '../../styles/generated-inline/app/(auth)/loginInlineStyles';
 import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(auth)/loginDynamicStyles';
@@ -46,9 +47,9 @@ const LoginScreen: React.FC = () => {
         style={inlineStyles.inline1}
         onPress={() =>
           router.push({
-            pathname: '/calculadora',
+            pathname: AppRoutes.calculadora,
             params: { origem: 'login' },
-          } as any)
+          })
         }
         activeOpacity={0.7}
       >
