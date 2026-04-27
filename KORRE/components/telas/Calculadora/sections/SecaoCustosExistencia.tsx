@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { AJUDA_CALCULADORA } from '../../../../constants/calculadoraAjuda';
 import { useTema } from '../../../../hooks/modo_tema';
 import { palette } from '../../../../styles/tokens';
 import { secaoCustosExistenciaStyles as styles } from '../../../../styles/telas/Calculadora/sections/secaoCustosExistenciaStyles';
@@ -23,7 +24,7 @@ import {
   REGRAS_IPVA_ESTADOS,
   SiglaEstado,
 } from '../../../../type/ipvaEstados';
-import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida'; // SSOT
+import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida';
 import { AccordionSection } from '../ui/AccordionSection';
 import { InputFinanceiro } from '../ui/InputFinanceiro';
 
@@ -34,7 +35,7 @@ interface SecaoCustosExistenciaProps {
     valor: string,
   ) => void;
   onHelp: (titulo: string, texto: string) => void;
-  onCalcularIPVA: (ufSelecionada?: SiglaEstado) => void; // <-- Permite receber a UF
+  onCalcularIPVA: (ufSelecionada?: SiglaEstado) => void;
   isComplete: boolean;
 }
 
@@ -48,20 +49,15 @@ export const SecaoCustosExistencia = memo(
   }: SecaoCustosExistenciaProps) => {
     const { tema } = useTema();
     const isDark = tema === 'escuro';
-
-    // Estado local para controlar a visibilidade do modal de seleção de estado
     const [modalUFVisivel, setModalUFVisivel] =
       useState(false);
-
-    // Extrai as siglas do seu Map de regras para montar a lista do Modal automaticamente
     const listaEstados = Object.keys(
       REGRAS_IPVA_ESTADOS,
     ) as SiglaEstado[];
 
-    // Função disparada ao clicar numa UF dentro do modal
     const handleSelecionarUF = (uf: SiglaEstado) => {
       setModalUFVisivel(false);
-      onCalcularIPVA(uf); // Calcula e atualiza imediatamente!
+      onCalcularIPVA(uf);
     };
 
     return (
@@ -73,26 +69,28 @@ export const SecaoCustosExistencia = memo(
           onHelpClick={() =>
             onHelp(
               'Custos de Existência',
-              'Custos fixos. Eles definem quanto você perde com o carro parado.',
+              AJUDA_CALCULADORA.custosExistencia,
             )
           }
         >
           <View style={sharedSectionStyles.fieldStack}>
-            {/* 1. IMPOSTOS E TAXAS */}
             <View style={styles.row}>
               <View style={sharedSectionStyles.flex1}>
                 <InputFinanceiro
-                  label="IPVA Anual"
+                  label="IPVA anual"
                   value={String(form.ipva_anual || '')}
                   onChangeText={(v) =>
                     onChange('ipva_anual', v)
                   }
                   placeholder="R$ 0,00"
                   icon={<FileText size={18} color={palette.surface400} />}
-                  suffix="R$"
+                  suffix="R$/ano"
+                  onHelp={() =>
+                    onHelp('IPVA anual', AJUDA_CALCULADORA.ipva)
+                  }
                 />
               </View>
-              {/* Botão que agora abre o Modal */}
+
               <TouchableOpacity
                 style={[
                   styles.autoButton,
@@ -112,7 +110,7 @@ export const SecaoCustosExistencia = memo(
                     { color: isDark ? palette.white : palette.surface600 },
                   ]}
                 >
-                  CALCULAR ({form.estado_uf || 'SP'}) ▾
+                  CALCULAR ({form.estado_uf || 'SP'})
                 </Text>
               </TouchableOpacity>
             </View>
@@ -127,12 +125,17 @@ export const SecaoCustosExistencia = memo(
               }
               placeholder="R$ 0,00"
               icon={<FileText size={18} color={palette.surface400} />}
-              suffix="R$/Ano"
+              suffix="R$/ano"
+              onHelp={() =>
+                onHelp(
+                  'Licenciamento / DPVAT',
+                  AJUDA_CALCULADORA.licenciamento,
+                )
+              }
             />
 
-            {/* 2. PROTEÇÃO E CONECTIVIDADE */}
             <InputFinanceiro
-              label="Seguro Comercial / APP"
+              label="Seguro comercial / APP"
               value={String(
                 form.seguro_comercial_anual || '',
               )}
@@ -141,23 +144,34 @@ export const SecaoCustosExistencia = memo(
               }
               placeholder="R$ 0,00"
               icon={<Shield size={18} color={palette.surface400} />}
-              suffix="R$/Ano"
+              suffix="R$/ano"
+              onHelp={() =>
+                onHelp(
+                  'Seguro comercial / APP',
+                  AJUDA_CALCULADORA.seguro,
+                )
+              }
             />
 
             <InputFinanceiro
-              label="Plano de Dados (Internet)"
+              label="Plano de dados (internet)"
               value={String(form.plano_dados_mensal || '')}
               onChangeText={(v) =>
                 onChange('plano_dados_mensal', v)
               }
               placeholder="R$ 0,00"
               icon={<Wifi size={18} color={palette.surface400} />}
-              suffix="R$/Mês"
+              suffix="R$/mês"
+              onHelp={() =>
+                onHelp(
+                  'Plano de dados',
+                  AJUDA_CALCULADORA.planoDados,
+                )
+              }
             />
 
-            {/* 3. EQUIPAMENTO DE TRABALHO */}
             <InputFinanceiro
-              label="Custo do Smartphone"
+              label="Custo do smartphone"
               value={String(form.valor_smartphone || '')}
               onChangeText={(v) =>
                 onChange('valor_smartphone', v)
@@ -165,10 +179,16 @@ export const SecaoCustosExistencia = memo(
               placeholder="R$ 0,00"
               icon={<Smartphone size={18} color={palette.surface400} />}
               suffix="R$"
+              onHelp={() =>
+                onHelp(
+                  'Custo do smartphone',
+                  AJUDA_CALCULADORA.smartphone,
+                )
+              }
             />
 
             <InputFinanceiro
-              label="Vida Útil (Meses)"
+              label="Vida útil do smartphone"
               value={String(
                 form.vida_util_smartphone_meses || '',
               )}
@@ -177,12 +197,17 @@ export const SecaoCustosExistencia = memo(
               }
               placeholder="Ex: 24"
               icon={<Landmark size={18} color={palette.surface400} />}
-              suffix="Meses"
+              suffix="meses"
+              onHelp={() =>
+                onHelp(
+                  'Vida útil do smartphone',
+                  AJUDA_CALCULADORA.vidaSmartphone,
+                )
+              }
             />
           </View>
         </AccordionSection>
 
-        {/* Modal de Seleção de Estado (Renderizado fora da Accordion para evitar cortes de layout) */}
         <Modal
           visible={modalUFVisivel}
           transparent
@@ -207,7 +232,7 @@ export const SecaoCustosExistencia = memo(
                     { color: isDark ? palette.white : palette.surface600 },
                   ]}
                 >
-                  Selecione o Estado
+                  Selecione o estado
                 </Text>
                 <TouchableOpacity
                   onPress={() => setModalUFVisivel(false)}

@@ -2,21 +2,20 @@ import {
   BadgePercent,
   Coins,
   Landmark,
-  TrendingDown,
 } from 'lucide-react-native';
 import React, { memo } from 'react';
 import { View } from 'react-native';
+import { AJUDA_CALCULADORA } from '../../../../constants/calculadoraAjuda';
 import { palette } from '../../../../styles/tokens';
 import { sharedSectionStyles } from '../../../../styles/telas/Calculadora/sections/sharedSectionStyles';
-// IMPORTANTE: Importando a Fonte Única de Verdade (SSOT)
 import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida';
 import { AccordionSection } from '../ui/AccordionSection';
 import { InputFinanceiro } from '../ui/InputFinanceiro';
 
 interface SecaoPatrimonioProps {
-  form: Partial<FormularioViabilidade>; // Atualizado para a SSOT
+  form: Partial<FormularioViabilidade>;
   onChange: (
-    campo: keyof FormularioViabilidade, // Atualizado para a SSOT
+    campo: keyof FormularioViabilidade,
     valor: string,
   ) => void;
   onHelp: (titulo: string, texto: string) => void;
@@ -37,15 +36,14 @@ export const SecaoPatrimonio = memo(
         isComplete={isComplete}
         onHelpClick={() =>
           onHelp(
-            'Custos de Capital',
-            'Aqui calculamos quanto o seu dinheiro custa. O veículo é um capital imobilizado que perde valor e deixa de render juros.',
+            'Patrimônio e Capital',
+            AJUDA_CALCULADORA.patrimonio,
           )
         }
       >
         <View style={sharedSectionStyles.fieldStack}>
-          {/* 1. VALOR DO ATIVO */}
           <InputFinanceiro
-            label="Valor do Veículo (Tabela FIPE)"
+            label="Valor do veículo (Tabela FIPE)"
             value={String(form.valor_veiculo_fipe || '')}
             onChangeText={(v) =>
               onChange('valor_veiculo_fipe', v)
@@ -54,52 +52,25 @@ export const SecaoPatrimonio = memo(
             icon={<Landmark size={18} color={palette.surface400} />}
             suffix="R$"
             onHelp={() =>
-              onHelp(
-                'Valor FIPE',
-                'O valor atual de mercado do seu veículo. Ele é a base para o cálculo do Custo de Oportunidade.',
-              )
+              onHelp('Valor FIPE', AJUDA_CALCULADORA.valorFipe)
             }
           />
 
-          {/* 2. DEPRECIAÇÃO */}
           <InputFinanceiro
-            label="Depreciação Anual Estimada"
-            value={String(
-              form.depreciacao_real_estimada || '',
-            )}
-            onChangeText={(v) =>
-              onChange('depreciacao_real_estimada', v)
-            }
-            placeholder="Ex: 10"
-            icon={<TrendingDown size={18} color={palette.surface400} />}
-            suffix="%"
-            onHelp={() =>
-              onHelp(
-                'Depreciação',
-                'Quanto o seu veículo perde de valor por ano? A média de mercado para carros de aplicativo gira entre 10% a 15%.',
-              )
-            }
-          />
-
-          {/* 3. CUSTO DE OPORTUNIDADE (SELIC) */}
-          <InputFinanceiro
-            label="Taxa Selic Anual (Rendimento)"
+            label="Taxa Selic anual"
             value={String(
               form.custo_oportunidade_selic || '',
             )}
             onChangeText={(v) =>
               onChange('custo_oportunidade_selic', v)
             }
-            placeholder="Ex: 10.75"
+            placeholder="Ex: 10,75"
             icon={
               <BadgePercent size={18} color={palette.brand} />
             }
             suffix="%"
             onHelp={() =>
-              onHelp(
-                'Taxa SELIC',
-                'É a taxa básica de juros. Usamos para calcular quanto você ganharia se o valor do carro estivesse aplicado no banco.',
-              )
+              onHelp('Taxa Selic', AJUDA_CALCULADORA.selic)
             }
           />
         </View>

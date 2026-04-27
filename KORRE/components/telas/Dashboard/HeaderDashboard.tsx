@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import * as FileSystem from 'expo-file-system/legacy';
 import {
   Cloud,
   CloudRain,
@@ -19,6 +20,7 @@ import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashb
 
 import { inlineStyles } from '../../../styles/generated-inline/components/telas/Dashboard/HeaderDashboardInlineStyles';
 import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Dashboard/HeaderDashboardDynamicStyles';
+
 interface HeaderProps {
   nome: string;
   fraseMotivacional: string;
@@ -34,20 +36,34 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
 }) => {
   const router = useRouter();
   const { clima, loadingClima } = useHeaderClimaDashboard();
-
-  // Estado para controlar se a imagem falhou
   const [imageError, setImageError] = useState(false);
 
-  // --- LOG 1: O que está chegando no componente? ---
   useEffect(() => {
-    console.log(
-      '[DEBUG Avatar] Props atualizadas. Valor de fotoPerfil:',
-      fotoPerfil,
-    );
-    setImageError(false); // Tenta recarregar se a prop mudar
+    let ativo = true;
+
+    const validarFotoLocal = async () => {
+      setImageError(false);
+
+      if (!fotoPerfil?.startsWith('file://')) return;
+
+      const info = await FileSystem.getInfoAsync(fotoPerfil);
+      if (ativo && !info.exists) {
+        console.warn(
+          '[Avatar] Arquivo de foto não encontrado. Usando avatar padrão.',
+        );
+        setImageError(true);
+      }
+    };
+
+    validarFotoLocal().catch(() => {
+      if (ativo) setImageError(true);
+    });
+
+    return () => {
+      ativo = false;
+    };
   }, [fotoPerfil]);
 
-  // Regra de segurança: impede strings vazias de tentarem renderizar
   const isFotoValida =
     fotoPerfil && fotoPerfil.trim() !== '' && !imageError;
 
@@ -67,29 +83,16 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
               <Image
                 source={{ uri: fotoPerfil }}
                 style={dynamicInlineStyles.inline1({})}
-                // --- LOGS DE CICLO DE VIDA DA IMAGEM ---
-                onLoadStart={() =>
-                  console.log(
-                    '[DEBUG Avatar] ⏳ Iniciando download da imagem...',
-                  )
-                }
-                onLoad={() =>
-                  console.log(
-                    '[DEBUG Avatar] ✅ Imagem carregada e renderizada com sucesso!',
-                  )
-                }
                 onError={(e) => {
-                  console.error(
-                    '[DEBUG Avatar] ❌ ERRO ao carregar a imagem. Detalhes:',
+                  console.warn(
+                    '[Avatar] Falha ao carregar foto. Usando avatar padrão.',
                     e.nativeEvent.error,
                   );
-                  setImageError(true); // Aciona o fallback
+                  setImageError(true);
                 }}
               />
             ) : (
-              <View
-                style={inlineStyles.inline1}
-              >
+              <View style={inlineStyles.inline1}>
                 <User size={24} color="#00C853" />
               </View>
             )}
@@ -126,22 +129,13 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
           </View>
         </TouchableOpacity>
 
-        {/* Container para alinhar o Clima e as Configurações à direita */}
-        <View
-          style={inlineStyles.inline4}
-        >
+        <View style={inlineStyles.inline4}>
           {!loadingClima && clima && (
-            <View
-              style={inlineStyles.inline5}
-            >
-              <Text
-                style={inlineStyles.inline6}
-              >
+            <View style={inlineStyles.inline5}>
+              <Text style={inlineStyles.inline6}>
                 Previsão de Amanhã
               </Text>
-              <View
-                style={inlineStyles.inline7}
-              >
+              <View style={inlineStyles.inline7}>
                 {clima.condicao === 'sol' && (
                   <Sun size={16} color="#FFEB3B" />
                 )}
@@ -151,17 +145,13 @@ export const HeaderDashboard: React.FC<HeaderProps> = ({
                 {clima.condicao === 'chuva' && (
                   <CloudRain size={16} color="#03A9F4" />
                 )}
-                <Text
-                  style={inlineStyles.inline8}
-                >
+                <Text style={inlineStyles.inline8}>
                   {clima.max}° / {clima.min}°
                 </Text>
               </View>
               {clima.condicao === 'chuva' &&
                 clima.horaChuva && (
-                  <Text
-                    style={inlineStyles.inline9}
-                  >
+                  <Text style={inlineStyles.inline9}>
                     {clima.horaChuva} (
                     {clima.probabilidadeChuva}%)
                   </Text>

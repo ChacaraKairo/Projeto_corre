@@ -1,13 +1,17 @@
-import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { AppRoutes } from '../constants/routes';
 import { handleRemoteCommand } from './RemoteCommandHandler';
 
+const isExpoGo = Constants.appOwnership === 'expo';
+
 export const NotificationHandler = {
-  setupForegroundHandler: () => {
+  setupForegroundHandler: async () => {
+    if (isExpoGo) return;
+
+    const Notifications = await import('expo-notifications');
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
-        shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: true,
         shouldShowBanner: true,
@@ -15,7 +19,10 @@ export const NotificationHandler = {
       }),
     });
   },
-  listenToReceived: () => {
+  listenToReceived: async () => {
+    if (isExpoGo) return { remove: () => undefined };
+
+    const Notifications = await import('expo-notifications');
     return Notifications.addNotificationReceivedListener(
       async (notification) => {
         const data = notification.request.content.data;
@@ -25,7 +32,10 @@ export const NotificationHandler = {
       },
     );
   },
-  listenToClicks: () => {
+  listenToClicks: async () => {
+    if (isExpoGo) return { remove: () => undefined };
+
+    const Notifications = await import('expo-notifications');
     return Notifications.addNotificationResponseReceivedListener(
       async (response) => {
         const data = response.notification.request.content.data;

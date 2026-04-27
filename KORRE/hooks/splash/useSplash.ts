@@ -9,9 +9,8 @@ export const useSplash = () => {
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      NavigationBar.setBackgroundColorAsync('#0A0A0A');
-      NavigationBar.setButtonStyleAsync('light');
-      NavigationBar.setVisibilityAsync('visible');
+      NavigationBar.setButtonStyleAsync('light').catch(() => {});
+      NavigationBar.setVisibilityAsync('visible').catch(() => {});
     }
 
     const verificarUsuarioUnico = async () => {

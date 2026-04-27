@@ -1,20 +1,20 @@
 // MeuCorre/app/_layout.tsx
-import { Href, Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-  ScrollView,
+  ActivityIndicator,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import db, { DatabaseInit } from '../database/DatabaseInit';
-import { NotificationHandler } from '../notifications/NotificationHandler';
+import { AppLoadingOverlay } from '../components/ui/AppLoadingOverlay';
 import { AppRoutes } from '../constants/routes';
+import db, { DatabaseInit } from '../database/DatabaseInit';
+import '../locales/i18n';
 import { executarVerificacoesLocais } from '../notifications/LocalNotificationScheduler';
+import { NotificationHandler } from '../notifications/NotificationHandler';
 
 import { inlineStyles } from '../styles/generated-inline/app/_layoutInlineStyles';
-import { dynamicInlineStyles } from '../styles/generated-dynamic/app/_layoutDynamicStyles';
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const [hasUser, setHasUser] = useState(false);
@@ -27,24 +27,32 @@ export default function RootLayout() {
     async function setup() {
       try {
         DatabaseInit();
-        NotificationHandler.setupForegroundHandler();
+        await NotificationHandler.setupForegroundHandler();
         subscriptions.push(
-          NotificationHandler.listenToReceived(),
+          await NotificationHandler.listenToReceived(),
         );
         const notificationSub =
-          NotificationHandler.listenToClicks();
+          await NotificationHandler.listenToClicks();
         subscriptions.push(notificationSub);
-        await executarVerificacoesLocais();
-
         const result = await db.getAllAsync<{ id: number }>(
           'SELECT id FROM perfil_usuario LIMIT 1;',
         );
+        const existeUsuario = result.length > 0;
 
-        setHasUser(result.length > 0);
-      } catch {
-        // Erro silencioso
+        setHasUser(existeUsuario);
+
+        if (existeUsuario) {
+          await executarVerificacoesLocais();
+        }
+      } catch (error) {
+        if (__DEV__) {
+          console.error(
+            '[RootLayout] Falha no setup inicial:',
+            error,
+          );
+        }
       } finally {
-        setTimeout(() => setIsReady(true), 1000);
+        setIsReady(true);
       }
     }
     setup();
@@ -73,75 +81,43 @@ export default function RootLayout() {
     }
   }, [isReady, hasUser, segments, router]);
 
-  // --- MENU DE ATALHOS NA BARRA INFERIOR (APENAS DEV) ---
-  const DevMenu = () => {
-    if (!__DEV__) return null;
-
-    const rotas: { nome: string; path: Href }[] = [
-      { nome: 'Login', path: AppRoutes.login },
-      { nome: 'Cadastro', path: AppRoutes.cadastro },
-      { nome: 'Home', path: AppRoutes.dashboard },
-      { nome: 'Ganhos', path: AppRoutes.finance },
-      { nome: 'Oficina', path: AppRoutes.oficina },
-      { nome: 'Garagem', path: AppRoutes.garagem },
-      { nome: 'Origem', path: AppRoutes.origemGanhos },
-      { nome: 'MEI', path: '/relatorios/temometro_mei' },
-      { nome: 'Lucro', path: '/relatorios/balanco_dre' },
-      { nome: 'Relatórios', path: '/(tabs)/relatorios' },
-      { nome: 'Config', path: AppRoutes.configuracoes },
-      { nome: 'Perfil', path: AppRoutes.perfil },
-      { nome: 'Notif', path: AppRoutes.notificacoes },
-      { nome: 'DB', path: '/(tabs)/explore' },
-      { nome: 'Calc', path: AppRoutes.calculadora },
-      { nome: 'Termos', path: AppRoutes.termos },
-      { nome: 'Suporte', path: AppRoutes.suporte },
-      { nome: 'Histórico', path: '/(tabs)/historico' },
-    ];
-
+  if (!isReady) {
     return (
-      <View
-        style={dynamicInlineStyles.inline1({})}
-      >
-        <Text
-          style={inlineStyles.inline1}
+      <SafeAreaProvider style={inlineStyles.inline4}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#0A0A0A',
+          }}
         >
-          KORRE DEV BAR
-        </Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={inlineStyles.devMenuContent}
-        >
-          {rotas.map((rota) => (
-            <TouchableOpacity
-              key={String(rota.path)}
-              onPress={() => router.push(rota.path)}
-              style={inlineStyles.inline2}
-            >
-              <Text
-                style={inlineStyles.inline3}
-              >
-                {rota.nome}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+          <ActivityIndicator size="large" color="#00C853" />
+          <Text
+            style={{
+              color: '#00C853',
+              fontSize: 12,
+              fontWeight: '900',
+              marginTop: 12,
+              textTransform: 'uppercase',
+            }}
+          >
+            Carregando KORRE
+          </Text>
+        </View>
+      </SafeAreaProvider>
     );
-  };
+  }
 
   return (
-    <SafeAreaProvider
-      style={inlineStyles.inline4}
-    >
+    <SafeAreaProvider style={inlineStyles.inline4}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="relatorios" />
       </Stack>
-      {/* O menu fica por cima de tudo no final do componente */}
-      <DevMenu />
+      <AppLoadingOverlay />
     </SafeAreaProvider>
   );
 }

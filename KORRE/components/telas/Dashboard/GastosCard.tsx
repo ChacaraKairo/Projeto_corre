@@ -1,25 +1,23 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { TrendingDown, Plus } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useTema } from '../../../hooks/modo_tema';
 
 import { styles } from '../../../styles/generated/components/telas/Dashboard/GastosCardStyles';
+
 interface GastosProps {
   valor: number;
   qtdGastos?: number;
+  tipoMeta?: 'diaria' | 'semanal';
 }
 
 export const GastosCard: React.FC<GastosProps> = ({
   valor,
   qtdGastos = 0,
+  tipoMeta = 'diaria',
 }) => {
   const router = useRouter();
-
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
@@ -35,19 +33,20 @@ export const GastosCard: React.FC<GastosProps> = ({
       activeOpacity={0.8}
       onPress={() =>
         router.push({
-          pathname: '/finance',
-          params: { initialType: 'despesa' },
+          pathname: '/(tabs)/finance',
+          params: {
+            initialType: 'despesa',
+            ts: String(Date.now()),
+          },
         } as any)
       }
     >
       <View style={styles.header}>
         <View style={styles.iconContainer}>
-          {/* Fundo do ícone de gasto */}
           <View style={styles.iconBg}>
             <TrendingDown size={28} color="#F44336" />
           </View>
 
-          {/* Botão de Plus estilizado para Gastos */}
           <View style={styles.plusBtn}>
             <Plus size={20} color="white" />
           </View>
@@ -61,7 +60,9 @@ export const GastosCard: React.FC<GastosProps> = ({
             { color: isDark ? '#666' : '#888' },
           ]}
         >
-          GASTOS DE HOJE{' '}
+          {tipoMeta === 'semanal'
+            ? 'GASTOS DA SEMANA'
+            : 'GASTOS DE HOJE'}{' '}
           {qtdGastos > 0 ? `• ${qtdGastos} REGISTOS` : ''}
         </Text>
         <Text
@@ -79,5 +80,3 @@ export const GastosCard: React.FC<GastosProps> = ({
     </TouchableOpacity>
   );
 };
-
-

@@ -6,16 +6,33 @@ export const FinanceiroRepository = {
     veiculoId: number,
     dataInicio: string,
     tipo: 'ganho' | 'despesa',
+    dataFim?: string,
   ) => {
+    const filtros = [
+      'tipo = ?',
+      'veiculo_id = ?',
+      'data_transacao >= ?',
+    ];
+    const params: (string | number)[] = [
+      tipo,
+      veiculoId,
+      dataInicio,
+    ];
+
+    if (dataFim) {
+      filtros.push('data_transacao < ?');
+      params.push(dataFim);
+    }
+
     const query = `
       SELECT SUM(valor) as total, COUNT(*) as qtd 
       FROM transacoes_financeiras 
-      WHERE tipo = ? AND veiculo_id = ? AND data_transacao >= ?
+      WHERE ${filtros.join(' AND ')}
     `;
     return await db.getFirstAsync<{
       total: number;
       qtd: number;
-    }>(query, [tipo, veiculoId, dataInicio]);
+    }>(query, params);
   },
 
   getUltimasMovimentacoes: async (limit = 5) => {

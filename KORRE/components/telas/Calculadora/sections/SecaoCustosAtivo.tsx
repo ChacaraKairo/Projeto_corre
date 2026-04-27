@@ -8,6 +8,7 @@ import {
 } from 'lucide-react-native';
 import React, { memo } from 'react';
 import { Text, View } from 'react-native';
+import { AJUDA_CALCULADORA } from '../../../../constants/calculadoraAjuda';
 import { palette } from '../../../../styles/tokens';
 import { sharedSectionStyles } from '../../../../styles/telas/Calculadora/sections/sharedSectionStyles';
 import { FormularioViabilidade } from '../../../../type/viabilidadeCorrida';
@@ -39,13 +40,13 @@ export const SecaoCustosAtivo = memo(
         onHelpClick={() =>
           onHelp(
             'Custos de Movimento',
-            'Valores consumidos enquanto você roda. Compõem o IKM.',
+            AJUDA_CALCULADORA.custosMovimento,
           )
         }
       >
         <View style={sharedSectionStyles.fieldStack}>
           <InputFinanceiro
-            label="Preço do Combustível / kWh"
+            label="Preço do combustível / kWh"
             value={String(form.preco_energia_unidade || '')}
             onChangeText={(v) =>
               onChange('preco_energia_unidade', v)
@@ -53,23 +54,35 @@ export const SecaoCustosAtivo = memo(
             placeholder="R$ 0,00"
             icon={<Fuel size={18} color={palette.surface400} />}
             suffix="R$/L ou kWh"
+            onHelp={() =>
+              onHelp(
+                'Preço do combustível / kWh',
+                AJUDA_CALCULADORA.precoEnergia,
+              )
+            }
           />
 
           <InputFinanceiro
-            label="Média de Consumo"
+            label="Média de consumo"
             value={String(
               form.rendimento_energia_unidade || '',
             )}
             onChangeText={(v) =>
               onChange('rendimento_energia_unidade', v)
             }
-            placeholder="0.0"
+            placeholder="Ex: 40"
             icon={<Gauge size={18} color={palette.surface400} />}
-            suffix="KM/L"
+            suffix="KM/L ou KM/kWh"
+            onHelp={() =>
+              onHelp(
+                'Média de consumo',
+                AJUDA_CALCULADORA.rendimento,
+              )
+            }
           />
 
           <InputFinanceiro
-            label="Valor do Jogo de Pneus"
+            label="Valor do jogo de pneus"
             value={String(form.valor_jogo_pneus || '')}
             onChangeText={(v) =>
               onChange('valor_jogo_pneus', v)
@@ -79,10 +92,16 @@ export const SecaoCustosAtivo = memo(
               <CircleDot size={18} color={palette.surface400} />
             }
             suffix="R$"
+            onHelp={() =>
+              onHelp(
+                'Valor do jogo de pneus',
+                AJUDA_CALCULADORA.valorPneus,
+              )
+            }
           />
 
           <InputFinanceiro
-            label="Durabilidade dos Pneus"
+            label="Durabilidade dos pneus"
             value={String(form.durabilidade_pneus_km || '')}
             onChangeText={(v) =>
               onChange('durabilidade_pneus_km', v)
@@ -90,10 +109,16 @@ export const SecaoCustosAtivo = memo(
             placeholder="Ex: 40000"
             icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM"
+            onHelp={() =>
+              onHelp(
+                'Durabilidade dos pneus',
+                AJUDA_CALCULADORA.durabilidadePneus,
+              )
+            }
           />
 
           <InputFinanceiro
-            label="Custo Óleo e Filtros"
+            label="Custo óleo e filtros"
             value={String(form.valor_oleo_filtros || '')}
             onChangeText={(v) =>
               onChange('valor_oleo_filtros', v)
@@ -101,10 +126,16 @@ export const SecaoCustosAtivo = memo(
             placeholder="R$ 0,00"
             icon={<Droplets size={18} color={palette.surface400} />}
             suffix="R$"
+            onHelp={() =>
+              onHelp(
+                'Custo óleo e filtros',
+                AJUDA_CALCULADORA.oleoFiltros,
+              )
+            }
           />
 
           <InputFinanceiro
-            label="Intervalo de Troca (Óleo)"
+            label="Intervalo de troca (óleo)"
             value={String(
               form.intervalo_oleo_filtros_km || '',
             )}
@@ -114,10 +145,16 @@ export const SecaoCustosAtivo = memo(
             placeholder="Ex: 10000"
             icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM"
+            onHelp={() =>
+              onHelp(
+                'Intervalo de troca (óleo)',
+                AJUDA_CALCULADORA.intervaloOleo,
+              )
+            }
           />
 
           <InputFinanceiro
-            label="Valor Freios (Pastilha/Disco)"
+            label="Valor freios (pastilha/disco)"
             value={String(
               form.valor_manutencao_freios || '',
             )}
@@ -127,10 +164,16 @@ export const SecaoCustosAtivo = memo(
             placeholder="R$ 0,00"
             icon={<Wrench size={18} color={palette.surface400} />}
             suffix="R$"
+            onHelp={() =>
+              onHelp(
+                'Valor freios',
+                AJUDA_CALCULADORA.freios,
+              )
+            }
           />
 
           <InputFinanceiro
-            label="Intervalo de Troca (Freios)"
+            label="Intervalo de troca (freios)"
             value={String(form.intervalo_freios_km || '')}
             onChangeText={(v) =>
               onChange('intervalo_freios_km', v)
@@ -138,10 +181,16 @@ export const SecaoCustosAtivo = memo(
             placeholder="Ex: 20000"
             icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM"
+            onHelp={() =>
+              onHelp(
+                'Intervalo de troca (freios)',
+                AJUDA_CALCULADORA.intervaloFreios,
+              )
+            }
           />
 
           <InputFinanceiro
-            label="Kit Transmissão / Correia"
+            label="Kit transmissão / correia"
             value={String(form.valor_kit_transmissao || '')}
             onChangeText={(v) =>
               onChange('valor_kit_transmissao', v)
@@ -149,10 +198,16 @@ export const SecaoCustosAtivo = memo(
             placeholder="R$ 0,00"
             icon={<Wrench size={18} color={palette.surface400} />}
             suffix="R$"
+            onHelp={() =>
+              onHelp(
+                'Kit transmissão / correia',
+                AJUDA_CALCULADORA.transmissao,
+              )
+            }
           />
 
           <InputFinanceiro
-            label="Durabilidade Transmissão"
+            label="Durabilidade transmissão"
             value={String(
               form.durabilidade_transmissao_km || '',
             )}
@@ -162,6 +217,12 @@ export const SecaoCustosAtivo = memo(
             placeholder="Ex: 35000"
             icon={<Gauge size={18} color={palette.surface400} />}
             suffix="KM"
+            onHelp={() =>
+              onHelp(
+                'Durabilidade transmissão',
+                AJUDA_CALCULADORA.durabilidadeTransmissao,
+              )
+            }
           />
 
           <Text style={sharedSectionStyles.subsectionTitle}>
@@ -174,11 +235,11 @@ export const SecaoCustosAtivo = memo(
             onChangeText={(v) => onChange('km_estimado_mes', v)}
             placeholder="Ex: 1500"
             icon={<Gauge size={18} color={palette.surface400} />}
-            suffix="KM"
+            suffix="KM/mês"
             onHelp={() =>
               onHelp(
                 'KM estimado por mês',
-                'Se vazio, o KORRE calcula usando km por dia × dias por semana.',
+                AJUDA_CALCULADORA.kmEstimadoMes,
               )
             }
           />
@@ -193,11 +254,11 @@ export const SecaoCustosAtivo = memo(
             }
             placeholder="R$ 0,00"
             icon={<Wrench size={18} color={palette.surface400} />}
-            suffix="R$"
+            suffix="R$/mês"
             onHelp={() =>
               onHelp(
                 'Depreciação mensal estimada',
-                'Quanto o veículo perde de valor por mês pelo uso.',
+                AJUDA_CALCULADORA.depreciacaoMensal,
               )
             }
           />
@@ -208,13 +269,13 @@ export const SecaoCustosAtivo = memo(
             onChangeText={(v) =>
               onChange('depreciacao_por_km', v)
             }
-            placeholder="R$ 0,00"
+            placeholder="Ex: 0,20"
             icon={<Gauge size={18} color={palette.surface400} />}
             suffix="R$/KM"
             onHelp={() =>
               onHelp(
                 'Depreciação por km',
-                'Use apenas se você já sabe o valor exato por km. Se preencher, ele tem prioridade sobre a depreciação mensal.',
+                AJUDA_CALCULADORA.depreciacaoKm,
               )
             }
           />
@@ -229,11 +290,11 @@ export const SecaoCustosAtivo = memo(
             }
             placeholder="R$ 0,00"
             icon={<Wrench size={18} color={palette.surface400} />}
-            suffix="R$"
+            suffix="R$/mês"
             onHelp={() =>
               onHelp(
                 'Reserva mensal para imprevistos',
-                'Valor reservado para problemas não previstos.',
+                AJUDA_CALCULADORA.manutencaoImprevistaMensal,
               )
             }
           />
@@ -246,13 +307,13 @@ export const SecaoCustosAtivo = memo(
             onChangeText={(v) =>
               onChange('manutencao_imprevista_por_km', v)
             }
-            placeholder="R$ 0,00"
+            placeholder="Ex: 0,10"
             icon={<Gauge size={18} color={palette.surface400} />}
             suffix="R$/KM"
             onHelp={() =>
               onHelp(
                 'Imprevistos por km',
-                'Use se preferir informar diretamente por km.',
+                AJUDA_CALCULADORA.manutencaoImprevistaKm,
               )
             }
           />
@@ -265,13 +326,13 @@ export const SecaoCustosAtivo = memo(
             onChangeText={(v) =>
               onChange('mao_obra_preventiva_por_km', v)
             }
-            placeholder="R$ 0,00"
+            placeholder="Ex: 0,03"
             icon={<Sparkles size={18} color={palette.surface400} />}
             suffix="R$/KM"
             onHelp={() =>
               onHelp(
                 'Mão de obra preventiva por km',
-                'Valor médio de mão de obra diluído por km.',
+                AJUDA_CALCULADORA.maoObraPreventivaKm,
               )
             }
           />
@@ -286,7 +347,13 @@ export const SecaoCustosAtivo = memo(
             }
             placeholder="R$ 0,00"
             icon={<Droplets size={18} color={palette.surface400} />}
-            suffix="R$"
+            suffix="R$/mês"
+            onHelp={() =>
+              onHelp(
+                'Limpeza/higienização mensal',
+                AJUDA_CALCULADORA.limpezaMensal,
+              )
+            }
           />
 
           <InputFinanceiro
@@ -297,13 +364,13 @@ export const SecaoCustosAtivo = memo(
             onChangeText={(v) =>
               onChange('limpeza_higienizacao_por_km', v)
             }
-            placeholder="R$ 0,00"
+            placeholder="Ex: 0,04"
             icon={<Droplets size={18} color={palette.surface400} />}
             suffix="R$/KM"
             onHelp={() =>
               onHelp(
                 'Limpeza por km',
-                'Use se quiser informar diretamente por km.',
+                AJUDA_CALCULADORA.limpezaKm,
               )
             }
           />

@@ -6,7 +6,29 @@ import db from '../../database/DatabaseInit';
 import { CalculadoraRepository } from '../../database/repositories/CalculadoraRepository';
 import { FinanceiroRepository } from '../../database/repositories/FinanceiroRepository';
 import { verificarAlertasManutencao } from '../../notifications/LocalNotificationScheduler';
+import {
+  hideAppLoading,
+  showAppLoadingAsync,
+} from '../ui/useAppLoading';
 import { getFraseDoMomento } from './frasesService';
+
+const formatarDataLocal = (data: Date) => {
+  const pad = (valor: number) =>
+    String(valor).padStart(2, '0');
+  return `${data.getFullYear()}-${pad(data.getMonth() + 1)}-${pad(data.getDate())}`;
+};
+
+const inicioDoDia = (data: Date) =>
+  `${formatarDataLocal(data)} 00:00:00`;
+
+const inicioDaSemana = (data: Date) => {
+  const inicio = new Date(data);
+  const dia = inicio.getDay();
+  const distanciaSegunda = dia === 0 ? -6 : 1 - dia;
+  inicio.setDate(inicio.getDate() + distanciaSegunda);
+  inicio.setHours(0, 0, 0, 0);
+  return inicio;
+};
 
 export const useDashboard = () => {
   const router = useRouter();
@@ -18,8 +40,11 @@ export const useDashboard = () => {
     financeiro: {
       ganhos: 0,
       gastos: 0,
+      ganhosMes: 0,
+      gastosMes: 0,
       meta: 0,
       qtdGanhos: 0,
+      qtdGastos: 0,
     },
     movimentacoes: [] as any[],
   });
@@ -27,8 +52,6 @@ export const useDashboard = () => {
   const carregarTudo = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Dados Básicos
-      // ADICIONADO: Busca o perfil do usuário no banco SQLite
       const usuarioPerfil = await db.getFirstAsync(
         'SELECT * FROM perfil_usuario LIMIT 1',
       );
@@ -38,39 +61,74 @@ export const useDashboard = () => {
       const frase = getFraseDoMomento();
 
       if (veiculoAtivo) {
-        const hoje = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const agora = new Date();
+        const tipoMeta =
+          (usuarioPerfil as any)?.tipo_meta === 'semanal'
+            ? 'semanal'
+            : 'diaria';
+        const periodoInicio =
+          tipoMeta === 'semanal'
+            ? inicioDoDia(inicioDaSemana(agora))
+            : inicioDoDia(agora);
+        const mesInicio = inicioDoDia(
+          new Date(agora.getFullYear(), agora.getMonth(), 1),
+        );
+        const mesFim = inicioDoDia(
+          new Date(agora.getFullYear(), agora.getMonth() + 1, 1),
+        );
 
-        // 2. Busca Paralela (Performance Máxima)
-        const [resGanhos, resGastos, ultimas] =
-          await Promise.all([
-            FinanceiroRepository.getResumoPorPeriodo(
-              veiculoAtivo.id,
-              hoje,
-              'ganho',
-            ),
-            FinanceiroRepository.getResumoPorPeriodo(
-              veiculoAtivo.id,
-              hoje,
-              'despesa',
-            ),
-            FinanceiroRepository.getUltimasMovimentacoes(5),
-          ]);
+        const [
+          resGanhos,
+          resGastos,
+          resGanhosMes,
+          resGastosMes,
+          ultimas,
+        ] = await Promise.all([
+          FinanceiroRepository.getResumoPorPeriodo(
+            veiculoAtivo.id,
+            periodoInicio,
+            'ganho',
+          ),
+          FinanceiroRepository.getResumoPorPeriodo(
+            veiculoAtivo.id,
+            periodoInicio,
+            'despesa',
+          ),
+          FinanceiroRepository.getResumoPorPeriodo(
+            veiculoAtivo.id,
+            mesInicio,
+            'ganho',
+            mesFim,
+          ),
+          FinanceiroRepository.getResumoPorPeriodo(
+            veiculoAtivo.id,
+            mesInicio,
+            'despesa',
+            mesFim,
+          ),
+          FinanceiroRepository.getUltimasMovimentacoes(5),
+        ]);
 
         setData((prev) => ({
           ...prev,
-          usuario: usuarioPerfil, // <-- O estado agora recebe os dados reais da tabela
+          usuario: usuarioPerfil,
           veiculo: veiculoAtivo,
           frase,
           movimentacoes: ultimas,
           financeiro: {
             ganhos: resGanhos?.total || 0,
             gastos: resGastos?.total || 0,
+            ganhosMes: resGanhosMes?.total || 0,
+            gastosMes: resGastosMes?.total || 0,
             qtdGanhos: resGanhos?.qtd || 0,
-            meta: (usuarioPerfil as any)?.meta_diaria || 0, // <-- Bônus: já puxa a meta real configurada
+            qtdGastos: resGastos?.qtd || 0,
+            meta:
+              tipoMeta === 'semanal'
+                ? (usuarioPerfil as any)?.meta_semanal || 0
+                : (usuarioPerfil as any)?.meta_diaria || 0,
           },
         }));
       } else if (usuarioPerfil) {
-        // Fallback de segurança: Caso o app tenha um usuário logado, mas nenhum veículo ativo cadastrado ainda
         setData((prev) => ({
           ...prev,
           usuario: usuarioPerfil,
@@ -93,21 +151,19 @@ export const useDashboard = () => {
     }, [carregarTudo]),
   );
 
-  // Lógica de UI (Atoms/Molecules Actions)
   const onUpdateKm = async (novoKm: number) => {
     if (!data.veiculo) return;
 
     try {
+      await showAppLoadingAsync('Atualizando KM...');
       await db.runAsync(
         'UPDATE veiculos SET km_atual = ? WHERE id = ?',
         [novoKm, data.veiculo.id],
       );
 
-      // O PULO DO GATO: Avisa o app todo que o KM mudou
       DeviceEventEmitter.emit('KM_UPDATED', { novoKm });
       await verificarAlertasManutencao();
 
-      // Atualização otimista do estado local para maior performance (sem reload completo)
       setData((prev) => ({
         ...prev,
         veiculo: { ...prev.veiculo, km_atual: novoKm },
@@ -117,6 +173,8 @@ export const useDashboard = () => {
         '[Dashboard] Erro ao atualizar KM:',
         error,
       );
+    } finally {
+      hideAppLoading();
     }
   };
 

@@ -35,8 +35,12 @@ export default function ConfiguracoesScreen() {
   const { tema, setTema } = useTema();
   const isDark = tema === 'escuro';
 
-  const { exportarDados } = useExportarDados();
-  const { importarBackup, limparTodosOsDados } =
+  const { exportarDados, isExportando } = useExportarDados();
+  const {
+    importarBackup,
+    importandoBackup,
+    limparTodosOsDados,
+  } =
     useGerenciarDados();
 
   const [notificacoes, setNotificacoes] = useState(true);
@@ -158,13 +162,21 @@ export default function ConfiguracoesScreen() {
             <SettingItem
               isDark={isDark}
               icon={UploadCloud}
-              title="Exportar Backup"
+              title={
+                isExportando
+                  ? 'Exportando backup...'
+                  : 'Exportar Backup'
+              }
               onClick={exportarDados}
             />
             <SettingItem
               isDark={isDark}
               icon={DownloadCloud}
-              title="Restaurar Dados"
+              title={
+                importandoBackup
+                  ? 'Restaurando dados...'
+                  : 'Restaurar Dados'
+              }
               onClick={importarBackup}
             />
             <SettingItem

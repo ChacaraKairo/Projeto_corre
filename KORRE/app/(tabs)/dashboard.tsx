@@ -1,8 +1,9 @@
 // app/(tabs)/dashboard.tsx
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  BackHandler,
   ScrollView,
   View,
 } from 'react-native';
@@ -34,6 +35,15 @@ export default function DashboardScreen() {
     backgroundColor: isDark ? '#0A0A0A' : '#F5F5F5',
   };
   const router = useRouter();
+
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true,
+    );
+
+    return () => subscription.remove();
+  }, []);
 
   // Estados Locais da UI (Modal de KM)
   const [modalKmAberto, setModalKmAberto] = useState(false);
@@ -151,11 +161,15 @@ export default function DashboardScreen() {
 
         <GastosCard
           valor={financeiro?.gastos || 0}
-          qtdGastos={0}
+          qtdGastos={financeiro?.qtdGastos || 0}
+          tipoMeta={usuario?.tipo_meta || 'diaria'}
         />
 
         {/* Organism: Balanço Mensal Consolidado */}
-        <FinanceiroMensal ganhos={0} gastos={0} />
+        <FinanceiroMensal
+          ganhos={financeiro?.ganhosMes || 0}
+          gastos={financeiro?.gastosMes || 0}
+        />
 
         {/* Organism: Feed de Atividades Recentes */}
         <UltimasMovimentacoes dados={movimentacoes} />

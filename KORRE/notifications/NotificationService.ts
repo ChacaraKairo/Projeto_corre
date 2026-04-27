@@ -1,4 +1,5 @@
-import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import type { NotificationTriggerInput } from 'expo-notifications';
 import db from '../database/DatabaseInit';
 import type {
   CriarNotificacaoInput,
@@ -6,7 +7,20 @@ import type {
 } from './NotificationTypes';
 import { shouldCreateNotificationForDedup } from './notificationDedup';
 
+type ExpoNotifications = typeof import('expo-notifications');
+
+const isExpoGo = Constants.appOwnership === 'expo';
+
+const carregarNotifications =
+  async (): Promise<ExpoNotifications | null> => {
+    if (isExpoGo) return null;
+    return import('expo-notifications');
+  };
+
 export async function solicitarPermissaoNotificacoes() {
+  const Notifications = await carregarNotifications();
+  if (!Notifications) return false;
+
   const { status } = await Notifications.getPermissionsAsync();
   if (status === 'granted') return true;
 
@@ -17,6 +31,9 @@ export async function solicitarPermissaoNotificacoes() {
 export async function criarNotificacao(
   input: CriarNotificacaoInput,
 ) {
+  const Notifications = await carregarNotifications();
+  if (!Notifications) return;
+
   const podeNotificar = await solicitarPermissaoNotificacoes();
   if (!podeNotificar) return;
 
@@ -39,8 +56,11 @@ export async function criarNotificacao(
 
 export async function criarNotificacaoAgendada(
   input: CriarNotificacaoInput,
-  trigger: Notifications.NotificationTriggerInput,
+  trigger: NotificationTriggerInput,
 ) {
+  const Notifications = await carregarNotifications();
+  if (!Notifications) return;
+
   const podeNotificar = await solicitarPermissaoNotificacoes();
   if (!podeNotificar) return;
 

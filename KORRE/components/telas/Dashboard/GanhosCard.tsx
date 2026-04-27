@@ -67,8 +67,11 @@ export const GanhosCard: React.FC<GanhosProps> = ({
       activeOpacity={0.8}
       onPress={() =>
         router.push({
-          pathname: '/finance',
-          params: { initialType: 'ganho' },
+          pathname: '/(tabs)/finance',
+          params: {
+            initialType: 'ganho',
+            ts: String(Date.now()),
+          },
         } as any)
       }
     >

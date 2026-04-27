@@ -26,7 +26,7 @@ export const FinanceHeader = ({
         </Text>
       </Text>
       <TouchableOpacity
-        onPress={() => router.back()} // Volta para o Dashboard
+        onPress={() => router.replace('/(tabs)/dashboard')}
         style={styles.closeButton}
       >
         <Text style={styles.closeButtonText}>X</Text>

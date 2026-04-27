@@ -12,6 +12,10 @@ import {
 } from '../../utils/calculadoraKorreKM';
 import { showCustomAlert } from '../alert/useCustomAlert';
 import { CalculadoraService } from './service/CalculadoraService';
+import {
+  hideAppLoading,
+  showAppLoadingAsync,
+} from '../ui/useAppLoading';
 
 const ESTADO_INICIAL_VAZIO: Partial<FormularioViabilidade> =
   {
@@ -160,6 +164,7 @@ export function useCalculadora() {
   const calcularESalvar = async () => {
     if (!veiculoAtivo) return;
     try {
+      await showAppLoadingAsync('Salvando calculadora...');
       const resultado =
         await CalculadoraService.processarESalvarCalculos(
           veiculoAtivo.id,
@@ -179,6 +184,8 @@ export function useCalculadora() {
         'Erro',
         'Não foi possível processar a inteligência financeira.',
       );
+    } finally {
+      hideAppLoading();
     }
   };
 

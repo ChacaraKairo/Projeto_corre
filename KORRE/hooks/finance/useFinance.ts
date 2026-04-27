@@ -14,21 +14,30 @@ import * as Icons from 'lucide-react-native';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
 import { verificarMetaDiaria } from '../../notifications/LocalNotificationScheduler';
+import {
+  hideAppLoading,
+  showAppLoadingAsync,
+} from '../ui/useAppLoading';
 
 export const useFinance = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  // Estados Principais
+  const getTipoInicial = useCallback(() => {
+    return params.initialType === 'despesa'
+      ? 'despesa'
+      : 'ganho';
+  }, [params.initialType]);
+
   const [tipo, setTipo] = useState<'ganho' | 'despesa'>(
-    (params.initialType as any) || 'ganho',
+    getTipoInicial(),
   );
   const [valor, setValor] = useState('0,00');
   const [categoriaSelecionada, setCategoriaSelecionada] =
     useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [salvando, setSalvando] = useState(false);
 
-  // Estados de Dados
   const [allVehicles, setAllVehicles] = useState<any[]>([]);
   const [selectedVehicleId, setSelectedVehicleId] =
     useState<number | null>(null);
@@ -37,7 +46,6 @@ export const useFinance = () => {
     null,
   );
 
-  // Estados do Modal de Nova Categoria
   const [modalCategoriaAberto, setModalCategoriaAberto] =
     useState(false);
   const [novaCategoriaNome, setNovaCategoriaNome] =
@@ -53,34 +61,52 @@ export const useFinance = () => {
     valor.replace(/\./g, '').replace(',', '.'),
   );
 
+  const carregarCategorias = useCallback(async () => {
+    const catList = await db.getAllAsync(
+      'SELECT * FROM categorias_financeiras WHERE tipo = ?',
+      [tipo],
+    );
+
+    const formatadas = catList.map((cat: any) => ({
+      id: cat.id.toString(),
+      nome: cat.nome,
+      icon:
+        (Icons as any)[cat.icone || 'Briefcase'] ||
+        Icons.Briefcase,
+      cor: cat.cor,
+    }));
+
+    setCategorias(formatadas);
+    setCategoriaSelecionada('');
+  }, [tipo]);
+
   useFocusEffect(
     useCallback(() => {
+      setTipo(getTipoInicial());
       setValor('0,00');
       setCategoriaSelecionada('');
       setShowSuccess(false);
-    }, []),
+      setSalvando(false);
+    }, [getTipoInicial]),
   );
 
   useEffect(() => {
-    if (params.initialType) {
-      setTipo(params.initialType as 'ganho' | 'despesa');
-    }
-  }, [params.initialType]);
+    setTipo(getTipoInicial());
+  }, [getTipoInicial, params.ts]);
 
   useFocusEffect(
     useCallback(() => {
       async function loadData() {
         try {
-          // 1. Garante a estrutura correta (Ajustado de icon_id para icone)
           await db.execAsync(`
             CREATE TABLE IF NOT EXISTS categorias_financeiras (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               nome TEXT UNIQUE,
               tipo TEXT,
-              icone TEXT, 
+              icone TEXT,
               cor TEXT
             );
-            INSERT OR IGNORE INTO categorias_financeiras (nome, tipo, icone, cor) VALUES 
+            INSERT OR IGNORE INTO categorias_financeiras (nome, tipo, icone, cor) VALUES
             ('Combustível', 'despesa', 'Fuel', '#F44336'),
             ('Alimentação', 'despesa', 'Coffee', '#FF9800'),
             ('Manutenção', 'despesa', 'Wrench', '#795548'),
@@ -105,23 +131,7 @@ export const useFinance = () => {
             setSelectedVehicleId(veiculoAtivo.id);
           }
 
-          // 2. Busca Categorias (Ajustado para ler 'icone')
-          const catList = await db.getAllAsync(
-            'SELECT * FROM categorias_financeiras WHERE tipo = ?',
-            [tipo],
-          );
-
-          const formatadas = catList.map((cat: any) => ({
-            id: cat.id.toString(),
-            nome: cat.nome,
-            icon:
-              (Icons as any)[cat.icone || 'Briefcase'] ||
-              Icons.Briefcase,
-            cor: cat.cor,
-          }));
-
-          setCategorias(formatadas);
-          setCategoriaSelecionada('');
+          await carregarCategorias();
         } catch (error) {
           console.error(
             'Erro ao carregar dados financeiros:',
@@ -130,7 +140,7 @@ export const useFinance = () => {
         }
       }
       loadData();
-    }, [tipo]),
+    }, [tipo, carregarCategorias]),
   );
 
   const handleValueChange = (text: string) => {
@@ -151,12 +161,19 @@ export const useFinance = () => {
   };
 
   const handleSave = async () => {
-    if (valorNumerico <= 0 || !categoriaSelecionada) return;
+    if (salvando || valorNumerico <= 0 || !categoriaSelecionada)
+      return;
 
     try {
+      setSalvando(true);
+      await showAppLoadingAsync(
+        tipo === 'ganho'
+          ? 'Salvando ganho...'
+          : 'Salvando despesa...',
+      );
       await db.runAsync(
-        `INSERT INTO transacoes_financeiras 
-        (veiculo_id, categoria_id, valor, tipo, data_transacao) 
+        `INSERT INTO transacoes_financeiras
+        (veiculo_id, categoria_id, valor, tipo, data_transacao)
         VALUES (?, ?, ?, ?, datetime('now', 'localtime'))`,
         [
           selectedVehicleId,
@@ -169,13 +186,17 @@ export const useFinance = () => {
       await verificarMetaDiaria();
       setShowSuccess(true);
       setTimeout(() => {
+        hideAppLoading();
+        setSalvando(false);
         setShowSuccess(false);
         setValor('0,00');
         setCategoriaSelecionada('');
-        router.back();
-      }, 2000);
+        router.replace('/(tabs)/dashboard');
+      }, 1200);
     } catch (error) {
-      console.error('Erro ao salvar transação:', error);
+      console.error('Erro ao salvar transacao:', error);
+      hideAppLoading();
+      setSalvando(false);
       showCustomAlert(
         'Erro',
         'Não foi possível salvar a transação.',
@@ -190,7 +211,7 @@ export const useFinance = () => {
       const corPadrao =
         tipo === 'ganho' ? '#00C853' : '#F44336';
 
-      // 3. Ajustado para inserir na coluna 'icone'
+      await showAppLoadingAsync('Criando categoria...');
       await db.runAsync(
         'INSERT INTO categorias_financeiras (nome, tipo, icone, cor) VALUES (?, ?, ?, ?)',
         [
@@ -204,28 +225,15 @@ export const useFinance = () => {
       setNovaCategoriaNome('');
       setNovaCategoriaIcone('Briefcase');
       setModalCategoriaAberto(false);
-
-      const catList = await db.getAllAsync(
-        'SELECT * FROM categorias_financeiras WHERE tipo = ?',
-        [tipo],
-      );
-
-      const formatadas = catList.map((cat: any) => ({
-        id: cat.id.toString(),
-        nome: cat.nome,
-        icon:
-          (Icons as any)[cat.icone || 'Briefcase'] ||
-          Icons.Briefcase,
-        cor: cat.cor,
-      }));
-
-      setCategorias(formatadas);
+      await carregarCategorias();
     } catch (error) {
       console.error('Erro ao adicionar categoria:', error);
       showCustomAlert(
         'Erro',
         'Nome de categoria já existe ou erro no banco.',
       );
+    } finally {
+      hideAppLoading();
     }
   };
 
@@ -238,6 +246,7 @@ export const useFinance = () => {
     categoriaSelecionada,
     setCategoriaSelecionada,
     showSuccess,
+    salvando,
     allVehicles,
     selectedVehicleId,
     setSelectedVehicleId,

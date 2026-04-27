@@ -2,6 +2,10 @@
 import { useState } from 'react';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
+import {
+  hideAppLoading,
+  showAppLoadingAsync,
+} from '../ui/useAppLoading';
 
 export function useModalNovoItem(
   veiculoId: number,
@@ -40,6 +44,7 @@ export function useModalNovoItem(
     }
 
     try {
+      await showAppLoadingAsync('Salvando manutenção...');
       let dataFormatada = null;
       if (ultimaTrocaData.length === 10) {
         const [d, m, a] = ultimaTrocaData.split('/');
@@ -120,6 +125,8 @@ export function useModalNovoItem(
         'Erro',
         'Falha ao salvar a manutenção.',
       );
+    } finally {
+      hideAppLoading();
     }
   };
 

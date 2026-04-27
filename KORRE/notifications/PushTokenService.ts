@@ -1,17 +1,20 @@
 import Constants from 'expo-constants';
 import * as Crypto from 'expo-crypto';
-import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import db, { DATABASE_VERSION } from '../database/DatabaseInit';
 import { solicitarPermissaoNotificacoes } from './NotificationService';
 
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_KORRE_API_BASE_URL ?? '';
+const isExpoGo = Constants.appOwnership === 'expo';
 
 export async function obterExpoPushToken() {
+  if (isExpoGo) return null;
+
   const permitido = await solicitarPermissaoNotificacoes();
   if (!permitido) return null;
 
+  const Notifications = await import('expo-notifications');
   const projectId =
     Constants.expoConfig?.extra?.eas?.projectId ??
     Constants.easConfig?.projectId;

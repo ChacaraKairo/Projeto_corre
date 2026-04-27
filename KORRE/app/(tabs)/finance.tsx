@@ -1,25 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
+  ActivityIndicator,
+  BackHandler,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import {
-  TrendingUp,
-  TrendingDown,
   Check,
+  TrendingDown,
+  TrendingUp,
 } from 'lucide-react-native';
 
 import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/financeInlineStyles';
-// Importação do Hook e Estilos
 import { useFinance } from '../../hooks/finance/useFinance';
 import { styles as parentStyles } from '../../styles/telas/Finance/AddTransactionStyles';
 import { financeStyles as styles } from '../../styles/telas/Finance/financeStyles';
 
-// Importação dos Sub-componentes
 import { FinanceHeader } from '../../components/telas/finance/FinanceHeader';
 import { ValueInput } from '../../components/telas/finance/ValueInput';
 import { CategoryGrid } from '../../components/telas/finance/CategoryGrid';
@@ -28,7 +28,6 @@ import { AdicionarCategoria } from '../../components/telas/finance/AdicionarCate
 import { useTema } from '../../hooks/modo_tema';
 
 export default function AddTransactionScreen() {
-  // Hook Personalizado
   const {
     tipo,
     setTipo,
@@ -38,6 +37,7 @@ export default function AddTransactionScreen() {
     categoriaSelecionada,
     setCategoriaSelecionada,
     showSuccess,
+    salvando,
     allVehicles,
     selectedVehicleId,
     setSelectedVehicleId,
@@ -58,6 +58,24 @@ export default function AddTransactionScreen() {
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        router.replace('/(tabs)/dashboard');
+        return true;
+      },
+    );
+
+    return () => subscription.remove();
+  }, [router]);
+
+  const podeSalvar =
+    valorNumerico > 0 &&
+    !!categoriaSelecionada &&
+    !showSuccess &&
+    !salvando;
+
   return (
     <KeyboardAvoidingView
       style={[
@@ -71,7 +89,7 @@ export default function AddTransactionScreen() {
       <FinanceHeader
         tipo={tipo}
         mainColor={mainColor}
-        onCancel={() => router.back()}
+        onCancel={() => router.replace('/(tabs)/dashboard')}
       />
 
       <ScrollView
@@ -79,7 +97,6 @@ export default function AddTransactionScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={parentStyles.content}>
-          {/* Seletor de Tipo (Ganho / Despesa) */}
           <View style={styles.financeTypeRow}>
             <TouchableOpacity
               style={[
@@ -173,7 +190,6 @@ export default function AddTransactionScreen() {
             onChangeText={handleValueChange}
           />
 
-          {/* Seletor de Veículo */}
           <View style={styles.vehicleSection}>
             <Text style={styles.vehicleTitle}>
               Vincular ao Veículo
@@ -243,7 +259,6 @@ export default function AddTransactionScreen() {
             mainColor={mainColor}
           />
 
-          {/* Botão de Adicionar Nova Categoria */}
           <TouchableOpacity
             style={styles.addCategoryBtn}
             onPress={() => setModalCategoriaAberto(true)}
@@ -262,20 +277,18 @@ export default function AddTransactionScreen() {
 
       <View style={parentStyles.footer}>
         <TouchableOpacity
-          disabled={
-            valorNumerico <= 0 ||
-            !categoriaSelecionada ||
-            showSuccess
-          }
+          disabled={!podeSalvar}
           style={[
             parentStyles.btnSalvar,
-            valorNumerico > 0 && categoriaSelecionada
+            podeSalvar
               ? { backgroundColor: mainColor }
               : parentStyles.btnSalvarDisabled,
           ]}
           onPress={handleSave}
         >
-          {showSuccess ? (
+          {salvando && !showSuccess ? (
+            <ActivityIndicator size="small" color="#FFF" />
+          ) : showSuccess ? (
             <Check size={28} color="#FFF" />
           ) : (
             <TrendingUp
@@ -296,7 +309,11 @@ export default function AddTransactionScreen() {
               },
             ]}
           >
-            {showSuccess ? 'SALVO!' : 'SALVAR ANOTAÇÃO'}
+            {salvando
+              ? 'SALVANDO...'
+              : showSuccess
+                ? 'SALVO!'
+                : 'SALVAR ANOTAÇÃO'}
           </Text>
         </TouchableOpacity>
       </View>
