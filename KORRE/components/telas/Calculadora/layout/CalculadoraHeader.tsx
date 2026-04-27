@@ -14,6 +14,7 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTema } from '../../../../hooks/modo_tema';
 import { palette } from '../../../../styles/tokens';
 import { calculadoraHeaderStyles as styles } from '../../../../styles/telas/Calculadora/layout/calculadoraHeaderStyles';
+import { safeBack } from '../../../../utils/navigation/safeBack';
 
 const getIconeVeiculo = (
   tipo: string | undefined,
@@ -88,7 +89,7 @@ export const CalculadoraHeader: React.FC<
       <View style={styles.topRow}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
         >
           <ArrowLeft size={24} color={textColor} />
         </TouchableOpacity>
@@ -191,4 +192,3 @@ export const CalculadoraHeader: React.FC<
     </View>
   );
 };
-

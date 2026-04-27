@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { styles } from '../../../styles/telas/Configuracoes/configuracoesStyles';
+import { safeBack } from '../../../utils/navigation/safeBack';
 
 import { inlineStyles } from '../../../styles/generated-inline/components/telas/Configuracoes/HeaderConfiguracoesInlineStyles';
 interface Props {
@@ -18,7 +19,7 @@ export const HeaderConfiguracoes = ({ isDark, cardColor, borderColor }: Props) =
     <View style={[styles.header, { borderBottomColor: isDark ? '#161616' : '#EAEAEA' }]}>
       <TouchableOpacity
         style={[styles.btnVoltar, { backgroundColor: cardColor, borderColor }]}
-        onPress={() => router.back()}
+        onPress={() => safeBack(router)}
       >
         <ArrowLeft size={20} color={isDark ? '#FFF' : '#1A1A1A'} />
       </TouchableOpacity>

@@ -22,6 +22,7 @@ import { useCarneLeao } from '../../hooks/relatorios/useCarneLeao';
 import { styles } from '../../styles/telas/Relatorios/carneLeaoStyles';
 import { ImpostoCard } from '../../components/telas/Relatorios/ImpostoCard';
 import { LivroCaixaCard } from '../../components/telas/Relatorios/LivroCaixaCard';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 export default function CarneLeaoScreen() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function CarneLeaoScreen() {
           <TouchableOpacity
             style={styles.headerBtn}
             activeOpacity={0.8}
-            onPress={() => router.back()}
+            onPress={() => safeBack(router)}
           >
             <Ionicons
               name="arrow-back"

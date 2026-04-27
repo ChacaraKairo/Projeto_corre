@@ -23,6 +23,7 @@ import { inlineStyles } from '../../styles/generated-inline/app/relatorios/balan
 import { useTema } from '../../hooks/modo_tema';
 import { useBalancoDre } from '../../hooks/relatorios/useBalancoDre';
 import { styles } from '../../styles/telas/Relatorios/balancoDreStyles';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 export default function BalancoDreScreen() {
   const router = useRouter();
@@ -63,7 +64,7 @@ export default function BalancoDreScreen() {
             styles.btnVoltar,
             { backgroundColor: cardColor, borderColor },
           ]}
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
         >
           <ArrowLeft size={20} color={textColor} />
         </TouchableOpacity>

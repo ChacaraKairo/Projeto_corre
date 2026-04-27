@@ -1,8 +1,15 @@
 // MeuCorre/app/_layout.tsx
-import { Stack, useRouter, useSegments } from 'expo-router';
+import {
+  Stack,
+  usePathname,
+  useRouter,
+  useSegments,
+} from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  BackHandler,
+  Platform,
   Text,
   View,
 } from 'react-native';
@@ -19,6 +26,7 @@ export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const [hasUser, setHasUser] = useState(false);
   const segments = useSegments();
+  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
@@ -80,6 +88,37 @@ export default function RootLayout() {
       }
     }
   }, [isReady, hasUser, segments, router]);
+
+  useEffect(() => {
+    if (Platform.OS !== 'android' || !isReady) return;
+
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (!hasUser) {
+          if (!pathname.includes('cadastro')) {
+            router.replace(AppRoutes.cadastro);
+          }
+          return true;
+        }
+
+        if (
+          pathname.includes('dashboard') ||
+          pathname.includes('login')
+        ) {
+          return true;
+        }
+
+        if (!pathname.includes('dashboard')) {
+          router.replace(AppRoutes.dashboard);
+        }
+
+        return true;
+      },
+    );
+
+    return () => subscription.remove();
+  }, [hasUser, isReady, pathname, router]);
 
   if (!isReady) {
     return (

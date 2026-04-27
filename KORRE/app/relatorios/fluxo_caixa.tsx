@@ -24,6 +24,7 @@ import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/relatori
 import { useTema } from '../../hooks/modo_tema';
 import { useFluxoCaixa } from '../../hooks/relatorios/useFluxoCaixa';
 import { styles } from '../../styles/telas/Relatorios/fluxoCaixaStyles';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 export default function FluxoCaixaScreen() {
   const router = useRouter();
@@ -72,7 +73,7 @@ export default function FluxoCaixaScreen() {
             styles.btnVoltar,
             { backgroundColor: cardColor, borderColor },
           ]}
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
         >
           <ArrowLeft size={20} color={textColor} />
         </TouchableOpacity>

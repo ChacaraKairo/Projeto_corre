@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { useOficina } from '../../hooks/oficina/useOficina';
 import { styles } from '../../styles/telas/Oficina/oficinaStyles';
 import { useTema } from '../../hooks/modo_tema';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/oficinaInlineStyles';
 // Componentes
@@ -58,7 +59,7 @@ export default function OficinaScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.btnIcon}
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
         >
           <ArrowLeft size={20} color="#666" />
         </TouchableOpacity>

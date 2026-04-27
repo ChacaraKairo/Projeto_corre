@@ -14,6 +14,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useTema } from '../../../hooks/modo_tema';
 import { styles } from '../../../styles/telas/Historico/historicoStyles';
+import { safeBack } from '../../../utils/navigation/safeBack';
 
 import { localStyles } from '../../../styles/generated/components/telas/historico/HeaderHistoricoStyles';
 import { inlineStyles } from '../../../styles/generated-inline/components/telas/historico/HeaderHistoricoInlineStyles';
@@ -69,7 +70,7 @@ export function HeaderHistorico({
             styles.btnIcon,
             { backgroundColor: cardColor, borderColor },
           ]}
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
         >
           <ArrowLeft size={20} color={textMuted} />
         </TouchableOpacity>

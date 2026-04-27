@@ -1,3 +1,4 @@
+import { InteractionManager } from 'react-native';
 import { create } from 'zustand';
 
 interface AppLoadingState {
@@ -21,9 +22,13 @@ export const showAppLoading = (message?: string) => {
 
 export const waitForAppLoadingFrame = () =>
   new Promise<void>((resolve) => {
-    requestAnimationFrame(() => {
-      setTimeout(resolve, 80);
-    });
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        InteractionManager.runAfterInteractions(() => {
+          setTimeout(resolve, 180);
+        });
+      }),
+    );
   });
 
 export const showAppLoadingAsync = async (message?: string) => {

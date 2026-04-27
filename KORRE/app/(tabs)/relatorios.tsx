@@ -20,6 +20,7 @@ import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(tabs)/r
 import { useTema } from '../../hooks/modo_tema';
 import { useRelatorios } from '../../hooks/relatorios/useRelatorios';
 import { styles } from '../../styles/telas/Relatorios/relatoriosStyles';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 // Componentes
 import { RelatorioItem } from '../../components/telas/Relatorios/RelatorioItem';
@@ -76,7 +77,7 @@ export default function RelatoriosScreen() {
             styles.btnVoltar,
             { backgroundColor: cardColor, borderColor },
           ]}
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
         >
           <ArrowLeft size={20} color={textColor} />
         </TouchableOpacity>

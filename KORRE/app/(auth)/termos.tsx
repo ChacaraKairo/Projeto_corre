@@ -15,7 +15,9 @@ import {
   View,
 } from 'react-native';
 import { useTema } from '../../hooks/modo_tema';
+import { AppRoutes } from '../../constants/routes';
 import { styles } from '../../styles/telas/Termos/termosStyles';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 import { inlineStyles } from '../../styles/generated-inline/app/(auth)/termosInlineStyles';
 export default function TermosScreen() {
@@ -67,7 +69,7 @@ export default function TermosScreen() {
       >
         <View style={styles.headerContent}>
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => safeBack(router, AppRoutes.cadastro)}
             style={[
               styles.btnVoltar,
               { backgroundColor: cardColor },

@@ -28,6 +28,7 @@ import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/relatori
 import { useTema } from '../../hooks/modo_tema';
 import { useManutencoesReport } from '../../hooks/relatorios/useManutencoesReport';
 import { styles } from '../../styles/telas/Relatorios/manutencoesStyles';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 export default function ManutencoesReportScreen() {
   const router = useRouter();
@@ -89,7 +90,7 @@ export default function ManutencoesReportScreen() {
             styles.btnVoltar,
             { backgroundColor: cardColor, borderColor },
           ]}
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
         >
           <ArrowLeft size={20} color={textColor} />
         </TouchableOpacity>

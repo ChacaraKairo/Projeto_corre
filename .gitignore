@@ -1,1 +1,3 @@
 bild.md
+# Ignorar chaves do Google Service Account para evitar vazamento de credenciais
+api-*.json

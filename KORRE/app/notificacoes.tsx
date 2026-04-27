@@ -13,6 +13,7 @@ import {
   Trash2,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { safeBack } from '../utils/navigation/safeBack';
 
 import { useTema } from '../hooks/modo_tema';
 import { useNotificacoes } from '../hooks/notificacoes/useNotificacoes';
@@ -55,7 +56,7 @@ export default function NotificacoesScreen() {
           style={inlineStyles.inline1}
         >
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => safeBack(router)}
             style={dynamicInlineStyles.inline1({ isDark })}
           >
             <ArrowLeft

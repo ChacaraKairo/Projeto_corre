@@ -25,6 +25,7 @@ import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/relatori
 import { useTema } from '../../hooks/modo_tema';
 import { useReceitaPlataforma } from '../../hooks/relatorios/useReceitaPlataforma';
 import { styles } from '../../styles/telas/Relatorios/receitaPlataformaStyles';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 export default function ReceitaPlataformaScreen() {
   const router = useRouter();
@@ -103,7 +104,7 @@ export default function ReceitaPlataformaScreen() {
             styles.btnVoltar,
             { backgroundColor: cardColor, borderColor },
           ]}
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
         >
           <ArrowLeft size={20} color={textColor} />
         </TouchableOpacity>

@@ -16,6 +16,7 @@ import {
   hideAppLoading,
   showAppLoadingAsync,
 } from '../ui/useAppLoading';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 const ESTADO_INICIAL_VAZIO: Partial<FormularioViabilidade> =
   {
@@ -177,7 +178,7 @@ export function useCalculadora() {
         'Atualizado!',
         'Cálculos de viabilidade sincronizados.',
       );
-      router.back();
+      safeBack(router);
     } catch (error) {
       console.error('[Hook] Erro na orquestracao:', error);
       showCustomAlert(

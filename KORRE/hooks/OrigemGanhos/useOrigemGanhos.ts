@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 export function useOrigemGanhos() {
   const router = useRouter();
@@ -141,7 +142,7 @@ export function useOrigemGanhos() {
   };
 
   const voltarTela = () => {
-    router.back();
+    safeBack(router);
   };
 
   const origensFiltradas = origens.filter((origem) =>
