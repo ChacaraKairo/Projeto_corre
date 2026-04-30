@@ -28,7 +28,7 @@
       }
     },
     "android": {
-      "package": "com.chacara.korre",
+      "package": "korre_app.gestao.korucompany",
       "versionCode": 10,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
