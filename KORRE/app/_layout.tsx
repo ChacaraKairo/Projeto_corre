@@ -100,23 +100,31 @@ export default function RootLayout() {
     const subscription = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
+        const fallbackRoute = hasUser
+          ? AppRoutes.dashboard
+          : AppRoutes.cadastro;
+
         if (!hasUser) {
           if (!pathname.includes('cadastro')) {
-            router.replace(AppRoutes.cadastro);
+            router.replace(fallbackRoute);
           }
           return true;
         }
 
-        if (pathname.includes('dashboard')) {
+        const isProtectedRoot = pathname.includes('dashboard');
+        const isAuthRoute =
+          pathname.includes('login') ||
+          pathname.includes('cadastro');
+
+        if (isProtectedRoot) {
           return true;
         }
 
-        if (pathname.includes('login')) {
-          router.replace(AppRoutes.cadastro);
+        if (isAuthRoute) {
           return true;
         }
 
-        safeBack(router);
+        safeBack(router, fallbackRoute);
         return true;
       },
     );

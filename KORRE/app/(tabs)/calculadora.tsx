@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   StatusBar,
   View,
-  BackHandler,
 } from 'react-native';
-import {
-  useLocalSearchParams,
-  useRouter,
-} from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import HeaderCalculadoraFlex from '../../components/telas/CalculadoraFlex/HeaderCalculadoraFlex';
 import MainCalculadoraFlex from '../../components/telas/CalculadoraFlex/MainCalculadoraFlex';
 import ModalAjuda from '../../components/telas/CalculadoraFlex/ModalAjuda';
@@ -19,25 +15,6 @@ export default function CalculadoraFlexScreen() {
   const { tema } = useTema();
   const isDark = tema === 'escuro';
   const { origem } = useLocalSearchParams();
-  const router = useRouter();
-
-  useEffect(() => {
-    const onBackPress = () => {
-      if (origem === 'login') {
-        router.replace('/(auth)/login');
-      } else {
-        router.replace('/(tabs)/dashboard');
-      }
-      return true; // Impede o comportamento padrão de voltar do sistema
-    };
-
-    const subscription = BackHandler.addEventListener(
-      'hardwareBackPress',
-      onBackPress,
-    );
-
-    return () => subscription.remove();
-  }, [origem, router]);
 
   return (
     <View
@@ -63,5 +40,3 @@ export default function CalculadoraFlexScreen() {
     </View>
   );
 }
-
-

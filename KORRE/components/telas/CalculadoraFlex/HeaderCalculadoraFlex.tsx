@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { AppRoutes } from '../../../constants/routes';
 import { useTema } from '../../../hooks/modo_tema';
+import { safeBack } from '../../../utils/navigation/safeBack';
 
 import { styles } from '../../../styles/generated/components/telas/CalculadoraFlex/HeaderCalculadoraFlexStyles';
 export default function HeaderCalculadoraFlex({
@@ -24,11 +26,10 @@ export default function HeaderCalculadoraFlex({
   const isDark = tema === 'escuro';
 
   const handleBack = () => {
-    if (origem === 'login') {
-      router.replace('/(auth)/login');
-    } else {
-      router.replace('/(tabs)/dashboard');
-    }
+    safeBack(
+      router,
+      origem === 'login' ? AppRoutes.login : AppRoutes.dashboard,
+    );
   };
 
   return (

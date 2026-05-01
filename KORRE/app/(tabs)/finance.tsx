@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import {
   ActivityIndicator,
-  BackHandler,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -61,18 +60,6 @@ export default function AddTransactionScreen() {
   const voltar = useCallback(() => {
     safeBack(router);
   }, [router]);
-
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener(
-      'hardwareBackPress',
-      () => {
-        voltar();
-        return true;
-      },
-    );
-
-    return () => subscription.remove();
-  }, [router, voltar]);
 
   const podeSalvar =
     valorNumerico > 0 &&

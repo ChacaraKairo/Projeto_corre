@@ -1,9 +1,8 @@
 // app/(tabs)/dashboard.tsx
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  BackHandler,
   ScrollView,
   View,
 } from 'react-native';
@@ -35,15 +34,6 @@ export default function DashboardScreen() {
     backgroundColor: isDark ? '#0A0A0A' : '#F5F5F5',
   };
   const router = useRouter();
-
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener(
-      'hardwareBackPress',
-      () => true,
-    );
-
-    return () => subscription.remove();
-  }, []);
 
   // Estados Locais da UI (Modal de KM)
   const [modalKmAberto, setModalKmAberto] = useState(false);
