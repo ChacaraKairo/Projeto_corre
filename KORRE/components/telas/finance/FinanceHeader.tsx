@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
 import { financeStyles as styles } from '../../../styles/telas/Finance/financeStyles';
 
 import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/finance/FinanceHeaderDynamicStyles';
@@ -15,8 +14,6 @@ export const FinanceHeader = ({
   mainColor,
   onCancel,
 }: FinanceHeaderProps) => {
-  const router = useRouter();
-
   return (
     <View style={styles.headerContainer}>
       <Text style={styles.headerTitle}>
@@ -26,7 +23,7 @@ export const FinanceHeader = ({
         </Text>
       </Text>
       <TouchableOpacity
-        onPress={() => router.replace('/(tabs)/dashboard')}
+        onPress={onCancel}
         style={styles.closeButton}
       >
         <Text style={styles.closeButtonText}>X</Text>

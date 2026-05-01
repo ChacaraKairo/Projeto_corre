@@ -3,8 +3,16 @@ import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Animated } from 'react-native';
 import db from '../../database/DatabaseInit';
-import { verifyPassword } from '../../utils/auth/passwordHash';
+import {
+  hashPassword,
+  verifyPassword,
+} from '../../utils/auth/passwordHash';
+import {
+  HASH_ITERATIONS,
+  parsePasswordHash,
+} from '../../utils/auth/passwordHashFormat';
 import { AppRoutes } from '../../constants/routes';
+import { logger } from '../../utils/logger';
 
 type UsuarioLogin = {
   id: number;
@@ -122,6 +130,19 @@ export const useLogin = () => {
 
       if (usuario) {
         if (await verifyPassword(senhaLimpa, usuario.senha)) {
+          const senhaAtual = parsePasswordHash(usuario.senha);
+          if (
+            !senhaAtual ||
+            senhaAtual.iterations !== HASH_ITERATIONS
+          ) {
+            const senhaAtualizada =
+              await hashPassword(senhaLimpa);
+            await db.runAsync(
+              'UPDATE perfil_usuario SET senha = ? WHERE id = ?',
+              [senhaAtualizada, usuario.id],
+            );
+          }
+
           await db.runAsync(
             'INSERT OR REPLACE INTO configuracoes_app (chave, valor) VALUES (?, ?)',
             [
@@ -141,7 +162,7 @@ export const useLogin = () => {
         setErro('Utilizador ou senha incorretos.');
       }
     } catch (e) {
-      if (__DEV__) console.error('[LOGIN] Falha na consulta ao banco:', e);
+      logger.error('[LOGIN] Falha na consulta ao banco:', e);
       setErro('Erro ao aceder à base de dados local.');
     } finally {
       setCarregando(false);

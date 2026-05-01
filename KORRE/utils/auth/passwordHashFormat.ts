@@ -1,5 +1,5 @@
 export const HASH_PREFIX = 'sha256i';
-export const HASH_ITERATIONS = 25000;
+export const HASH_ITERATIONS = 5000;
 
 export const formatPasswordHash = (
   iterations: number,

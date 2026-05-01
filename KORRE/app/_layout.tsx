@@ -21,6 +21,7 @@ import '../locales/i18n';
 import { executarVerificacoesLocais } from '../notifications/LocalNotificationScheduler';
 import { NotificationHandler } from '../notifications/NotificationHandler';
 import { logger } from '../utils/logger';
+import { safeBack } from '../utils/navigation/safeBack';
 
 import { inlineStyles } from '../styles/generated-inline/app/_layoutInlineStyles';
 export default function RootLayout() {
@@ -106,17 +107,16 @@ export default function RootLayout() {
           return true;
         }
 
-        if (
-          pathname.includes('dashboard') ||
-          pathname.includes('login')
-        ) {
+        if (pathname.includes('dashboard')) {
           return true;
         }
 
-        if (!pathname.includes('dashboard')) {
-          router.replace(AppRoutes.dashboard);
+        if (pathname.includes('login')) {
+          router.replace(AppRoutes.cadastro);
+          return true;
         }
 
+        safeBack(router);
         return true;
       },
     );

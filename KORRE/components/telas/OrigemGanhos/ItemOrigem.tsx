@@ -35,7 +35,7 @@ export const ItemOrigem: React.FC<ItemOrigemProps> = ({
   isSelecionado,
   onToggle,
 }) => {
-  const Icon = IconComponents[item.iconId] || Briefcase;
+  const Icon = IconComponents[item.icone || item.iconId] || Briefcase;
 
   return (
     <TouchableOpacity

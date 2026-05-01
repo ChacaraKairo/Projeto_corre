@@ -9,6 +9,7 @@ import { TipoVeiculo } from '../../type/typeVeiculos';
 import { VeiculoService } from './veiculoService';
 import { hashPassword } from '../../utils/auth/passwordHash';
 import { AppRoutes } from '../../constants/routes';
+import { logger } from '../../utils/logger';
 
 export const useCadastro = () => {
   const router = useRouter();
@@ -38,8 +39,11 @@ export const useCadastro = () => {
   >('diaria');
   const [aceitouTermos, setAceitouTermos] = useState(false);
   const [erro, setErro] = useState(false);
+  const [salvando, setSalvando] = useState(false);
 
   const salvarCadastro = async () => {
+    if (salvando) return;
+
     // 1. LIMPEZA DE DADOS
     const nomeLimpo = nome.trim();
     const emailLimpo = email.trim();
@@ -93,6 +97,7 @@ export const useCadastro = () => {
     }
 
     try {
+      setSalvando(true);
       const valorMeta = parseFloat(meta) || 0;
 
       // Criptografia
@@ -130,11 +135,13 @@ export const useCadastro = () => {
 
       router.replace(AppRoutes.origemGanhos);
     } catch (error) {
-      console.error('Erro ao salvar no banco:', error);
+      logger.error('Erro ao salvar no banco:', error);
       Alert.alert(
         'Erro',
         'Falha ao guardar os dados no banco de dados local.',
       );
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -172,6 +179,7 @@ export const useCadastro = () => {
     aceitouTermos,
     setAceitouTermos,
     erro,
+    salvando,
     salvarCadastro,
   };
 };

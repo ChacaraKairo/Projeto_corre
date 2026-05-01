@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   ActivityIndicator,
   BackHandler,
@@ -26,6 +26,7 @@ import { CategoryGrid } from '../../components/telas/finance/CategoryGrid';
 import { SuccessOverlay } from '../../components/telas/finance/SuccessOverlay';
 import { AdicionarCategoria } from '../../components/telas/finance/AdicionarCategoria';
 import { useTema } from '../../hooks/modo_tema';
+import { safeBack } from '../../utils/navigation/safeBack';
 
 export default function AddTransactionScreen() {
   const {
@@ -57,18 +58,21 @@ export default function AddTransactionScreen() {
 
   const { tema } = useTema();
   const isDark = tema === 'escuro';
+  const voltar = useCallback(() => {
+    safeBack(router);
+  }, [router]);
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        router.replace('/(tabs)/dashboard');
+        voltar();
         return true;
       },
     );
 
     return () => subscription.remove();
-  }, [router]);
+  }, [router, voltar]);
 
   const podeSalvar =
     valorNumerico > 0 &&
@@ -89,7 +93,7 @@ export default function AddTransactionScreen() {
       <FinanceHeader
         tipo={tipo}
         mainColor={mainColor}
-        onCancel={() => router.replace('/(tabs)/dashboard')}
+        onCancel={voltar}
       />
 
       <ScrollView
@@ -117,7 +121,10 @@ export default function AddTransactionScreen() {
                   borderWidth: 1,
                 },
               ]}
-              onPress={() => setTipo('ganho')}
+              onPress={() => {
+                setCategoriaSelecionada('');
+                setTipo('ganho');
+              }}
               activeOpacity={0.7}
             >
               <TrendingUp
@@ -158,7 +165,10 @@ export default function AddTransactionScreen() {
                   borderWidth: 1,
                 },
               ]}
-              onPress={() => setTipo('despesa')}
+              onPress={() => {
+                setCategoriaSelecionada('');
+                setTipo('despesa');
+              }}
               activeOpacity={0.7}
             >
               <TrendingDown

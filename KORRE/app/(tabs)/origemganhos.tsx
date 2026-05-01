@@ -70,10 +70,8 @@ export default function OrigemGanhosScreen() {
         style={inlineStyles.inline1}
         keyboardShouldPersistTaps="handled"
       >
-        {/* === INÍCIO DA ÁREA ALTERADA === */}
-        {/* Renderização da lista de origens (Limitada a 4 itens visíveis com View fixa) */}
         <View style={inlineStyles.inline2}>
-          {origens.slice(0, 4).map((item) => (
+          {origens.map((item) => (
             <ItemOrigem
               key={item.id}
               item={item}
@@ -82,7 +80,6 @@ export default function OrigemGanhosScreen() {
             />
           ))}
         </View>
-        {/* === FIM DA ÁREA ALTERADA === */}
 
         {/* Botão de Adicionar Nova Origem */}
         <View

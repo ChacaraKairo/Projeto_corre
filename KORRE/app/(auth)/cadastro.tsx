@@ -5,6 +5,7 @@ import {
 } from 'lucide-react-native';
 import React, { useEffect, useRef } from 'react';
 import {
+  ActivityIndicator,
   Animated,
   Keyboard,
   KeyboardAvoidingView,
@@ -17,20 +18,15 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { useCadastro } from '../../hooks/cadastro/useCadastro';
-import { styles } from '../../styles/telas/Cadastro/componentes/cadastroStyles';
-
-import { inlineStyles } from '../../styles/generated-inline/app/(auth)/cadastroInlineStyles';
-// Componentes da tela
 import { HeaderCadastro } from '../../components/telas/Cadastro/HeaderCadastro';
 import { MetasSecao } from '../../components/telas/Cadastro/MetasSecao';
 import { PerfilSecao } from '../../components/telas/Cadastro/PerfilSecao';
 import { RestaurarFluxoCadastro } from '../../components/telas/Cadastro/RestaurarFluxoCadastro';
 import { VeiculoSecao } from '../../components/telas/Cadastro/VeiculoSecao';
-
-// IMPORTAÇÃO DO ALERTA PERSONALIZADO
 import { CustomAlert } from '../../components/telas/Cadastro/CustomAlert';
-
+import { useCadastro } from '../../hooks/cadastro/useCadastro';
+import { inlineStyles } from '../../styles/generated-inline/app/(auth)/cadastroInlineStyles';
+import { styles } from '../../styles/telas/Cadastro/componentes/cadastroStyles';
 import { TipoVeiculo } from '../../type/typeVeiculos';
 
 export default function CadastroScreen() {
@@ -68,6 +64,7 @@ export default function CadastroScreen() {
     aceitouTermos,
     setAceitouTermos,
     erro,
+    salvando,
     salvarCadastro,
   } = useCadastro();
 
@@ -122,8 +119,6 @@ export default function CadastroScreen() {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-
-      {/* 1. ADICIONADO: Componente visual que renderiza o Alerta da Store (Zustand) */}
       <CustomAlert />
 
       <KeyboardAvoidingView
@@ -132,9 +127,7 @@ export default function CadastroScreen() {
         }
         style={inlineStyles.inline1}
       >
-        <TouchableWithoutFeedback
-          onPress={Keyboard.dismiss}
-        >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={inlineStyles.inline2}>
             <ScrollView
               ref={scrollViewRef}
@@ -147,7 +140,6 @@ export default function CadastroScreen() {
                 tipoVeiculo={tipoVeiculo as TipoVeiculo}
               />
 
-              {/* O RestaurarFluxoCadastro agora conseguirá mostrar o alerta nesta tela */}
               <RestaurarFluxoCadastro />
 
               <PerfilSecao
@@ -199,7 +191,7 @@ export default function CadastroScreen() {
                     paddingBottom: 40,
                     paddingTop: 20,
                     opacity: fadeAnim,
-                    transform: [{ translateY: translateY }],
+                    transform: [{ translateY }],
                   },
                 ]}
               >
@@ -209,6 +201,7 @@ export default function CadastroScreen() {
                   onPress={() =>
                     setAceitouTermos(!aceitouTermos)
                   }
+                  disabled={salvando}
                 >
                   <View
                     style={[
@@ -227,8 +220,8 @@ export default function CadastroScreen() {
                     Aceito os{' '}
                     <Text
                       style={styles.termosDestaque}
-                      onPress={(e) => {
-                        e.stopPropagation();
+                      onPress={(event) => {
+                        event.stopPropagation();
                         router.push('/(auth)/termos');
                       }}
                     >
@@ -242,21 +235,42 @@ export default function CadastroScreen() {
                   style={[
                     styles.btnSalvar,
                     {
-                      backgroundColor: aceitouTermos
-                        ? '#00C853'
-                        : '#222',
+                      backgroundColor:
+                        aceitouTermos
+                          ? '#00C853'
+                          : '#222',
                     },
                   ]}
                   onPress={salvarCadastro}
-                  disabled={!aceitouTermos}
+                  disabled={!aceitouTermos || salvando}
                 >
-                  <Text style={styles.btnSalvarText}>
-                    Começar o Korre
-                  </Text>
-                  <ChevronRight size={24} color="#0A0A0A" />
+                  {salvando ? (
+                    <ActivityIndicator color="#0A0A0A" />
+                  ) : (
+                    <>
+                      <Text style={styles.btnSalvarText}>
+                        Comecar o Korre
+                      </Text>
+                      <ChevronRight size={24} color="#0A0A0A" />
+                    </>
+                  )}
                 </TouchableOpacity>
               </Animated.View>
             </ScrollView>
+
+            {salvando && (
+              <View
+                pointerEvents="auto"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  left: 0,
+                  backgroundColor: 'transparent',
+                }}
+              />
+            )}
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

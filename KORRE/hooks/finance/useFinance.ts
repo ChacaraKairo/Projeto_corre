@@ -78,12 +78,14 @@ export const useFinance = () => {
     valor.replace(/\./g, '').replace(',', '.'),
   );
 
-  const carregarCategorias = useCallback(async () => {
+  const carregarCategorias = useCallback(async (tipoConsulta = tipo) => {
+    setCategoriaSelecionada('');
+
     const catList = await db.getAllAsync<CategoriaFinanceira>(
       `SELECT id, nome, tipo, icone, cor
        FROM categorias_financeiras
        WHERE tipo = ?`,
-      [tipo],
+      [tipoConsulta],
     );
 
     const formatadas = catList.map((cat) => ({
@@ -96,21 +98,25 @@ export const useFinance = () => {
     }));
 
     setCategorias(formatadas);
-    setCategoriaSelecionada('');
   }, [tipo]);
 
   useFocusEffect(
     useCallback(() => {
-      setTipo(getTipoInicial());
+      const tipoInicial = getTipoInicial();
+      setTipo(tipoInicial);
       setValor('0,00');
       setCategoriaSelecionada('');
+      setCategorias([]);
       setShowSuccess(false);
       setSalvando(false);
     }, [getTipoInicial]),
   );
 
   useEffect(() => {
-    setTipo(getTipoInicial());
+    const tipoInicial = getTipoInicial();
+    setTipo(tipoInicial);
+    setCategoriaSelecionada('');
+    setCategorias([]);
   }, [getTipoInicial, params.ts]);
 
   useFocusEffect(
@@ -126,6 +132,24 @@ export const useFinance = () => {
               cor TEXT
             );
             INSERT OR IGNORE INTO categorias_financeiras (nome, tipo, icone, cor) VALUES
+            ('iFood', 'ganho', 'ShoppingBag', '#EA1D2C'),
+            ('Uber', 'ganho', 'Navigation', '#000000'),
+            ('99', 'ganho', 'Smartphone', '#FFCC00'),
+            ('Rappi', 'ganho', 'ShoppingBag', '#FF441F'),
+            ('Loggi', 'ganho', 'Package', '#00B5E2'),
+            ('Lalamove', 'ganho', 'Truck', '#EA5B0C'),
+            ('InDrive', 'ganho', 'Car', '#8BC34A'),
+            ('Uber Eats', 'ganho', 'ShoppingBag', '#06C167'),
+            ('Mercado Livre Envios', 'ganho', 'Package', '#FFE600'),
+            ('Shopee Entregas', 'ganho', 'Package', '#EE4D2D'),
+            ('Amazon Flex', 'ganho', 'Package', '#FF9900'),
+            ('Borzo', 'ganho', 'Zap', '#00AEEF'),
+            ('Zé Delivery', 'ganho', 'Zap', '#FFD700'),
+            ('Cabify', 'ganho', 'Car', '#7145D6'),
+            ('Wappa', 'ganho', 'Car', '#1976D2'),
+            ('Táxi / Local', 'ganho', 'Car', '#FFC107'),
+            ('Frete particular', 'ganho', 'Truck', '#00C853'),
+            ('Particulares', 'ganho', 'Briefcase', '#00C853'),
             ('Combustível', 'despesa', 'Fuel', '#F44336'),
             ('Alimentação', 'despesa', 'Coffee', '#FF9800'),
             ('Manutenção', 'despesa', 'Wrench', '#795548'),
@@ -140,7 +164,7 @@ export const useFinance = () => {
             setUsuarioId(null);
             setAllVehicles([]);
             setSelectedVehicleId(null);
-            await carregarCategorias();
+            await carregarCategorias(tipo);
             return;
           }
 
@@ -164,7 +188,7 @@ export const useFinance = () => {
             setSelectedVehicleId(null);
           }
 
-          await carregarCategorias();
+          await carregarCategorias(tipo);
         } catch (error) {
           logger.error(
             'Erro ao carregar dados financeiros:',
