@@ -13,6 +13,7 @@ export default function AuthLayout() {
       <Stack.Screen name="login" />
       <Stack.Screen name="cadastro" />
       <Stack.Screen name="termos" />
+      <Stack.Screen name="politica-privacidade" />
     </Stack>
   );
 }

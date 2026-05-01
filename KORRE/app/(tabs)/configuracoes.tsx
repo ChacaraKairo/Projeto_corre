@@ -9,6 +9,7 @@ import {
   Sun,
   HelpCircle,
   FileText,
+  ShieldCheck,
   DownloadCloud,
   UploadCloud,
   Trash2,
@@ -212,10 +213,18 @@ export default function ConfiguracoesScreen() {
             />
             <SettingItem
               isDark={isDark}
-              isLast={true}
               icon={FileText}
               title={t('configuracoes.termos')}
               onClick={() => router.push('/(auth)/termos')}
+            />
+            <SettingItem
+              isDark={isDark}
+              isLast={true}
+              icon={ShieldCheck}
+              title="Politica de Privacidade"
+              onClick={() =>
+                router.push('/(auth)/politica-privacidade' as never)
+              }
             />
           </View>
         </View>
