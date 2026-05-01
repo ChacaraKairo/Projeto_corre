@@ -1,89 +1,79 @@
-// Arquivo: src/hooks/perfil_user/usePerfil.ts
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import db from '../../database/DatabaseInit';
 import { PhotoService } from '../../components/telas/Cadastro/script/photoService';
+import { AppRoutes } from '../../constants/routes';
+import { logger } from '../../utils/logger';
 import { showCustomAlert } from '../alert/useCustomAlert';
+
+type TipoMeta = 'diaria' | 'semanal';
+
+interface PerfilUsuario {
+  id: number;
+  nome: string;
+  foto_uri?: string | null;
+  tipo_meta?: TipoMeta | null;
+  meta_diaria?: number | null;
+  meta_semanal?: number | null;
+}
+
+interface VeiculoPerfil {
+  id: number;
+  modelo: string;
+  placa?: string | null;
+  ativo: number;
+}
 
 export function usePerfil() {
   const router = useRouter();
-  const [usuario, setUsuario] = useState<any>(null);
-  const [veiculo, setVeiculo] = useState<any>(null);
+  const [usuario, setUsuario] =
+    useState<PerfilUsuario | null>(null);
+  const [veiculo, setVeiculo] =
+    useState<VeiculoPerfil | null>(null);
   const [meta, setMeta] = useState('');
-  const [tipoMeta, setTipoMeta] = useState<
-    'diaria' | 'semanal'
-  >('diaria');
+  const [tipoMeta, setTipoMeta] =
+    useState<TipoMeta>('diaria');
   const [loading, setLoading] = useState(true);
 
   const carregarDados = async () => {
-    console.log(
-      '\n--- [PERFIL DEBUG] Iniciando carregarDados() ---',
-    );
     try {
-      // 1. Puxa o utilizador logado
-      const user: any = await db.getFirstAsync(
-        'SELECT * FROM perfil_usuario LIMIT 1',
-      );
-
-      if (user) {
-        console.log(
-          `[PERFIL DEBUG] Usuário encontrado: ID ${user.id} | Nome: ${user.nome}`,
-        );
-        setUsuario(user);
-
-        const tm = user.tipo_meta || 'diaria';
-        setTipoMeta(tm);
-
-        const val =
-          tm === 'semanal'
-            ? user.meta_semanal
-            : user.meta_diaria;
-        setMeta(val ? val.toString() : '150');
-
-        // 2. Busca todos os veículos para ver como está o banco agora
-        const todosVeiculos = await db.getAllAsync(
-          'SELECT id, modelo, placa, ativo FROM veiculos',
-        );
-        console.log(
-          '[PERFIL DEBUG] Estado atual de todos os veículos no banco:',
-          todosVeiculos,
+      const user =
+        await db.getFirstAsync<PerfilUsuario>(
+          'SELECT * FROM perfil_usuario LIMIT 1',
         );
 
-        // 3. Puxa o veículo ativo específico deste utilizador
-        console.log(
-          `[PERFIL DEBUG] Buscando veículo ativo para o user_id: ${user.id}...`,
-        );
-        const veic: any = await db.getFirstAsync(
+      if (!user) {
+        setUsuario(null);
+        setVeiculo(null);
+        return;
+      }
+
+      setUsuario(user);
+
+      const tm: TipoMeta =
+        user.tipo_meta === 'semanal' ? 'semanal' : 'diaria';
+      setTipoMeta(tm);
+
+      const valorMeta =
+        tm === 'semanal'
+          ? user.meta_semanal
+          : user.meta_diaria;
+      setMeta(valorMeta ? String(valorMeta) : '150');
+
+      const veiculoAtivo =
+        await db.getFirstAsync<VeiculoPerfil>(
           'SELECT * FROM veiculos WHERE ativo = 1 AND id_user = ? LIMIT 1',
           [user.id],
         );
 
-        if (veic) {
-          console.log(
-            `[PERFIL DEBUG] Veículo ATIVO encontrado: ${veic.modelo} (${veic.placa})`,
-          );
-        } else {
-          console.log(
-            '[PERFIL DEBUG] ALERTA: Nenhum veículo retornado com ativo=1 para este usuário!',
-          );
-        }
-
-        setVeiculo(veic);
-      } else {
-        console.log(
-          '[PERFIL DEBUG] Nenhum usuário encontrado no banco.',
-        );
-      }
+      setVeiculo(veiculoAtivo ?? null);
     } catch (error) {
-      console.error(
-        '[PERFIL DEBUG] Erro ao carregar dados do perfil:',
+      logger.error(
+        '[Perfil] Erro ao carregar dados do perfil:',
         error,
       );
     } finally {
       setLoading(false);
-      console.log(
-        '--- [PERFIL DEBUG] Fim do carregarDados() ---\n',
-      );
     }
   };
 
@@ -93,8 +83,9 @@ export function usePerfil() {
 
   const salvarMeta = async () => {
     if (!usuario) return;
+
     try {
-      const valorFormatado = parseFloat(
+      const valorFormatado = Number.parseFloat(
         meta.replace(',', '.'),
       );
       const campo =
@@ -108,10 +99,10 @@ export function usePerfil() {
       );
       showCustomAlert(
         'Sucesso',
-        'A tua meta diária foi atualizada!',
+        'A sua meta foi atualizada!',
       );
     } catch (error) {
-      console.error('Erro ao salvar meta:', error);
+      logger.error('[Perfil] Erro ao salvar meta:', error);
       showCustomAlert(
         'Erro',
         'Não foi possível atualizar a meta.',
@@ -120,19 +111,21 @@ export function usePerfil() {
   };
 
   const alterarFoto = async () => {
+    if (!usuario) return;
+
     try {
       const novaFotoUri = await PhotoService.takePhoto(
-        usuario?.foto_uri,
+        usuario.foto_uri,
       );
       if (novaFotoUri) {
         await db.runAsync(
           'UPDATE perfil_usuario SET foto_uri = ? WHERE id = ?',
           [novaFotoUri, usuario.id],
         );
-        carregarDados();
+        await carregarDados();
       }
     } catch (error) {
-      console.error('Erro ao alterar foto:', error);
+      logger.error('[Perfil] Erro ao alterar foto:', error);
       showCustomAlert(
         'Erro',
         'Não foi possível alterar a foto de perfil.',
@@ -143,14 +136,13 @@ export function usePerfil() {
   const realizarLogout = () => {
     showCustomAlert(
       'Sair da Conta',
-      'Tens a certeza que desejas sair?',
+      'Tem certeza que deseja sair?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
           text: 'Sair',
           style: 'destructive',
-          // @ts-ignore
-          onPress: () => router.replace('/(auth)/login'),
+          onPress: () => router.replace(AppRoutes.login),
         },
       ],
     );
@@ -166,6 +158,6 @@ export function usePerfil() {
     alterarFoto,
     salvarMeta,
     realizarLogout,
-    carregarDados, // A tela usa essa função para recarregar após trocar o veículo
+    carregarDados,
   };
 }

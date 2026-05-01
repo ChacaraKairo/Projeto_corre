@@ -5,7 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Bell,
   Globe,
-  ArrowLeft,
   Moon,
   Sun,
   HelpCircle,
@@ -20,18 +19,21 @@ import { useTranslation } from 'react-i18next';
 import { useTema } from '../../hooks/modo_tema';
 import { useExportarDados } from '../../hooks/configuracao/useExportarDados';
 import { useGerenciarDados } from '../../hooks/configuracao/useGerenciarDados';
-import { showCustomAlert } from '../../hooks/alert/useCustomAlert';
 import { styles } from '../../styles/telas/Configuracoes/configuracoesStyles';
+import {
+  normalizeLanguage,
+  SUPPORTED_LANGUAGES,
+} from '../../locales/i18n';
 
 import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/configuracoesInlineStyles';
 import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(tabs)/configuracoesDynamicStyles';
-// Importando os componentes
 import { SettingItem } from '../../components/telas/Configuracoes/SettingItem';
 import { HeaderConfiguracoes } from '../../components/telas/Configuracoes/HeaderConfiguracoes';
+import { ModalIdioma } from '../../components/telas/Configuracoes/ModalIdioma';
 
 export default function ConfiguracoesScreen() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { tema, setTema } = useTema();
   const isDark = tema === 'escuro';
 
@@ -40,15 +42,21 @@ export default function ConfiguracoesScreen() {
     importarBackup,
     importandoBackup,
     limparTodosOsDados,
-  } =
-    useGerenciarDados();
+  } = useGerenciarDados();
 
   const [notificacoes, setNotificacoes] = useState(true);
+  const [modalIdiomaVisible, setModalIdiomaVisible] =
+    useState(false);
 
   const bgColor = isDark ? '#0A0A0A' : '#F5F5F5';
   const cardColor = isDark ? '#161616' : '#FFFFFF';
   const borderColor = isDark ? '#222' : '#E0E0E0';
   const textMuted = isDark ? '#666' : '#888';
+  const idiomaAtual =
+    SUPPORTED_LANGUAGES.find(
+      (language) =>
+        language.code === normalizeLanguage(i18n.language),
+    ) ?? SUPPORTED_LANGUAGES[0];
 
   return (
     <SafeAreaView
@@ -70,7 +78,6 @@ export default function ConfiguracoesScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* SEÇÃO: APARÊNCIA */}
         <View>
           <Text
             style={[
@@ -78,7 +85,7 @@ export default function ConfiguracoesScreen() {
               { color: textMuted },
             ]}
           >
-            APARÊNCIA
+            {t('configuracoes.aparencia')}
           </Text>
           <View
             style={[
@@ -89,7 +96,7 @@ export default function ConfiguracoesScreen() {
             <SettingItem
               isDark={isDark}
               icon={isDark ? Moon : Sun}
-              title="Tema Escuro"
+              title={t('configuracoes.tema_escuro')}
               action="toggle"
               value={{
                 current: isDark,
@@ -101,7 +108,7 @@ export default function ConfiguracoesScreen() {
               isDark={isDark}
               isLast={true}
               icon={Bell}
-              title="Notificações"
+              title={t('configuracoes.notificacoes')}
               action="toggle"
               value={{
                 current: notificacoes,
@@ -111,7 +118,6 @@ export default function ConfiguracoesScreen() {
           </View>
         </View>
 
-        {/* SEÇÃO: PREFERÊNCIAS */}
         <View>
           <Text
             style={[
@@ -119,7 +125,7 @@ export default function ConfiguracoesScreen() {
               { color: textMuted },
             ]}
           >
-            PREFERÊNCIAS
+            {t('configuracoes.preferencias')}
           </Text>
           <View
             style={[
@@ -131,19 +137,13 @@ export default function ConfiguracoesScreen() {
               isDark={isDark}
               isLast={true}
               icon={Globe}
-              title="Idioma do aplicativo"
-              value={{ label: 'Português (PT)' }}
-              onClick={() =>
-                showCustomAlert(
-                  'Em breve',
-                  'A seleção de novos idiomas será implementada em atualizações futuras.',
-                )
-              }
+              title={t('configuracoes.idioma')}
+              value={{ label: idiomaAtual.label }}
+              onClick={() => setModalIdiomaVisible(true)}
             />
           </View>
         </View>
 
-        {/* SEÇÃO: DADOS */}
         <View>
           <Text
             style={[
@@ -151,7 +151,7 @@ export default function ConfiguracoesScreen() {
               { color: textMuted },
             ]}
           >
-            SEGURANÇA E DADOS
+            {t('configuracoes.seguranca_dados')}
           </Text>
           <View
             style={[
@@ -164,8 +164,8 @@ export default function ConfiguracoesScreen() {
               icon={UploadCloud}
               title={
                 isExportando
-                  ? 'Exportando backup...'
-                  : 'Exportar Backup'
+                  ? t('configuracoes.exportando_backup')
+                  : t('configuracoes.exportar_backup')
               }
               onClick={exportarDados}
             />
@@ -174,8 +174,8 @@ export default function ConfiguracoesScreen() {
               icon={DownloadCloud}
               title={
                 importandoBackup
-                  ? 'Restaurando dados...'
-                  : 'Restaurar Dados'
+                  ? t('configuracoes.restaurando_dados')
+                  : t('configuracoes.restaurar_dados')
               }
               onClick={importarBackup}
             />
@@ -183,13 +183,12 @@ export default function ConfiguracoesScreen() {
               isDark={isDark}
               isLast={true}
               icon={Trash2}
-              title="Zerar Aplicativo"
+              title={t('configuracoes.zerar_app')}
               onClick={limparTodosOsDados}
             />
           </View>
         </View>
 
-        {/* SEÇÃO: SUPORTE */}
         <View>
           <Text
             style={[
@@ -197,7 +196,7 @@ export default function ConfiguracoesScreen() {
               { color: textMuted },
             ]}
           >
-            SUPORTE
+            {t('configuracoes.suporte')}
           </Text>
           <View
             style={[
@@ -208,22 +207,20 @@ export default function ConfiguracoesScreen() {
             <SettingItem
               isDark={isDark}
               icon={HelpCircle}
-              title="Central de Ajuda"
+              title={t('configuracoes.central_ajuda')}
               onClick={() => router.push('/(tabs)/suporte')}
             />
             <SettingItem
               isDark={isDark}
               isLast={true}
               icon={FileText}
-              title="Termos de Uso"
+              title={t('configuracoes.termos')}
               onClick={() => router.push('/(auth)/termos')}
             />
           </View>
         </View>
 
-        <View
-          style={inlineStyles.inline1}
-        >
+        <View style={inlineStyles.inline1}>
           <Text
             style={dynamicInlineStyles.inline1({ textMuted })}
           >
@@ -231,6 +228,15 @@ export default function ConfiguracoesScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      <ModalIdioma
+        visible={modalIdiomaVisible}
+        onClose={() => setModalIdiomaVisible(false)}
+        idiomas={SUPPORTED_LANGUAGES}
+        isDark={isDark}
+        cardColor={cardColor}
+        borderColor={borderColor}
+      />
     </SafeAreaView>
   );
 }

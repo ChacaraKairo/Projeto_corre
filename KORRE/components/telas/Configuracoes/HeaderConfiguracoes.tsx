@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { styles } from '../../../styles/telas/Configuracoes/configuracoesStyles';
 import { safeBack } from '../../../utils/navigation/safeBack';
 
@@ -15,6 +16,7 @@ interface Props {
 
 export const HeaderConfiguracoes = ({ isDark, cardColor, borderColor }: Props) => {
   const router = useRouter();
+  const { t } = useTranslation();
   return (
     <View style={[styles.header, { borderBottomColor: isDark ? '#161616' : '#EAEAEA' }]}>
       <TouchableOpacity
@@ -23,7 +25,9 @@ export const HeaderConfiguracoes = ({ isDark, cardColor, borderColor }: Props) =
       >
         <ArrowLeft size={20} color={isDark ? '#FFF' : '#1A1A1A'} />
       </TouchableOpacity>
-      <Text style={styles.headerTitle}>AJUSTES</Text>
+      <Text style={styles.headerTitle}>
+        {t('configuracoes.titulo')}
+      </Text>
       <View style={inlineStyles.inline1} />
     </View>
   );

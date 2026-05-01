@@ -8,13 +8,21 @@ import {
 } from 'react-native';
 import { Check } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
+import {
+  normalizeLanguage,
+  setAppLanguage,
+  SupportedLanguage,
+} from '../../../locales/i18n';
 
 import { inlineStyles } from '../../../styles/generated-inline/components/telas/Configuracoes/ModalIdiomaInlineStyles';
 import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Configuracoes/ModalIdiomaDynamicStyles';
 interface Props {
   visible: boolean;
   onClose: () => void;
-  idiomas: { code: string; label: string }[];
+  idiomas: readonly {
+    code: SupportedLanguage;
+    label: string;
+  }[];
   isDark: boolean;
   cardColor: string;
   borderColor: string;
@@ -28,7 +36,8 @@ export const ModalIdioma = ({
   cardColor,
   borderColor,
 }: Props) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
+  const activeLanguage = normalizeLanguage(i18n.language);
 
   return (
     <Modal
@@ -46,23 +55,26 @@ export const ModalIdioma = ({
           <Text
             style={dynamicInlineStyles.inline2({ isDark })}
           >
-            Selecione o Idioma (Futuro)
+            {t('configuracoes.selecione_idioma')}
           </Text>
           {idiomas.map((lang) => (
             <TouchableOpacity
               key={lang.code}
               style={dynamicInlineStyles.inline3({ borderColor })}
-              onPress={() => {
-                i18n.changeLanguage(lang.code);
+              onPress={async () => {
+                await setAppLanguage(lang.code);
                 onClose();
               }}
             >
               <Text
-                style={dynamicInlineStyles.inline4({ i18n, lang, isDark })}
+                style={dynamicInlineStyles.inline4({
+                  isActive: activeLanguage === lang.code,
+                  isDark,
+                })}
               >
                 {lang.label}
               </Text>
-              {i18n.language === lang.code && (
+              {activeLanguage === lang.code && (
                 <Check size={20} color="#00C853" />
               )}
             </TouchableOpacity>
@@ -74,7 +86,7 @@ export const ModalIdioma = ({
             <Text
               style={inlineStyles.inline3}
             >
-              Fechar
+              {t('configuracoes.cancelar')}
             </Text>
           </TouchableOpacity>
         </View>

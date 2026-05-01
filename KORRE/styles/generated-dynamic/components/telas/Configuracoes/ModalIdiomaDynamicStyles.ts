@@ -24,10 +24,10 @@ export const dynamicInlineStyles = {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }) as DynamicStyle,
-  inline4: ({ i18n, lang, isDark }: DynamicStyleParams) => ({
+  inline4: ({ isActive, isDark }: DynamicStyleParams) => ({
                   fontSize: 16,
                   color:
-                    i18n.language === lang.code
+                    isActive
                       ? '#00C853'
                       : isDark
                         ? '#FFF'

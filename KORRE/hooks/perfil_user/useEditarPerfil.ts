@@ -1,7 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import db from '../../database/DatabaseInit';
-import { showCustomAlert } from '../alert/useCustomAlert';
 import { hashPassword } from '../../utils/auth/passwordHash';
+import { logger } from '../../utils/logger';
+import { showCustomAlert } from '../alert/useCustomAlert';
+
+type TipoMeta = 'diaria' | 'semanal';
+
+interface PerfilUsuario {
+  nome?: string | null;
+  tipo_meta?: TipoMeta | null;
+}
+
+interface VeiculoPerfil {
+  id: number;
+  modelo: string;
+  tipo?: string | null;
+  placa?: string | null;
+}
 
 export function useEditarPerfil(
   visivel: boolean,
@@ -10,64 +25,55 @@ export function useEditarPerfil(
 ) {
   const [nome, setNome] = useState('');
   const [senha, setSenha] = useState('');
-  const [tipoMeta, setTipoMeta] = useState<
-    'diaria' | 'semanal'
-  >('diaria');
-  const [veiculos, setVeiculos] = useState<any[]>([]);
+  const [tipoMeta, setTipoMeta] =
+    useState<TipoMeta>('diaria');
+  const [veiculos, setVeiculos] = useState<VeiculoPerfil[]>(
+    [],
+  );
   const [loading, setLoading] = useState(false);
 
-  // Carrega os dados sempre que o modal for aberto
+  const carregarDados = async () => {
+    try {
+      const user =
+        await db.getFirstAsync<PerfilUsuario>(
+          'SELECT * FROM perfil_usuario LIMIT 1',
+        );
+
+      if (user) {
+        setNome(user.nome || '');
+        setSenha('');
+        setTipoMeta(
+          user.tipo_meta === 'semanal' ? 'semanal' : 'diaria',
+        );
+      }
+
+      const listaVeiculos =
+        await db.getAllAsync<VeiculoPerfil>(
+          'SELECT id, modelo, tipo, placa FROM veiculos',
+        );
+      setVeiculos(listaVeiculos);
+    } catch (error) {
+      logger.error(
+        '[EditarPerfil] Erro ao carregar dados:',
+        error,
+      );
+    }
+  };
+
   useEffect(() => {
     if (visivel) {
       carregarDados();
     }
   }, [visivel]);
 
-  const carregarDados = async () => {
-    try {
-      // Pega o utilizador (Assumindo que há apenas 1 perfil local)
-      const user: any = await db.getFirstAsync(
-        'SELECT * FROM perfil_usuario LIMIT 1',
-      );
-      if (user) {
-        setNome(user.nome || '');
-        setSenha('');
-        setTipoMeta(user.tipo_meta || 'diaria');
-      }
-
-      // Pega todos os veículos para a lista de exclusão
-      const listaVeiculos = await db.getAllAsync(
-        'SELECT * FROM veiculos',
-      );
-      console.log(
-        `[EditarPerfil] Dados carregados. Usuário: ${user?.nome}. Veículos na conta: ${listaVeiculos.length}`,
-      );
-      setVeiculos(listaVeiculos);
-    } catch (error) {
-      console.error(
-        '[EditarPerfil] Erro ao carregar dados para edição:',
-        error,
-      );
-    }
-  };
-
   const salvarDados = async () => {
     if (!nome.trim()) {
-      console.log(
-        '[EditarPerfil] Erro de validação: Nome vazio.',
-      );
-      showCustomAlert(
-        'Aviso',
-        'O nome não pode estar vazio.',
-      );
+      showCustomAlert('Aviso', 'O nome não pode estar vazio.');
       return;
     }
 
     setLoading(true);
     try {
-      console.log(
-        '[EditarPerfil] Tentando atualizar dados do usuário...',
-      );
       if (senha.trim()) {
         const senhaCriptografada = await hashPassword(
           senha.trim(),
@@ -83,18 +89,15 @@ export function useEditarPerfil(
         );
       }
 
-      console.log(
-        '[EditarPerfil] Perfil atualizado com sucesso.',
-      );
       showCustomAlert(
         'Sucesso',
-        'Os teus dados foram atualizados!',
+        'Os seus dados foram atualizados!',
       );
-      onSalvoSucesso(); // Avisa a tela de perfil para recarregar os dados
-      onClose(); // Fecha o modal
+      onSalvoSucesso();
+      onClose();
     } catch (error) {
-      console.error(
-        '[EditarPerfil] Erro ao salvar edição de perfil:',
+      logger.error(
+        '[EditarPerfil] Erro ao salvar edição:',
         error,
       );
       showCustomAlert(
@@ -109,7 +112,7 @@ export function useEditarPerfil(
   const apagarVeiculo = (id: number, modelo: string) => {
     showCustomAlert(
       'Apagar Veículo',
-      `Tens a certeza que queres apagar o veículo ${modelo}? Esta ação não pode ser desfeita.`,
+      `Tem certeza que quer apagar o veículo ${modelo}? Esta ação não pode ser desfeita.`,
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -117,23 +120,16 @@ export function useEditarPerfil(
           style: 'destructive',
           onPress: async () => {
             try {
-              console.log(
-                `[EditarPerfil] Removendo veículo ID: ${id} a pedido do usuário.`,
-              );
               await db.runAsync(
                 'DELETE FROM veiculos WHERE id = ?',
                 [id],
               );
-              console.log(
-                '[EditarPerfil] Veículo removido com sucesso da conta.',
-              );
-              // Remove da lista atual da tela para não precisar recarregar tudo
               setVeiculos((prev) =>
-                prev.filter((v) => v.id !== id),
+                prev.filter((veiculo) => veiculo.id !== id),
               );
             } catch (error) {
-              console.error(
-                '[EditarPerfil] Erro ao tentar apagar o veículo:',
+              logger.error(
+                '[EditarPerfil] Erro ao apagar veículo:',
                 error,
               );
               showCustomAlert(
