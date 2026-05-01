@@ -1,6 +1,5 @@
 import {
   useState,
-  useEffect,
   useRef,
   useCallback,
   type ComponentType,
@@ -71,6 +70,8 @@ export const useFinance = () => {
     useState('Briefcase');
 
   const inputRef = useRef<TextInput>(null);
+  const tipoAtualRef = useRef<TipoTransacao>(getTipoInicial());
+  const categoriasRequestRef = useRef(0);
   const mainColor =
     tipo === 'ganho' ? '#00C853' : '#F44336';
 
@@ -79,6 +80,8 @@ export const useFinance = () => {
   );
 
   const carregarCategorias = useCallback(async (tipoConsulta: TipoTransacao) => {
+    const requestId = categoriasRequestRef.current + 1;
+    categoriasRequestRef.current = requestId;
     setCategoriaSelecionada('');
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS categorias_financeiras (
@@ -106,11 +109,17 @@ export const useFinance = () => {
       cor: cat.cor,
     }));
 
-    setCategorias(formatadas);
+    if (
+      requestId === categoriasRequestRef.current &&
+      tipoAtualRef.current === tipoConsulta
+    ) {
+      setCategorias(formatadas);
+    }
   }, []);
 
   const alterarTipo = useCallback(
     (proximoTipo: TipoTransacao) => {
+      tipoAtualRef.current = proximoTipo;
       setTipo(proximoTipo);
       setValor('0,00');
       setCategoriaSelecionada('');
@@ -122,30 +131,12 @@ export const useFinance = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const tipoInicial = getTipoInicial();
-      setTipo(tipoInicial);
-      setValor('0,00');
-      setCategoriaSelecionada('');
-      setCategorias([]);
-      setShowSuccess(false);
-      setSalvando(false);
-      void carregarCategorias(tipoInicial);
-    }, [carregarCategorias, getTipoInicial]),
-  );
+      let telaAtiva = true;
 
-  useEffect(() => {
-    const tipoInicial = getTipoInicial();
-    setTipo(tipoInicial);
-    setCategoriaSelecionada('');
-    setCategorias([]);
-    void carregarCategorias(tipoInicial);
-  }, [carregarCategorias, getTipoInicial, params.ts]);
-
-  useFocusEffect(
-    useCallback(() => {
       async function loadData() {
         try {
           const tipoInicial = getTipoInicial();
+          tipoAtualRef.current = tipoInicial;
           setTipo(tipoInicial);
           setValor('0,00');
           setCategoriaSelecionada('');
@@ -188,6 +179,8 @@ export const useFinance = () => {
           const usuario = await db.getFirstAsync<UsuarioLocal>(
             'SELECT id FROM perfil_usuario LIMIT 1',
           );
+          if (!telaAtiva) return;
+
           if (!usuario) {
             setUsuarioId(null);
             setAllVehicles([]);
@@ -205,6 +198,7 @@ export const useFinance = () => {
              ORDER BY ativo DESC, id ASC`,
             [usuario?.id],
           );
+          if (!telaAtiva) return;
           setAllVehicles(veiculos);
 
           if (veiculos.length > 0) {
@@ -225,6 +219,10 @@ export const useFinance = () => {
         }
       }
       loadData();
+
+      return () => {
+        telaAtiva = false;
+      };
     }, [carregarCategorias, getTipoInicial, params.ts]),
   );
 

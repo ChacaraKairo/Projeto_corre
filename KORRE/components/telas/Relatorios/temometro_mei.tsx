@@ -232,6 +232,7 @@ export function TermometroMEI() {
           <Text style={styles.dasSubtitle}>
             Toque aqui para{' '}
             {dados.das.pago ? 'desmarcar' : 'marcar como pago'}.
+            O KORRE tambem avisa perto do vencimento.
           </Text>
         </View>
       </TouchableOpacity>

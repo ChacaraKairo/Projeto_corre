@@ -13,6 +13,7 @@ import {
 } from '../../utils/auth/passwordHashFormat';
 import { AppRoutes } from '../../constants/routes';
 import { logger } from '../../utils/logger';
+import { waitForUiFeedback } from '../../utils/ui/waitForUiFeedback';
 
 type UsuarioLogin = {
   id: number;
@@ -106,7 +107,7 @@ export const useLogin = () => {
     setCarregando(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await waitForUiFeedback();
 
       let idLimpo = identificacao.trim();
       const senhaLimpa = senha.trim();
@@ -133,18 +134,6 @@ export const useLogin = () => {
       if (usuario) {
         if (await verifyPassword(senhaLimpa, usuario.senha)) {
           const senhaAtual = parsePasswordHash(usuario.senha);
-          if (
-            !senhaAtual ||
-            senhaAtual.iterations !== HASH_ITERATIONS
-          ) {
-            const senhaAtualizada =
-              await hashPassword(senhaLimpa);
-            await db.runAsync(
-              'UPDATE perfil_usuario SET senha = ? WHERE id = ?',
-              [senhaAtualizada, usuario.id],
-            );
-          }
-
           await db.runAsync(
             'INSERT OR REPLACE INTO configuracoes_app (chave, valor) VALUES (?, ?)',
             [
@@ -157,6 +146,16 @@ export const useLogin = () => {
             pathname: AppRoutes.dashboard,
             params: { userId: usuario.id },
           });
+
+          if (
+            !senhaAtual ||
+            senhaAtual.iterations !== HASH_ITERATIONS
+          ) {
+            void atualizarHashEmSegundoPlano(
+              usuario.id,
+              senhaLimpa,
+            );
+          }
         } else {
           setErro('Utilizador ou senha incorretos.');
         }
@@ -168,6 +167,21 @@ export const useLogin = () => {
       setErro('Erro ao aceder à base de dados local.');
     } finally {
       setCarregando(false);
+    }
+  };
+
+  const atualizarHashEmSegundoPlano = async (
+    usuarioId: number,
+    senhaLimpa: string,
+  ) => {
+    try {
+      const senhaAtualizada = await hashPassword(senhaLimpa);
+      await db.runAsync(
+        'UPDATE perfil_usuario SET senha = ? WHERE id = ?',
+        [senhaAtualizada, usuarioId],
+      );
+    } catch (error) {
+      logger.error('[LOGIN] Falha ao atualizar hash:', error);
     }
   };
 

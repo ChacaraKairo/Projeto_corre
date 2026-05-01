@@ -6,12 +6,14 @@ const KM_ALERTA_MANUTENCAO = 500;
 const DIAS_SEM_LANCAMENTO = 3;
 const DIAS_BACKUP_ALERTA = 7;
 const HORARIO_ALERTA_META = 20;
+const DIA_VENCIMENTO_DAS = 20;
 
 export async function executarVerificacoesLocais() {
   await verificarAlertasManutencao();
   await verificarBackupPendente();
   await verificarLancamentosRecentes();
   await verificarIndicesFinanceirosDesatualizados();
+  await verificarDasMeiPendente();
 }
 
 export async function verificarAlertasManutencao() {
@@ -199,6 +201,35 @@ export async function verificarBackupPendente() {
       dedupKey: `backup_pendente:${getToday()}`,
     });
   }
+}
+
+export async function verificarDasMeiPendente() {
+  const hoje = new Date();
+  const diaAtual = hoje.getDate();
+
+  if (diaAtual < DIA_VENCIMENTO_DAS - 2) return;
+
+  const ano = hoje.getFullYear();
+  const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+  const chaveDas = `mei_das_pago_${ano}-${mes}`;
+
+  const row = await db.getFirstAsync<{ valor: string }>(
+    'SELECT valor FROM configuracoes_app WHERE chave = ?',
+    [chaveDas],
+  );
+
+  if (row?.valor === 'true') return;
+
+  const vencido = diaAtual > DIA_VENCIMENTO_DAS;
+  await criarNotificacao({
+    titulo: vencido ? 'DAS do MEI pendente' : 'Lembrete do DAS',
+    mensagem: vencido
+      ? 'O vencimento do DAS deste mes ja passou. Marque como pago no painel MEI quando regularizar.'
+      : `O DAS vence no dia ${DIA_VENCIMENTO_DAS}. Confira e marque como pago no painel MEI.`,
+    tipo: 'financeiro',
+    destino: AppRoutes.relatorios,
+    dedupKey: `das_mei:${ano}-${mes}:${vencido ? 'vencido' : 'aviso'}`,
+  });
 }
 
 const getToday = () => new Date().toISOString().split('T')[0];

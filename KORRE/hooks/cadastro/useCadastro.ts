@@ -10,6 +10,7 @@ import { VeiculoService } from './veiculoService';
 import { hashPassword } from '../../utils/auth/passwordHash';
 import { AppRoutes } from '../../constants/routes';
 import { logger } from '../../utils/logger';
+import { waitForUiFeedback } from '../../utils/ui/waitForUiFeedback';
 
 export const useCadastro = () => {
   const router = useRouter();
@@ -98,7 +99,7 @@ export const useCadastro = () => {
 
     try {
       setSalvando(true);
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await waitForUiFeedback();
 
       const valorMeta = parseFloat(meta) || 0;
 
