@@ -29,7 +29,6 @@
     },
     "android": {
       "package": "korre_app.gestao.korucompany",
-      "versionCode": 10,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
       "blockedPermissions": [
@@ -81,7 +80,8 @@
       "expo-document-picker",
       "expo-sqlite",
       "expo-web-browser",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true,
