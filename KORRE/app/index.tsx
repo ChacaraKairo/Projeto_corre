@@ -14,7 +14,7 @@ export default function SplashScreen() {
 
       {/* Logo do KORRE ou algo que remeta ao projeto */}
       <Image
-        source={require("../assets/images/android-icon-foreground.png")}
+        source={require("../assets/images/android-icon-foreground-safe.png")}
         style={styles.logo}
         resizeMode="contain"
       />

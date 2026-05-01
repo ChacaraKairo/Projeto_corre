@@ -3,7 +3,7 @@
     "name": "Korre",
     "slug": "korre",
     "version": "1.2.0",
-    "orientation": "default",
+    "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "korre",
     "userInterfaceStyle": "automatic",
@@ -94,7 +94,7 @@
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": false
     },
     "owner": "koru-company",
     "extra": {

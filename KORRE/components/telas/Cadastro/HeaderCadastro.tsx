@@ -17,7 +17,7 @@ export const HeaderCadastro: React.FC<HeaderProps> = () => {
       {/* Container que faz o corte (Crop) */}
       <View style={headerStyles.imageCropContainer}>
         <Image
-          source={require('../../../assets/images/android-icon-monochrome.png')}
+          source={require('../../../assets/images/android-icon-monochrome-safe.png')}
           style={headerStyles.logoAumentada}
           resizeMode="cover" // Mudado para cover para preencher a área antes do corte
         />

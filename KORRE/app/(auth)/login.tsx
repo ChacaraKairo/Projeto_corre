@@ -70,7 +70,7 @@ const LoginScreen: React.FC = () => {
             style={dynamicInlineStyles.inline1({ bounceAnim })}
           >
             <Image
-              source={require('../../assets/images/android-icon-foreground.png')}
+              source={require('../../assets/images/android-icon-foreground-safe.png')}
               style={inlineStyles.inline3}
               resizeMode="contain"
             />

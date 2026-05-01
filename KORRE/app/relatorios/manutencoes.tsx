@@ -586,7 +586,7 @@ export default function ManutencoesReportScreen() {
                 <View style={inlineStyles.inline10}>
                   <View style={inlineStyles.inline11}>
                     <Image
-                      source={require('../../assets/images/android-icon-monochrome.png')}
+                      source={require('../../assets/images/android-icon-monochrome-safe.png')}
                       style={inlineStyles.inline12}
                     />
                     <Text
@@ -709,7 +709,7 @@ export default function ManutencoesReportScreen() {
                   >
                     <View>
                       <Image
-                        source={require('../../assets/images/android-icon-monochrome.png')}
+                        source={require('../../assets/images/android-icon-monochrome-safe.png')}
                         style={inlineStyles.inline36}
                       />
                       <Text
