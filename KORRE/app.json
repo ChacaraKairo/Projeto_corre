@@ -31,9 +31,18 @@
       "package": "korre_app.gestao.korucompany",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.VIBRATE"
+      ],
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
-        "android.permission.ACCESS_FINE_LOCATION"
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.SYSTEM_ALERT_WINDOW"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-icon-foreground-safe.png",
@@ -64,8 +73,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "O KORRE acessa suas fotos apenas quando você escolhe uma imagem para o perfil.",
-          "cameraPermission": "O KORRE usa a câmera apenas quando você escolhe tirar uma foto de perfil."
+          "photosPermission": "O KORRE acessa suas fotos apenas quando voce escolhe uma imagem para o perfil.",
+          "cameraPermission": "O KORRE solicita acesso a camera somente quando voce toca em Camera para tirar foto de perfil. A imagem fica salva localmente no aparelho."
         }
       ],
       [
