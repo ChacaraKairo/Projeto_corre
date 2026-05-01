@@ -1,4 +1,3 @@
-// MeuCorre/hooks/dashboard/useDashboard.ts
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { DeviceEventEmitter } from 'react-native';

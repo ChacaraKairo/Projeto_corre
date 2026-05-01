@@ -12,7 +12,7 @@ export default function SplashScreen() {
       {/* Garante que não apareça barra de navegação durante o loading */}
       <Stack.Screen options={{ headerShown: false }} />
 
-      {/* Logo do MeuCorre ou algo que remeta ao seu projeto */}
+      {/* Logo do KORRE ou algo que remeta ao projeto */}
       <Image
         source={require("../assets/images/android-icon-foreground.png")}
         style={styles.logo}

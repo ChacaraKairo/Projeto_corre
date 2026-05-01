@@ -4,6 +4,7 @@ import {
   BACKUP_APP_NAME,
   BACKUP_SCHEMA_VERSION,
   BACKUP_TABLES,
+  sanitizeBackupRow,
   validateBackupPayload,
 } from '../constants/backupSchema';
 
@@ -40,5 +41,15 @@ describe('backup schema validation', () => {
 
   it('rejeita backup de outro app', () => {
     assert.throws(() => validateBackupPayload(makeBackup('OutroApp')));
+  });
+
+  it('nao restaura senha de backups antigos ou manipulados', () => {
+    const { columns } = sanitizeBackupRow('perfil_usuario', {
+      id: 1,
+      nome: 'KORRE',
+      senha: 'hash-legado',
+    });
+
+    assert.deepEqual(columns, ['id', 'nome']);
   });
 });

@@ -1,17 +1,11 @@
-// MeuCorre/hooks/cadastro/useRestaurarBackup.ts
 import { Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import db from '../../database/DatabaseInit';
+import { BackupRestoreService } from '../../services/BackupRestoreService';
+import { logger } from '../../utils/logger';
 import { showCustomAlert } from '../alert/useCustomAlert';
-import {
-  BACKUP_TABLES,
-  BackupTable,
-  sanitizeBackupRow,
-  validateBackupPayload,
-} from '../../constants/backupSchema';
 
 const mostrarAviso = (titulo: string, mensagem: string) => {
   Alert.alert(titulo, mensagem);
@@ -22,46 +16,11 @@ export function useRestaurarBackup() {
   const router = useRouter();
   const [carregando, setCarregando] = useState(false);
 
-  const executarRestauracao = async (data: any) => {
-    let transacaoAberta = false;
+  const executarRestauracao = async (data: unknown) => {
     setCarregando(true);
 
     try {
-      const tabelasData = validateBackupPayload(data);
-      await db.execAsync('PRAGMA foreign_keys = OFF;');
-      await db.execAsync('BEGIN TRANSACTION;');
-      transacaoAberta = true;
-
-      for (const tabela of [...BACKUP_TABLES].reverse()) {
-        await db.execAsync(`DELETE FROM ${tabela};`);
-      }
-
-      for (const tabela of BACKUP_TABLES) {
-        const rows = tabelasData[tabela];
-        if (!Array.isArray(rows) || rows.length === 0) {
-          continue;
-        }
-
-        for (const row of rows) {
-          const { columns: colunas, values } =
-            sanitizeBackupRow(
-              tabela as BackupTable,
-              row as Record<string, unknown>,
-            );
-
-          if (colunas.length === 0) continue;
-
-          const placeholders = colunas.map(() => '?').join(', ');
-          await db.runAsync(
-            `INSERT OR REPLACE INTO ${tabela} (${colunas.join(', ')}) VALUES (${placeholders})`,
-            values,
-          );
-        }
-      }
-
-      await db.execAsync('COMMIT;');
-      transacaoAberta = false;
-      await db.execAsync('PRAGMA foreign_keys = ON;');
+      await BackupRestoreService.restaurarBackup(data);
 
       Alert.alert(
         'Backup restaurado',
@@ -73,26 +32,11 @@ export function useRestaurarBackup() {
           },
         ],
       );
-    } catch (error: any) {
-      if (transacaoAberta) {
-        try {
-          await db.execAsync('ROLLBACK;');
-        } catch (rollbackError) {
-          console.warn(
-            '[RESTORE] ROLLBACK não concluído:',
-            rollbackError,
-          );
-        }
-      }
-
-      try {
-        await db.execAsync('PRAGMA foreign_keys = ON;');
-      } catch {}
-
-      console.error('[RESTORE][FATAL]', error);
+    } catch (error) {
+      logger.error('[RESTORE][FATAL]', error);
       mostrarAviso(
-        'Erro na restauração',
-        'O arquivo de backup é inválido ou incompatível com o KORRE.',
+        'Erro na restauracao',
+        'O arquivo de backup e invalido ou incompativel com o KORRE.',
       );
     } finally {
       setCarregando(false);
@@ -110,8 +54,8 @@ export function useRestaurarBackup() {
 
       if (!result.assets?.[0]?.uri) {
         mostrarAviso(
-          'Backup não selecionado',
-          'Não foi possível acessar o arquivo escolhido.',
+          'Backup nao selecionado',
+          'Nao foi possivel acessar o arquivo escolhido.',
         );
         return;
       }
@@ -124,7 +68,7 @@ export function useRestaurarBackup() {
       if (!conteudo) {
         mostrarAviso(
           'Arquivo vazio',
-          'O arquivo selecionado está vazio.',
+          'O arquivo selecionado esta vazio.',
         );
         return;
       }
@@ -133,10 +77,10 @@ export function useRestaurarBackup() {
       try {
         dados = JSON.parse(conteudo);
       } catch (error) {
-        console.error('[PICKER] JSON inválido:', error);
+        logger.error('[PICKER] JSON invalido:', error);
         mostrarAviso(
-          'Arquivo inválido',
-          'O arquivo selecionado não é um JSON válido. Escolha um backup exportado pelo KORRE.',
+          'Arquivo invalido',
+          'O arquivo selecionado nao e um JSON valido. Escolha um backup exportado pelo KORRE.',
         );
         return;
       }
@@ -154,11 +98,11 @@ export function useRestaurarBackup() {
           },
         ],
       );
-    } catch (e: any) {
-      console.error('[PICKER][ERRO CRÍTICO]', e);
+    } catch (error) {
+      logger.error('[PICKER][ERRO CRITICO]', error);
       mostrarAviso(
         'Erro de leitura',
-        'Não foi possível processar este arquivo. Verifique se é um JSON válido.',
+        'Nao foi possivel processar este arquivo. Verifique se e um JSON valido.',
       );
     }
   };

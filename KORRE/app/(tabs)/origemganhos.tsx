@@ -1,4 +1,3 @@
-// MeuCorre/app/(tabs)/origemganhos.tsx
 import {
   ChevronRight,
   Info,

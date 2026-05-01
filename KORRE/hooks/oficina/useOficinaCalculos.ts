@@ -1,4 +1,3 @@
-// MeuCorre/hooks/oficina/useOficinaCalculos.ts
 import { useCallback, useMemo } from 'react';
 import { calcularDesgasteItem } from '../../utils/calculoManutencao';
 

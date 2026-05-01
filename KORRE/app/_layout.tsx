@@ -1,4 +1,3 @@
-// MeuCorre/app/_layout.tsx
 import {
   Stack,
   usePathname,
@@ -11,6 +10,7 @@ import {
   BackHandler,
   Platform,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -26,6 +26,8 @@ import { inlineStyles } from '../styles/generated-inline/app/_layoutInlineStyles
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const [hasUser, setHasUser] = useState(false);
+  const [startupError, setStartupError] = useState(false);
+  const [setupAttempt, setSetupAttempt] = useState(0);
   const segments = useSegments();
   const pathname = usePathname();
   const router = useRouter();
@@ -34,6 +36,9 @@ export default function RootLayout() {
     const subscriptions: { remove: () => void }[] = [];
 
     async function setup() {
+      setIsReady(false);
+      setStartupError(false);
+
       try {
         DatabaseInit();
         await NotificationHandler.setupForegroundHandler();
@@ -55,6 +60,7 @@ export default function RootLayout() {
         }
       } catch (error) {
         logger.error('[RootLayout] Falha no setup inicial:', error);
+        setStartupError(true);
       } finally {
         setIsReady(true);
       }
@@ -66,10 +72,10 @@ export default function RootLayout() {
         subscription.remove(),
       );
     };
-  }, []);
+  }, [setupAttempt]);
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady || startupError) return;
     const rootSegment = segments[0] as string | undefined;
     const isAtRoot =
       rootSegment === undefined ||
@@ -83,10 +89,12 @@ export default function RootLayout() {
         router.replace(AppRoutes.cadastro);
       }
     }
-  }, [isReady, hasUser, segments, router]);
+  }, [isReady, startupError, hasUser, segments, router]);
 
   useEffect(() => {
-    if (Platform.OS !== 'android' || !isReady) return;
+    if (Platform.OS !== 'android' || !isReady || startupError) {
+      return;
+    }
 
     const subscription = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -114,7 +122,7 @@ export default function RootLayout() {
     );
 
     return () => subscription.remove();
-  }, [hasUser, isReady, pathname, router]);
+  }, [hasUser, isReady, startupError, pathname, router]);
 
   if (!isReady) {
     return (
@@ -139,6 +147,68 @@ export default function RootLayout() {
           >
             Carregando KORRE
           </Text>
+        </View>
+      </SafeAreaProvider>
+    );
+  }
+
+  if (startupError) {
+    return (
+      <SafeAreaProvider style={inlineStyles.inline4}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingHorizontal: 24,
+            backgroundColor: '#0A0A0A',
+          }}
+        >
+          <Text
+            style={{
+              color: '#FFFFFF',
+              fontSize: 18,
+              fontWeight: '800',
+              textAlign: 'center',
+              marginBottom: 8,
+            }}
+          >
+            Nao foi possivel inicializar o KORRE.
+          </Text>
+          <Text
+            style={{
+              color: '#A0A0A0',
+              fontSize: 14,
+              lineHeight: 20,
+              textAlign: 'center',
+              marginBottom: 20,
+            }}
+          >
+            Tente fechar e abrir o app novamente. Se preferir,
+            toque abaixo para tentar reiniciar agora.
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => setSetupAttempt((attempt) => attempt + 1)}
+            style={{
+              minHeight: 44,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: 20,
+              borderRadius: 8,
+              backgroundColor: '#00C853',
+            }}
+          >
+            <Text
+              style={{
+                color: '#0A0A0A',
+                fontSize: 14,
+                fontWeight: '900',
+              }}
+            >
+              Tentar novamente
+            </Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaProvider>
     );

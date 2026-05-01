@@ -1,4 +1,3 @@
-// MeuCorre/app/(auth)/cadastro.tsx
 import { Stack, useRouter } from 'expo-router';
 import {
   ChevronRight,

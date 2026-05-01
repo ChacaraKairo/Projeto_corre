@@ -162,12 +162,22 @@ export const BACKUP_EXPORT_COLUMNS: Record<
   ),
 };
 
+export const BACKUP_RESTORE_COLUMNS: Record<
+  BackupTable,
+  readonly string[]
+> = {
+  ...BACKUP_COLUMNS,
+  perfil_usuario: BACKUP_COLUMNS.perfil_usuario.filter(
+    (column) => column !== 'senha',
+  ),
+};
+
 export const sanitizeBackupRow = (
   table: BackupTable,
   row: Record<string, unknown>,
 ) => {
   const normalizedRow = normalizeLegacyBackupRow(table, row);
-  const allowed = BACKUP_COLUMNS[table];
+  const allowed = BACKUP_RESTORE_COLUMNS[table];
   const columns = allowed.filter((column) =>
     Object.prototype.hasOwnProperty.call(normalizedRow, column),
   );

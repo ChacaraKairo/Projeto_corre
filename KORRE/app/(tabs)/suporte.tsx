@@ -1,4 +1,3 @@
-// MeuCorre/app/(tabs)/suporte.tsx
 import { useRouter } from 'expo-router';
 import {
   ArrowLeft,

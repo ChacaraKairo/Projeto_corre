@@ -1,4 +1,3 @@
-// MeuCorre/hooks/dashboard/frasesService.ts
 // Lista de 15 frases motivacionais para o "corre"
 const listaFrases = [
   'Bora faturar!',

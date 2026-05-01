@@ -1,4 +1,3 @@
-// MeuCorre/app/(auth)/termos.tsx
 import { useRouter } from 'expo-router';
 import {
   ArrowLeft,

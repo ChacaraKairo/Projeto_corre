@@ -1,4 +1,3 @@
-// src/hooks/configuracoes/useGerenciarDados.ts
 import { Alert } from 'react-native';
 import { useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
@@ -6,12 +5,9 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { useRouter } from 'expo-router';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
-import {
-  BACKUP_TABLES,
-  BackupTable,
-  sanitizeBackupRow,
-  validateBackupPayload,
-} from '../../constants/backupSchema';
+import { BACKUP_TABLES } from '../../constants/backupSchema';
+import { BackupRestoreService } from '../../services/BackupRestoreService';
+import { logger } from '../../utils/logger';
 import {
   hideAppLoading,
   showAppLoadingAsync,
@@ -27,49 +23,14 @@ export function useGerenciarDados() {
   const [importandoBackup, setImportandoBackup] =
     useState(false);
 
-  const executarRestauracao = async (data: any) => {
-    let transacaoAberta = false;
+  const executarRestauracao = async (data: unknown) => {
     setImportandoBackup(true);
     await showAppLoadingAsync('Restaurando backup...');
 
     try {
-      const tabelasData = validateBackupPayload(data);
-      await db.execAsync('PRAGMA foreign_keys = OFF;');
-      await db.execAsync('BEGIN TRANSACTION;');
-      transacaoAberta = true;
-
-      for (const tabela of [...BACKUP_TABLES].reverse()) {
-        await showAppLoadingAsync(`Limpando ${tabela}...`);
-        await db.execAsync(`DELETE FROM ${tabela};`);
-      }
-
-      for (const tabela of BACKUP_TABLES) {
-        await showAppLoadingAsync(`Restaurando ${tabela}...`);
-        const rows = tabelasData[tabela];
-        if (!Array.isArray(rows) || rows.length === 0) {
-          continue;
-        }
-
-        for (const row of rows) {
-          const { columns: colunas, values } =
-            sanitizeBackupRow(
-              tabela as BackupTable,
-              row as Record<string, unknown>,
-            );
-
-          if (colunas.length === 0) continue;
-
-          const placeholders = colunas.map(() => '?').join(', ');
-          await db.runAsync(
-            `INSERT OR REPLACE INTO ${tabela} (${colunas.join(', ')}) VALUES (${placeholders})`,
-            values,
-          );
-        }
-      }
-
-      await db.execAsync('COMMIT;');
-      transacaoAberta = false;
-      await db.execAsync('PRAGMA foreign_keys = ON;');
+      await BackupRestoreService.restaurarBackup(data, {
+        onProgress: showAppLoadingAsync,
+      });
 
       hideAppLoading();
       Alert.alert(
@@ -83,31 +44,11 @@ export function useGerenciarDados() {
         ],
       );
     } catch (error) {
-      if (transacaoAberta) {
-        try {
-          await db.execAsync('ROLLBACK;');
-        } catch (rollbackError) {
-          console.warn(
-            '[Backup] ROLLBACK não concluído:',
-            rollbackError,
-          );
-        }
-      }
-
-      try {
-        await db.execAsync('PRAGMA foreign_keys = ON;');
-      } catch (pragmaError) {
-        console.warn(
-          '[Backup] Falha ao reativar foreign_keys:',
-          pragmaError,
-        );
-      }
-
-      console.error('[Backup] Falha ao restaurar:', error);
+      logger.error('[Backup] Falha ao restaurar:', error);
       hideAppLoading();
       mostrarErroBackup(
         'Falha ao restaurar backup',
-        'O arquivo selecionado não pôde ser restaurado. Verifique se ele é um backup JSON válido do KORRE.',
+        'O arquivo selecionado nao pode ser restaurado. Verifique se ele e um backup JSON valido do KORRE.',
       );
     } finally {
       hideAppLoading();
@@ -130,8 +71,8 @@ export function useGerenciarDados() {
 
       if (!res.assets?.[0]?.uri) {
         mostrarErroBackup(
-          'Backup não selecionado',
-          'Não foi possível acessar o arquivo escolhido.',
+          'Backup nao selecionado',
+          'Nao foi possivel acessar o arquivo escolhido.',
         );
         return;
       }
@@ -142,21 +83,25 @@ export function useGerenciarDados() {
       );
       hideAppLoading();
 
+      let payload: unknown;
       try {
-        await executarRestauracao(JSON.parse(content));
-      } catch (parseError) {
-        console.error('[Backup] JSON inválido:', parseError);
+        payload = JSON.parse(content);
+      } catch (error) {
+        logger.error('[Backup] JSON invalido:', error);
         mostrarErroBackup(
-          'Arquivo inválido',
-          'O arquivo selecionado não é um JSON válido. Escolha um backup exportado pelo KORRE.',
+          'Arquivo invalido',
+          'O arquivo selecionado nao e um JSON valido. Escolha um backup exportado pelo KORRE.',
         );
+        return;
       }
+
+      await executarRestauracao(payload);
     } catch (error) {
       hideAppLoading();
-      console.error('[Backup] Falha ao ler arquivo:', error);
+      logger.error('[Backup] Falha ao ler arquivo:', error);
       mostrarErroBackup(
         'Falha ao ler backup',
-        'Não foi possível abrir o arquivo selecionado. Tente escolher outro arquivo JSON.',
+        'Nao foi possivel abrir o arquivo selecionado. Tente escolher outro arquivo JSON.',
       );
     }
   };
@@ -164,7 +109,7 @@ export function useGerenciarDados() {
   const limparTodosOsDados = () => {
     Alert.alert(
       'Limpar tudo?',
-      'Isto apagará permanentemente seu perfil e histórico.',
+      'Isto apagara permanentemente seu perfil e historico.',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -173,9 +118,7 @@ export function useGerenciarDados() {
           onPress: async () => {
             try {
               await showAppLoadingAsync('Limpando dados...');
-              await db.execAsync(
-                'PRAGMA foreign_keys = OFF;',
-              );
+              await db.execAsync('PRAGMA foreign_keys = OFF;');
 
               for (const tabela of [...BACKUP_TABLES].reverse()) {
                 await db.execAsync(`DELETE FROM ${tabela};`);
@@ -188,10 +131,10 @@ export function useGerenciarDados() {
                 await db.execAsync('PRAGMA foreign_keys = ON;');
               } catch {}
 
-              console.error('[Backup] Falha ao limpar dados:', error);
+              logger.error('[Backup] Falha ao limpar dados:', error);
               mostrarErroBackup(
                 'Falha ao limpar dados',
-                'Não foi possível apagar os dados agora. Tente novamente.',
+                'Nao foi possivel apagar os dados agora. Tente novamente.',
               );
             } finally {
               hideAppLoading();
