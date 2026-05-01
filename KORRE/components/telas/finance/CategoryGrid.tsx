@@ -3,11 +3,11 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { financeStyles as styles } from '../../../styles/telas/Finance/financeStyles';
 
 interface CategoryGridProps {
-  categorias: Array<{
+  categorias: {
     id: string;
     icon: any;
     nome?: string;
-  }>;
+  }[];
   categoriaSelecionada: string;
   onSelect: (id: string) => void;
   mainColor: string;

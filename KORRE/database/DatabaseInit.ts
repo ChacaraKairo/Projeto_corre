@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+import { logger } from '../utils/logger';
 import { SelicService } from '../utils/SelicService'; // Certifique-se de que o caminho está correto
 
 // Nome do banco consistente com o projeto
@@ -14,7 +15,7 @@ export const DatabaseInit = () => {
         'PRAGMA user_version;',
       ) ?? { user_version: 0 };
 
-    console.log(
+    logger.info(
       `[BANCO] Versão atual: ${currentDbVersion} | Versão alvo: ${DATABASE_VERSION}`,
     );
 
@@ -25,41 +26,41 @@ export const DatabaseInit = () => {
     `);
 
     if (currentDbVersion < 1) {
-      console.log(
+      logger.info(
         '[BANCO] Criando tabelas do ecossistema KORRE...',
       );
       initV1();
 
       db.execSync('PRAGMA user_version = 1;');
       currentDbVersion = 1;
-      console.log('[BANCO] V1 inicializada com sucesso.');
+      logger.info('[BANCO] V1 inicializada com sucesso.');
     }
 
     if (currentDbVersion < 2) {
       migrateToV2();
       db.execSync('PRAGMA user_version = 2;');
       currentDbVersion = 2;
-      console.log('[BANCO] Migracao V2 aplicada com sucesso.');
+      logger.info('[BANCO] Migracao V2 aplicada com sucesso.');
     }
 
     if (currentDbVersion < 3) {
       migrateToV3();
       db.execSync('PRAGMA user_version = 3;');
       currentDbVersion = 3;
-      console.log('[BANCO] Migracao V3 aplicada com sucesso.');
+      logger.info('[BANCO] Migracao V3 aplicada com sucesso.');
     }
 
     if (currentDbVersion < 4) {
       migrateToV4();
       db.execSync('PRAGMA user_version = 4;');
       currentDbVersion = 4;
-      console.log('[BANCO] Migracao V4 aplicada com sucesso.');
+      logger.info('[BANCO] Migracao V4 aplicada com sucesso.');
     }
 
     // DISPARO AUTOMÁTICO: Verifica a Selic sempre que o app inicia (Lógica de dia 1 está no Service)
     SelicService.validarEAtualizarSelic();
   } catch (error) {
-    console.error(
+    logger.error(
       '[ERRO] Falha crítica na inicialização do SQLite:',
       error,
     );

@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   Text,
-  Dimensions,
   ActivityIndicator,
 } from 'react-native';
 import { useTermometroMEI } from '../../../hooks/relatorios/useTermometroMEI';

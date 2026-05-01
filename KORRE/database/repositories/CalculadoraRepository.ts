@@ -1,5 +1,7 @@
 // database/repositories/CalculadoraRepository.ts
 import db from '../DatabaseInit';
+import type { Veiculo } from '../../types/database';
+import { logger } from '../../utils/logger';
 
 /**
  * 1. Definição de Interface Completa
@@ -64,7 +66,7 @@ export interface ParametrosFinanceiros {
   dias_trabalhados_semana: number;
   horas_por_dia: number;
   km_por_dia: number;
-  [key: string]: any;
+  id?: number;
 }
 
 export interface DadosOficina {
@@ -78,9 +80,17 @@ export const CalculadoraRepository = {
   /**
    * Puxa o veículo marcado como ativo no sistema
    */
-  getVeiculoAtivo: async () => {
-    return await db.getFirstAsync<any>(
-      'SELECT * FROM veiculos WHERE ativo = 1 LIMIT 1',
+  getVeiculoAtivo: async (usuarioId?: number) => {
+    const filtroUsuario = usuarioId ? 'AND id_user = ?' : '';
+
+    return await db.getFirstAsync<Veiculo>(
+      `SELECT id, tipo, marca, modelo, ano, motor, placa, km_atual, ativo, id_user,
+              custo_km_calculado, custo_minuto_calculado,
+              meta_ganho_minuto_calculado, taxa_completude
+       FROM veiculos
+       WHERE ativo = 1 ${filtroUsuario}
+       LIMIT 1`,
+      usuarioId ? [usuarioId] : [],
     );
   },
 
@@ -119,7 +129,7 @@ export const CalculadoraRepository = {
          WHERE i.veiculo_id = ? AND i.nome LIKE '%pneu%' LIMIT 1) as kmPneu
     `;
 
-    const result = await db.getFirstAsync<any>(query, [
+    const result = await db.getFirstAsync<DadosOficina>(query, [
       veiculoId,
       veiculoId,
       veiculoId,
@@ -178,7 +188,7 @@ export const CalculadoraRepository = {
     try {
       await db.runAsync(sql, valores);
     } catch (error) {
-      console.error(
+      logger.error(
         '[CalculadoraRepository] Erro no UPSERT:',
         error,
       );
@@ -215,7 +225,7 @@ export const CalculadoraRepository = {
         veiculoId,
       ]);
     } catch (error) {
-      console.error(
+      logger.error(
         '[CalculadoraRepository] Erro ao salvar índices no veículo:',
         error,
       );

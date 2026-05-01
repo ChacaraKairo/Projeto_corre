@@ -12,15 +12,14 @@ import { LogOut, X } from 'lucide-react-native';
 import { usePerfil } from '../../hooks/perfil_user/usePerfil';
 import { styles } from '../../styles/telas/Perfil/perfilStyles';
 import { useTema } from '../../hooks/modo_tema';
-import db from '../../database/DatabaseInit';
 import {
   VEICULOS_CONFIG,
   TipoVeiculo,
 } from '../../type/typeVeiculos';
+import type { Veiculo } from '../../types/database';
 
 import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/perfilInlineStyles';
 import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(tabs)/perfilDynamicStyles';
-// Sub-componentes
 import { HeaderPerfil } from '../../components/telas/Perfil/HeaderPerfil';
 import { CardUsuario } from '../../components/telas/Perfil/CardUsuario';
 import { MetaFinanceira } from '../../components/telas/Perfil/MetaFinanceira';
@@ -40,45 +39,30 @@ export default function PerfilScreen() {
     realizarLogout,
     carregarDados,
     alterarFoto,
+    listarVeiculosDoUsuario,
+    trocarVeiculoAtivo,
   } = usePerfil();
 
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
-  // Estado que controla a visibilidade do modal de edição
   const [modalEditAberto, setModalEditAberto] =
     useState(false);
-
-  // Estados para o Modal de Troca de Veículo
   const [modalTrocaAberto, setModalTrocaAberto] =
     useState(false);
   const [veiculosDisponiveis, setVeiculosDisponiveis] =
-    useState<any[]>([]);
+    useState<Veiculo[]>([]);
 
-  // Carrega os veículos e abre o modal na própria tela
   const abrirModalTroca = async () => {
-    try {
-      const lista = await db.getAllAsync(
-        'SELECT * FROM veiculos ORDER BY ativo DESC, id ASC',
-      );
-      setVeiculosDisponiveis(lista);
-      setModalTrocaAberto(true);
-    } catch (error) {
-      console.error('Erro ao buscar veículos:', error);
-    }
+    const lista = await listarVeiculosDoUsuario();
+    setVeiculosDisponiveis(lista);
+    setModalTrocaAberto(true);
   };
 
-  const trocarVeiculoAtivo = async (id: number) => {
-    try {
-      await db.runAsync('UPDATE veiculos SET ativo = 0');
-      await db.runAsync(
-        'UPDATE veiculos SET ativo = 1 WHERE id = ?',
-        [id],
-      );
+  const selecionarVeiculoAtivo = async (id: number) => {
+    const trocou = await trocarVeiculoAtivo(id);
+    if (trocou) {
       setModalTrocaAberto(false);
-      carregarDados(); // Recarrega os dados do perfil (incluindo o novo veículo ativo)
-    } catch (error) {
-      console.error('Erro ao trocar veiculo:', error);
     }
   };
 
@@ -112,7 +96,6 @@ export default function PerfilScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Passamos a função para abrir o modal ao clicar no botão de editar */}
         <CardUsuario
           usuario={usuario}
           onEditPress={() => setModalEditAberto(true)}
@@ -158,33 +141,23 @@ export default function PerfilScreen() {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Renderização do Modal */}
       <ModalEditarPerfil
         visivel={modalEditAberto}
         onClose={() => setModalEditAberto(false)}
         onSalvoSucesso={() => carregarDados()}
       />
 
-      {/* Modal de Troca de Veículo */}
       <Modal
         visible={modalTrocaAberto}
         transparent
         animationType="fade"
         onRequestClose={() => setModalTrocaAberto(false)}
       >
-        <View
-          style={inlineStyles.inline1}
-        >
-          <View
-            style={dynamicInlineStyles.inline1({ isDark })}
-          >
-            <View
-              style={inlineStyles.inline2}
-            >
-              <Text
-                style={dynamicInlineStyles.inline2({ isDark })}
-              >
-                Trocar Veículo
+        <View style={inlineStyles.inline1}>
+          <View style={dynamicInlineStyles.inline1({ isDark })}>
+            <View style={inlineStyles.inline2}>
+              <Text style={dynamicInlineStyles.inline2({ isDark })}>
+                Trocar Veiculo
               </Text>
               <TouchableOpacity
                 onPress={() => setModalTrocaAberto(false)}
@@ -196,9 +169,7 @@ export default function PerfilScreen() {
                 />
               </TouchableOpacity>
             </View>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-            >
+            <ScrollView showsVerticalScrollIndicator={false}>
               {veiculosDisponiveis.map((v) => {
                 const isAtivo = v.ativo === 1;
                 const tipo =
@@ -210,11 +181,16 @@ export default function PerfilScreen() {
                 return (
                   <TouchableOpacity
                     key={v.id}
-                    onPress={() => trocarVeiculoAtivo(v.id)}
-                    style={dynamicInlineStyles.inline4({ isAtivo, isDark })}
+                    onPress={() => selecionarVeiculoAtivo(v.id)}
+                    style={dynamicInlineStyles.inline4({
+                      isAtivo,
+                      isDark,
+                    })}
                   >
                     <View
-                      style={dynamicInlineStyles.inline5({ isDark })}
+                      style={dynamicInlineStyles.inline5({
+                        isDark,
+                      })}
                     >
                       <Icone
                         size={24}
@@ -229,12 +205,16 @@ export default function PerfilScreen() {
                     </View>
                     <View style={inlineStyles.inline3}>
                       <Text
-                        style={dynamicInlineStyles.inline6({ isDark })}
+                        style={dynamicInlineStyles.inline6({
+                          isDark,
+                        })}
                       >
                         {v.modelo}
                       </Text>
                       <Text
-                        style={dynamicInlineStyles.inline7({ isDark })}
+                        style={dynamicInlineStyles.inline7({
+                          isDark,
+                        })}
                       >
                         {v.placa || 'Sem placa'}
                       </Text>

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Animated,
 } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 import { styles } from '../../../styles/telas/Configuracoes/configuracoesStyles';

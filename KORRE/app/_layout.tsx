@@ -20,6 +20,7 @@ import db, { DatabaseInit } from '../database/DatabaseInit';
 import '../locales/i18n';
 import { executarVerificacoesLocais } from '../notifications/LocalNotificationScheduler';
 import { NotificationHandler } from '../notifications/NotificationHandler';
+import { logger } from '../utils/logger';
 
 import { inlineStyles } from '../styles/generated-inline/app/_layoutInlineStyles';
 export default function RootLayout() {
@@ -53,12 +54,7 @@ export default function RootLayout() {
           await executarVerificacoesLocais();
         }
       } catch (error) {
-        if (__DEV__) {
-          console.error(
-            '[RootLayout] Falha no setup inicial:',
-            error,
-          );
-        }
+        logger.error('[RootLayout] Falha no setup inicial:', error);
       } finally {
         setIsReady(true);
       }

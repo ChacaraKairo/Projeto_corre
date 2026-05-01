@@ -3,33 +3,21 @@ import { useRouter } from 'expo-router';
 import db from '../../database/DatabaseInit';
 import { PhotoService } from '../../components/telas/Cadastro/script/photoService';
 import { AppRoutes } from '../../constants/routes';
+import type {
+  PerfilUsuario,
+  TipoMeta,
+  Veiculo,
+} from '../../types/database';
 import { logger } from '../../utils/logger';
 import { showCustomAlert } from '../alert/useCustomAlert';
-
-type TipoMeta = 'diaria' | 'semanal';
-
-interface PerfilUsuario {
-  id: number;
-  nome: string;
-  foto_uri?: string | null;
-  tipo_meta?: TipoMeta | null;
-  meta_diaria?: number | null;
-  meta_semanal?: number | null;
-}
-
-interface VeiculoPerfil {
-  id: number;
-  modelo: string;
-  placa?: string | null;
-  ativo: number;
-}
 
 export function usePerfil() {
   const router = useRouter();
   const [usuario, setUsuario] =
     useState<PerfilUsuario | null>(null);
-  const [veiculo, setVeiculo] =
-    useState<VeiculoPerfil | null>(null);
+  const [veiculo, setVeiculo] = useState<Veiculo | null>(
+    null,
+  );
   const [meta, setMeta] = useState('');
   const [tipoMeta, setTipoMeta] =
     useState<TipoMeta>('diaria');
@@ -39,7 +27,9 @@ export function usePerfil() {
     try {
       const user =
         await db.getFirstAsync<PerfilUsuario>(
-          'SELECT * FROM perfil_usuario LIMIT 1',
+          `SELECT id, nome, email, cpf, foto_uri, tipo_meta, meta_diaria, meta_semanal
+           FROM perfil_usuario
+           LIMIT 1`,
         );
 
       if (!user) {
@@ -61,8 +51,11 @@ export function usePerfil() {
       setMeta(valorMeta ? String(valorMeta) : '150');
 
       const veiculoAtivo =
-        await db.getFirstAsync<VeiculoPerfil>(
-          'SELECT * FROM veiculos WHERE ativo = 1 AND id_user = ? LIMIT 1',
+        await db.getFirstAsync<Veiculo>(
+          `SELECT id, tipo, marca, modelo, ano, motor, placa, km_atual, ativo, id_user
+           FROM veiculos
+           WHERE ativo = 1 AND id_user = ?
+           LIMIT 1`,
           [user.id],
         );
 
@@ -80,6 +73,47 @@ export function usePerfil() {
   useEffect(() => {
     carregarDados();
   }, []);
+
+  const listarVeiculosDoUsuario = async () => {
+    if (!usuario) return [];
+
+    try {
+      return await db.getAllAsync<Veiculo>(
+        `SELECT id, tipo, marca, modelo, ano, motor, placa, km_atual, ativo, id_user
+         FROM veiculos
+         WHERE id_user = ?
+         ORDER BY ativo DESC, id ASC`,
+        [usuario.id],
+      );
+    } catch (error) {
+      logger.error('[Perfil] Erro ao listar veículos:', error);
+      return [];
+    }
+  };
+
+  const trocarVeiculoAtivo = async (veiculoId: number) => {
+    if (!usuario) return false;
+
+    try {
+      await db.runAsync(
+        'UPDATE veiculos SET ativo = 0 WHERE id_user = ?',
+        [usuario.id],
+      );
+      await db.runAsync(
+        'UPDATE veiculos SET ativo = 1 WHERE id = ? AND id_user = ?',
+        [veiculoId, usuario.id],
+      );
+      await carregarDados();
+      return true;
+    } catch (error) {
+      logger.error('[Perfil] Erro ao trocar veículo ativo:', error);
+      showCustomAlert(
+        'Erro',
+        'Não foi possível trocar o veículo ativo.',
+      );
+      return false;
+    }
+  };
 
   const salvarMeta = async () => {
     if (!usuario) return;
@@ -159,5 +193,7 @@ export function usePerfil() {
     salvarMeta,
     realizarLogout,
     carregarDados,
+    listarVeiculosDoUsuario,
+    trocarVeiculoAtivo,
   };
 }

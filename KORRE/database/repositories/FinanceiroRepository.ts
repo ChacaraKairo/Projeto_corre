@@ -1,11 +1,15 @@
 // database/repositories/FinanceiroRepository.ts
 import db from '../DatabaseInit';
+import type {
+  MovimentacaoFinanceira,
+  TipoTransacao,
+} from '../../types/database';
 
 export const FinanceiroRepository = {
   getResumoPorPeriodo: async (
     veiculoId: number,
     dataInicio: string,
-    tipo: 'ganho' | 'despesa',
+    tipo: TipoTransacao,
     dataFim?: string,
   ) => {
     const filtros = [
@@ -36,7 +40,7 @@ export const FinanceiroRepository = {
   },
 
   getUltimasMovimentacoes: async (limit = 5) => {
-    return await db.getAllAsync<any>(
+    return await db.getAllAsync<MovimentacaoFinanceira>(
       `
       SELECT t.id, t.tipo, t.valor, c.nome as categoria, strftime('%H:%M', t.data_transacao) as hora 
       FROM transacoes_financeiras t

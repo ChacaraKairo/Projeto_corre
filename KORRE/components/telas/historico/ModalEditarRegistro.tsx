@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Platform,
 } from 'react-native';
 import {
   X,

@@ -1,33 +1,20 @@
 import { useCallback, useEffect, useState } from 'react';
 import db from '../../database/DatabaseInit';
+import type {
+  NovoVeiculo,
+  UsuarioLocal,
+  Veiculo,
+} from '../../types/database';
 import { VeiculoService } from '../cadastro/veiculoService';
 import { showCustomAlert } from '../alert/useCustomAlert';
 import { logger } from '../../utils/logger';
 
-interface UsuarioLocal {
-  id: number;
-}
-
-interface VeiculoGaragem {
-  id: number;
-  tipo: string;
-  marca: string;
-  modelo: string;
-  ano: string | number;
-  motor: string;
-  placa: string;
-  km_atual: number;
-  ativo: number;
-}
-
 export function useGaragem() {
-  const [veiculos, setVeiculos] = useState<VeiculoGaragem[]>(
-    [],
-  );
+  const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalDelete, setModalDelete] = useState<{
     visivel: boolean;
-    veiculo: VeiculoGaragem | null;
+    veiculo: Veiculo | null;
   }>({
     visivel: false,
     veiculo: null,
@@ -48,8 +35,11 @@ export function useGaragem() {
         return;
       }
 
-      const lista = await db.getAllAsync<VeiculoGaragem>(
-        'SELECT * FROM veiculos WHERE id_user = ? ORDER BY ativo DESC, id ASC',
+      const lista = await db.getAllAsync<Veiculo>(
+        `SELECT id, tipo, marca, modelo, ano, motor, placa, km_atual, ativo, id_user
+         FROM veiculos
+         WHERE id_user = ?
+         ORDER BY ativo DESC, id ASC`,
         [user.id],
       );
 
@@ -65,12 +55,20 @@ export function useGaragem() {
     carregarVeiculos();
   }, [carregarVeiculos]);
 
-  const ativarVeiculo = async (veiculo: VeiculoGaragem) => {
+  const ativarVeiculo = async (veiculo: Veiculo) => {
     try {
-      await db.runAsync('UPDATE veiculos SET ativo = 0');
+      const user = await db.getFirstAsync<UsuarioLocal>(
+        'SELECT id FROM perfil_usuario LIMIT 1',
+      );
+      if (!user) return;
+
       await db.runAsync(
-        'UPDATE veiculos SET ativo = 1 WHERE id = ?',
-        [veiculo.id],
+        'UPDATE veiculos SET ativo = 0 WHERE id_user = ?',
+        [user.id],
+      );
+      await db.runAsync(
+        'UPDATE veiculos SET ativo = 1 WHERE id = ? AND id_user = ?',
+        [veiculo.id, user.id],
       );
       await carregarVeiculos();
     } catch (error) {
@@ -82,9 +80,7 @@ export function useGaragem() {
     }
   };
 
-  const adicionarVeiculo = async (
-    novoVeiculo: VeiculoGaragem,
-  ) => {
+  const adicionarVeiculo = async (novoVeiculo: NovoVeiculo) => {
     try {
       const user = await db.getFirstAsync<UsuarioLocal>(
         'SELECT id FROM perfil_usuario LIMIT 1',
@@ -119,7 +115,7 @@ export function useGaragem() {
     }
   };
 
-  const solicitarExclusao = (veiculo: VeiculoGaragem) => {
+  const solicitarExclusao = (veiculo: Veiculo) => {
     setConfirmacaoPlaca('');
     setModalDelete({ visivel: true, veiculo });
   };
@@ -131,16 +127,33 @@ export function useGaragem() {
     if (!modalDelete.veiculo) return;
 
     if (
-      confirmacaoPlaca.toUpperCase() !==
-      modalDelete.veiculo.placa.toUpperCase()
+      confirmacaoPlaca.trim().toUpperCase() !==
+      modalDelete.veiculo.placa?.toUpperCase()
     ) {
       return;
     }
 
     try {
+      const eraAtivo = modalDelete.veiculo.ativo === 1;
       await db.runAsync('DELETE FROM veiculos WHERE id = ?', [
         modalDelete.veiculo.id,
       ]);
+      if (eraAtivo && modalDelete.veiculo.id_user) {
+        const proximoVeiculo = await db.getFirstAsync<Veiculo>(
+          `SELECT id, tipo, marca, modelo, ano, motor, placa, km_atual, ativo, id_user
+           FROM veiculos
+           WHERE id_user = ?
+           ORDER BY id ASC
+           LIMIT 1`,
+          [modalDelete.veiculo.id_user],
+        );
+        if (proximoVeiculo) {
+          await db.runAsync(
+            'UPDATE veiculos SET ativo = 1 WHERE id = ?',
+            [proximoVeiculo.id],
+          );
+        }
+      }
       await carregarVeiculos();
       setModalDelete({ visivel: false, veiculo: null });
       showCustomAlert(

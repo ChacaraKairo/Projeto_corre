@@ -2,7 +2,6 @@ import {
   Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import {
-  Platform,
   Text,
   TouchableOpacity,
   View,

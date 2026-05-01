@@ -13,10 +13,11 @@ import {
   VEICULOS_CONFIG,
   TipoVeiculo,
 } from '../../../type/typeVeiculos';
+import type { Veiculo } from '../../../types/database';
 import { showCustomAlert } from '../../../hooks/alert/useCustomAlert';
 
 interface Props {
-  veiculo: any;
+  veiculo: Veiculo | null;
   // Opcional: Função que você pode passar do perfil.tsx para abrir um modal de troca de veículo
   onTrocarVeiculo?: () => void;
 }

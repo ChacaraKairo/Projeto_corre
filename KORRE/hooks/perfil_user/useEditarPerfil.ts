@@ -36,7 +36,9 @@ export function useEditarPerfil(
     try {
       const user =
         await db.getFirstAsync<PerfilUsuario>(
-          'SELECT * FROM perfil_usuario LIMIT 1',
+          `SELECT nome, tipo_meta
+           FROM perfil_usuario
+           LIMIT 1`,
         );
 
       if (user) {

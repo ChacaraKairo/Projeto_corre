@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Platform,
 } from 'react-native';
 import { X, Check, Calendar } from 'lucide-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';

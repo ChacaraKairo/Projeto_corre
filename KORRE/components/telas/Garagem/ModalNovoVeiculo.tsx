@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import {
   X,
-  Settings,
   Gauge,
   Check,
   ChevronDown,
@@ -29,6 +28,7 @@ import {
   VEICULOS_DATABASE,
   TipoVeiculoKey,
 } from '../../../type/veiculosData';
+import type { NovoVeiculo } from '../../../types/database';
 import { showCustomAlert } from '../../../hooks/alert/useCustomAlert';
 
 import { localStyles } from '../../../styles/generated/components/telas/Garagem/ModalNovoVeiculoStyles';
@@ -36,7 +36,7 @@ import { inlineStyles } from '../../../styles/generated-inline/components/telas/
 interface Props {
   visible: boolean;
   onClose: () => void;
-  onSave: (veiculo: any) => Promise<void>;
+  onSave: (veiculo: NovoVeiculo) => Promise<void>;
 }
 
 export const ModalNovoVeiculo = ({
@@ -139,10 +139,10 @@ export const ModalNovoVeiculo = ({
       });
       limparCampos();
       onClose();
-    } catch (error) {
-      console.error(
-        '[ModalNovoVeiculo] Erro ao salvar:',
-        error,
+    } catch {
+      showCustomAlert(
+        'Erro',
+        'Não foi possível salvar o veículo.',
       );
     } finally {
       setSalvando(false);

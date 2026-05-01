@@ -18,13 +18,14 @@ import {
   VEICULOS_CONFIG,
   TipoVeiculo,
 } from '../../../type/typeVeiculos';
+import type { Veiculo } from '../../../types/database';
 
 import { inlineStyles } from '../../../styles/generated-inline/components/telas/Garagem/CardVeiculoGaragemInlineStyles';
 import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Garagem/CardVeiculoGaragemDynamicStyles';
 interface Props {
-  v: any;
-  onAtivar: (v: any) => void;
-  onExcluir: (v: any) => void;
+  v: Veiculo;
+  onAtivar: (v: Veiculo) => void;
+  onExcluir: (v: Veiculo) => void;
 }
 
 export const CardVeiculoGaragem = ({

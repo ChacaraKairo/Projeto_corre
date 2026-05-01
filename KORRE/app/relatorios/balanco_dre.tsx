@@ -13,7 +13,6 @@ import {
   ChevronRight,
   TrendingUp,
   TrendingDown,
-  Briefcase,
   Activity,
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';

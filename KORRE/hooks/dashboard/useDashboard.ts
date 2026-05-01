@@ -6,6 +6,12 @@ import db from '../../database/DatabaseInit';
 import { CalculadoraRepository } from '../../database/repositories/CalculadoraRepository';
 import { FinanceiroRepository } from '../../database/repositories/FinanceiroRepository';
 import { verificarAlertasManutencao } from '../../notifications/LocalNotificationScheduler';
+import type {
+  MovimentacaoFinanceira,
+  PerfilUsuario,
+  Veiculo,
+} from '../../types/database';
+import { logger } from '../../utils/logger';
 import {
   hideAppLoading,
   showAppLoadingAsync,
@@ -32,10 +38,26 @@ const inicioDaSemana = (data: Date) => {
 
 export const useDashboard = () => {
   const router = useRouter();
+  interface DashboardData {
+    usuario: PerfilUsuario | null;
+    veiculo: Veiculo | null;
+    frase: string;
+    financeiro: {
+      ganhos: number;
+      gastos: number;
+      ganhosMes: number;
+      gastosMes: number;
+      meta: number;
+      qtdGanhos: number;
+      qtdGastos: number;
+    };
+    movimentacoes: MovimentacaoFinanceira[];
+  }
+
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({
-    usuario: null as any,
-    veiculo: null as any,
+  const [data, setData] = useState<DashboardData>({
+    usuario: null,
+    veiculo: null,
     frase: '',
     financeiro: {
       ganhos: 0,
@@ -46,24 +68,28 @@ export const useDashboard = () => {
       qtdGanhos: 0,
       qtdGastos: 0,
     },
-    movimentacoes: [] as any[],
+    movimentacoes: [],
   });
 
   const carregarTudo = useCallback(async () => {
     setLoading(true);
     try {
-      const usuarioPerfil = await db.getFirstAsync(
-        'SELECT * FROM perfil_usuario LIMIT 1',
+      const usuarioPerfil = await db.getFirstAsync<PerfilUsuario>(
+        `SELECT id, nome, email, cpf, foto_uri, tipo_meta, meta_diaria, meta_semanal
+         FROM perfil_usuario
+         LIMIT 1`,
       );
 
       const veiculoAtivo =
-        await CalculadoraRepository.getVeiculoAtivo();
+        await CalculadoraRepository.getVeiculoAtivo(
+          usuarioPerfil?.id,
+        );
       const frase = getFraseDoMomento();
 
       if (veiculoAtivo) {
         const agora = new Date();
         const tipoMeta =
-          (usuarioPerfil as any)?.tipo_meta === 'semanal'
+          usuarioPerfil?.tipo_meta === 'semanal'
             ? 'semanal'
             : 'diaria';
         const periodoInicio =
@@ -124,8 +150,8 @@ export const useDashboard = () => {
             qtdGastos: resGastos?.qtd || 0,
             meta:
               tipoMeta === 'semanal'
-                ? (usuarioPerfil as any)?.meta_semanal || 0
-                : (usuarioPerfil as any)?.meta_diaria || 0,
+                ? usuarioPerfil?.meta_semanal || 0
+                : usuarioPerfil?.meta_diaria || 0,
           },
         }));
       } else if (usuarioPerfil) {
@@ -136,7 +162,7 @@ export const useDashboard = () => {
         }));
       }
     } catch (error) {
-      console.error(
+      logger.error(
         '[Dashboard] Erro ao carregar dados:',
         error,
       );
@@ -166,10 +192,12 @@ export const useDashboard = () => {
 
       setData((prev) => ({
         ...prev,
-        veiculo: { ...prev.veiculo, km_atual: novoKm },
+        veiculo: prev.veiculo
+          ? { ...prev.veiculo, km_atual: novoKm }
+          : prev.veiculo,
       }));
     } catch (error) {
-      console.error(
+      logger.error(
         '[Dashboard] Erro ao atualizar KM:',
         error,
       );

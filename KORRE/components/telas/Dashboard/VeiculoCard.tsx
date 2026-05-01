@@ -3,24 +3,18 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import {
   Warehouse,
   ClipboardList,
-  X,
 } from 'lucide-react-native';
 import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashboardStyles';
 import { useTema } from '../../../hooks/modo_tema';
-import db from '../../../database/DatabaseInit';
-import { useRouter } from 'expo-router';
 import {
   VEICULOS_CONFIG,
   TipoVeiculo,
 } from '../../../type/typeVeiculos';
+import type { Veiculo } from '../../../types/database';
 
 import { inlineStyles } from '../../../styles/generated-inline/components/telas/Dashboard/VeiculoCardInlineStyles';
 interface VeiculoProps {
-  veiculo: {
-    tipo: TipoVeiculo;
-    modelo: string;
-    placa: string;
-  } | null;
+  veiculo: Veiculo | null;
   rendimento: string;
   onGaragem?: () => void;
   onOficina: () => void;
@@ -34,7 +28,6 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
 }) => {
   const { tema } = useTema();
   const isDark = tema === 'escuro';
-  const router = useRouter();
 
   return (
     <View
@@ -112,7 +105,7 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
                 : '#F5F5F5',
             },
           ]}
-          onPress={() => router.push('/(tabs)/garagem')}
+          onPress={onGaragem}
         >
           <Warehouse size={18} color="#00C853" />
           <Text style={styles.btnAcaoVeiculoTexto}>

@@ -8,20 +8,14 @@ import {
 import { useRouter } from 'expo-router';
 import { dashboardStyles as styles } from '../../../styles/telas/Dashboard/dashboardStyles';
 import { useTema } from '../../../hooks/modo_tema';
+import type { MovimentacaoFinanceira } from '../../../types/database';
 
 import { inlineStyles } from '../../../styles/generated-inline/components/telas/Dashboard/UltimasMovimentacoesInlineStyles';
-interface Movimentacao {
-  id: number;
-  tipo: 'ganho' | 'despesa';
-  valor: number;
-  categoria: string;
-  hora: string;
-}
 
 export const UltimasMovimentacoes = ({
   dados,
 }: {
-  dados: Movimentacao[];
+  dados: MovimentacaoFinanceira[];
 }) => {
   const { tema } = useTema();
   const isDark = tema === 'escuro';
@@ -105,7 +99,7 @@ export const UltimasMovimentacoes = ({
                       { color: isDark ? '#FFF' : '#000' },
                     ]}
                   >
-                    {item.categoria}
+                    {item.categoria || 'Sem categoria'}
                   </Text>
                   <Text
                     style={[
@@ -113,7 +107,7 @@ export const UltimasMovimentacoes = ({
                       { color: isDark ? '#666' : '#888' },
                     ]}
                   >
-                    {item.hora}
+                    {item.hora || '--:--'}
                   </Text>
                 </View>
               </View>

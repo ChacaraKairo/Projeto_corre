@@ -17,7 +17,7 @@ import {
 } from 'lucide-react-native';
 import { useEditarPerfil } from '../../../hooks/perfil_user/useEditarPerfil';
 import { useTema } from '../../../hooks/modo_tema';
-import { styles } from '../../../styles/telas/Perfil/perfilStyles'; import { inlineStyles } from '../../../styles/generated-inline/components/telas/Perfil/ModalEditarPerfilInlineStyles';
+import { inlineStyles } from '../../../styles/generated-inline/components/telas/Perfil/ModalEditarPerfilInlineStyles';
 import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Perfil/ModalEditarPerfilDynamicStyles';
 // Usando os teus estilos base
 

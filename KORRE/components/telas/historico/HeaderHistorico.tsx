@@ -46,7 +46,7 @@ export function HeaderHistorico({
   const textMuted = isDark ? '#888' : '#666';
   const textColor = isDark ? '#FFFFFF' : '#1A1A1A';
 
-  const periodos: Array<'dia' | 'semana' | 'mes'> = [
+  const periodos: ('dia' | 'semana' | 'mes')[] = [
     'dia',
     'semana',
     'mes',

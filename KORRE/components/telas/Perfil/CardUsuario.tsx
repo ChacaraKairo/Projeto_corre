@@ -8,12 +8,13 @@ import {
 import { Camera, User, Pencil } from 'lucide-react-native';
 import { styles } from '../../../styles/telas/Perfil/perfilStyles';
 import { useTema } from '../../../hooks/modo_tema';
+import type { PerfilUsuario } from '../../../types/database';
 
 import { dynamicInlineStyles } from '../../../styles/generated-dynamic/components/telas/Perfil/CardUsuarioDynamicStyles';
 interface Props {
-  usuario: any;
+  usuario: PerfilUsuario | null;
   onEditPress: () => void;
-  onCameraPress?: () => void; // <-- Nova propriedade
+  onCameraPress?: () => void;
 }
 
 export const CardUsuario = ({

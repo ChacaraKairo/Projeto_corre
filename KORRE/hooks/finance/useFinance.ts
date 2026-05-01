@@ -3,6 +3,7 @@ import {
   useEffect,
   useRef,
   useCallback,
+  type ComponentType,
 } from 'react';
 import { TextInput } from 'react-native';
 import {
@@ -14,6 +15,13 @@ import * as Icons from 'lucide-react-native';
 import db from '../../database/DatabaseInit';
 import { showCustomAlert } from '../alert/useCustomAlert';
 import { verificarMetaDiaria } from '../../notifications/LocalNotificationScheduler';
+import type {
+  CategoriaFinanceira,
+  TipoTransacao,
+  UsuarioLocal,
+  Veiculo,
+} from '../../types/database';
+import { logger } from '../../utils/logger';
 import {
   hideAppLoading,
   showAppLoadingAsync,
@@ -29,7 +37,7 @@ export const useFinance = () => {
       : 'ganho';
   }, [params.initialType]);
 
-  const [tipo, setTipo] = useState<'ganho' | 'despesa'>(
+  const [tipo, setTipo] = useState<TipoTransacao>(
     getTipoInicial(),
   );
   const [valor, setValor] = useState('0,00');
@@ -38,10 +46,19 @@ export const useFinance = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [salvando, setSalvando] = useState(false);
 
-  const [allVehicles, setAllVehicles] = useState<any[]>([]);
+  const [allVehicles, setAllVehicles] = useState<Veiculo[]>(
+    [],
+  );
   const [selectedVehicleId, setSelectedVehicleId] =
     useState<number | null>(null);
-  const [categorias, setCategorias] = useState<any[]>([]);
+  const [categorias, setCategorias] = useState<
+    Array<{
+      id: string;
+      nome: string;
+      icon: ComponentType<{ size?: number; color?: string }>;
+      cor?: string | null;
+    }>
+  >([]);
   const [usuarioId, setUsuarioId] = useState<number | null>(
     null,
   );
@@ -62,12 +79,14 @@ export const useFinance = () => {
   );
 
   const carregarCategorias = useCallback(async () => {
-    const catList = await db.getAllAsync(
-      'SELECT * FROM categorias_financeiras WHERE tipo = ?',
+    const catList = await db.getAllAsync<CategoriaFinanceira>(
+      `SELECT id, nome, tipo, icone, cor
+       FROM categorias_financeiras
+       WHERE tipo = ?`,
       [tipo],
     );
 
-    const formatadas = catList.map((cat: any) => ({
+    const formatadas = catList.map((cat) => ({
       id: cat.id.toString(),
       nome: cat.nome,
       icon:
@@ -114,26 +133,40 @@ export const useFinance = () => {
             ('Lavagem', 'despesa', 'Zap', '#03A9F4');
           `);
 
-          const usuario: any = await db.getFirstAsync(
+          const usuario = await db.getFirstAsync<UsuarioLocal>(
             'SELECT id FROM perfil_usuario LIMIT 1',
           );
-          if (usuario) setUsuarioId(usuario.id);
+          if (!usuario) {
+            setUsuarioId(null);
+            setAllVehicles([]);
+            setSelectedVehicleId(null);
+            await carregarCategorias();
+            return;
+          }
 
-          const veiculos = await db.getAllAsync(
-            'SELECT * FROM veiculos ORDER BY ativo DESC, id ASC',
+          setUsuarioId(usuario.id);
+
+          const veiculos = await db.getAllAsync<Veiculo>(
+            `SELECT id, tipo, marca, modelo, ano, motor, placa, km_atual, ativo, id_user
+             FROM veiculos
+             WHERE id_user = ?
+             ORDER BY ativo DESC, id ASC`,
+            [usuario?.id],
           );
           setAllVehicles(veiculos);
 
           if (veiculos.length > 0) {
-            const veiculoAtivo: any =
-              veiculos.find((v: any) => v.ativo === 1) ||
+            const veiculoAtivo =
+              veiculos.find((v) => v.ativo === 1) ||
               veiculos[0];
             setSelectedVehicleId(veiculoAtivo.id);
+          } else {
+            setSelectedVehicleId(null);
           }
 
           await carregarCategorias();
         } catch (error) {
-          console.error(
+          logger.error(
             'Erro ao carregar dados financeiros:',
             error,
           );
@@ -194,7 +227,7 @@ export const useFinance = () => {
         router.replace('/(tabs)/dashboard');
       }, 1200);
     } catch (error) {
-      console.error('Erro ao salvar transacao:', error);
+      logger.error('Erro ao salvar transacao:', error);
       hideAppLoading();
       setSalvando(false);
       showCustomAlert(
@@ -227,7 +260,7 @@ export const useFinance = () => {
       setModalCategoriaAberto(false);
       await carregarCategorias();
     } catch (error) {
-      console.error('Erro ao adicionar categoria:', error);
+      logger.error('Erro ao adicionar categoria:', error);
       showCustomAlert(
         'Erro',
         'Nome de categoria já existe ou erro no banco.',

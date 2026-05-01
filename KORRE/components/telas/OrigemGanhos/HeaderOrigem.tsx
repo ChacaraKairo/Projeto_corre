@@ -2,10 +2,9 @@ import React from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   TextInput,
 } from 'react-native';
-import { ArrowLeft, Search } from 'lucide-react-native';
+import { Search } from 'lucide-react-native';
 import { styles } from '../../../styles/telas/OrigemGanhos/OrigemGanhosStyles';
 interface HeaderOrigemProps {
   busca: string;
