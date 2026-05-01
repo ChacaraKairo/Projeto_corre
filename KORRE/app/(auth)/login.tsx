@@ -3,6 +3,7 @@ import { Check, Fuel } from 'lucide-react-native';
 import React from 'react';
 import {
   Animated,
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -126,6 +127,35 @@ const LoginScreen: React.FC = () => {
           <FooterLogin />
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {carregando && (
+        <View
+          pointerEvents="auto"
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.08)',
+          }}
+        >
+          <View
+            style={{
+              paddingHorizontal: 18,
+              paddingVertical: 14,
+              borderRadius: 12,
+              backgroundColor: '#161616',
+              borderWidth: 1,
+              borderColor: '#222',
+            }}
+          >
+            <ActivityIndicator color="#00C853" />
+          </View>
+        </View>
+      )}
     </View>
   );
 };

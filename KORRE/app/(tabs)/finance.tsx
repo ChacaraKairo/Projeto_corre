@@ -301,10 +301,13 @@ export default function AddTransactionScreen() {
           ) : showSuccess ? (
             <Check size={28} color="#FFF" />
           ) : (
-            <TrendingUp
-              size={24}
-              color={tipo === 'ganho' ? '#0A0A0A' : '#FFF'}
-            />
+            <>
+              {tipo === 'ganho' ? (
+                <TrendingUp size={24} color="#0A0A0A" />
+              ) : (
+                <TrendingDown size={24} color="#FFF" />
+              )}
+            </>
           )}
           <Text
             style={[

@@ -39,6 +39,35 @@ export const styles = StyleSheet.create({
     marginTop: 2,
   },
   card: { marginBottom: 20 },
+  metricsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 20,
+  },
+  metricCard: {
+    flexBasis: '48%',
+    flexGrow: 1,
+    minHeight: 74,
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    justifyContent: 'space-between',
+  },
+  metricLabel: {
+    fontSize: 11,
+    color: '#6B7280',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  metricValue: {
+    marginTop: 8,
+    fontSize: 15,
+    color: '#111827',
+    fontWeight: '900',
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -111,5 +140,40 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     color: '#6B7280',
     fontStyle: 'italic',
+  },
+  dasCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 14,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  dasPago: {
+    backgroundColor: '#F0FDF4',
+    borderColor: '#BBF7D0',
+  },
+  dasPendente: {
+    backgroundColor: '#FFFBEB',
+    borderColor: '#FDE68A',
+  },
+  dasVencido: {
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FECACA',
+  },
+  dasTextBox: {
+    flex: 1,
+  },
+  dasTitle: {
+    fontSize: 13,
+    color: '#111827',
+    fontWeight: '900',
+  },
+  dasSubtitle: {
+    marginTop: 2,
+    fontSize: 11,
+    color: '#6B7280',
+    fontWeight: '600',
   },
 });

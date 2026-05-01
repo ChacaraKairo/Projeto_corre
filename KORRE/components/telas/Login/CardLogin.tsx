@@ -104,6 +104,7 @@ export const CardLogin: React.FC<CardLoginProps> = ({
           onChangeText={handleIdentificacaoChange}
           autoCapitalize="none"
           keyboardType="email-address"
+          editable={!carregando}
         />
       </View>
 
@@ -114,6 +115,7 @@ export const CardLogin: React.FC<CardLoginProps> = ({
           value={senha}
           onChangeText={setSenha}
           secureTextEntry
+          editable={!carregando}
         />
       </View>
 
@@ -126,7 +128,7 @@ export const CardLogin: React.FC<CardLoginProps> = ({
         >
           {carregando ? (
             <ActivityIndicator
-              {...({ color: '#00C853' } as any)}
+              {...({ color: '#0A0A0A' } as any)}
             />
           ) : (
             <Text style={styles.btnEntrarText}>Entrar</Text>

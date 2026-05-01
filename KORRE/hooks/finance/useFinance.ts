@@ -78,8 +78,17 @@ export const useFinance = () => {
     valor.replace(/\./g, '').replace(',', '.'),
   );
 
-  const carregarCategorias = useCallback(async (tipoConsulta = tipo) => {
+  const carregarCategorias = useCallback(async (tipoConsulta: TipoTransacao) => {
     setCategoriaSelecionada('');
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS categorias_financeiras (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT UNIQUE,
+        tipo TEXT,
+        icone TEXT,
+        cor TEXT
+      );
+    `);
 
     const catList = await db.getAllAsync<CategoriaFinanceira>(
       `SELECT id, nome, tipo, icone, cor
@@ -98,7 +107,18 @@ export const useFinance = () => {
     }));
 
     setCategorias(formatadas);
-  }, [tipo]);
+  }, []);
+
+  const alterarTipo = useCallback(
+    (proximoTipo: TipoTransacao) => {
+      setTipo(proximoTipo);
+      setValor('0,00');
+      setCategoriaSelecionada('');
+      setCategorias([]);
+      void carregarCategorias(proximoTipo);
+    },
+    [carregarCategorias],
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -109,7 +129,8 @@ export const useFinance = () => {
       setCategorias([]);
       setShowSuccess(false);
       setSalvando(false);
-    }, [getTipoInicial]),
+      void carregarCategorias(tipoInicial);
+    }, [carregarCategorias, getTipoInicial]),
   );
 
   useEffect(() => {
@@ -117,12 +138,19 @@ export const useFinance = () => {
     setTipo(tipoInicial);
     setCategoriaSelecionada('');
     setCategorias([]);
-  }, [getTipoInicial, params.ts]);
+    void carregarCategorias(tipoInicial);
+  }, [carregarCategorias, getTipoInicial, params.ts]);
 
   useFocusEffect(
     useCallback(() => {
       async function loadData() {
         try {
+          const tipoInicial = getTipoInicial();
+          setTipo(tipoInicial);
+          setValor('0,00');
+          setCategoriaSelecionada('');
+          setCategorias([]);
+
           await db.execAsync(`
             CREATE TABLE IF NOT EXISTS categorias_financeiras (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -164,7 +192,7 @@ export const useFinance = () => {
             setUsuarioId(null);
             setAllVehicles([]);
             setSelectedVehicleId(null);
-            await carregarCategorias(tipo);
+            await carregarCategorias(tipoInicial);
             return;
           }
 
@@ -188,7 +216,7 @@ export const useFinance = () => {
             setSelectedVehicleId(null);
           }
 
-          await carregarCategorias(tipo);
+          await carregarCategorias(tipoInicial);
         } catch (error) {
           logger.error(
             'Erro ao carregar dados financeiros:',
@@ -197,7 +225,7 @@ export const useFinance = () => {
         }
       }
       loadData();
-    }, [tipo, carregarCategorias]),
+    }, [carregarCategorias, getTipoInicial, params.ts]),
   );
 
   const handleValueChange = (text: string) => {
@@ -282,7 +310,7 @@ export const useFinance = () => {
       setNovaCategoriaNome('');
       setNovaCategoriaIcone('Briefcase');
       setModalCategoriaAberto(false);
-      await carregarCategorias();
+      await carregarCategorias(tipo);
     } catch (error) {
       logger.error('Erro ao adicionar categoria:', error);
       showCustomAlert(
@@ -296,7 +324,7 @@ export const useFinance = () => {
 
   return {
     tipo,
-    setTipo,
+    setTipo: alterarTipo,
     valor,
     valorNumerico,
     handleValueChange,

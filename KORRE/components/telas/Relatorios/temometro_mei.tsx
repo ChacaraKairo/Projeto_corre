@@ -1,19 +1,21 @@
 import React from 'react';
 import {
-  View,
-  Text,
   ActivityIndicator,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { useTermometroMEI } from '../../../hooks/relatorios/useTermometroMEI';
 import {
   AlertTriangle,
-  TrendingUp,
-  CheckCircle,
+  Bell,
   Calendar,
+  CheckCircle,
+  TrendingUp,
 } from 'lucide-react-native';
-
+import { useTermometroMEI } from '../../../hooks/relatorios/useTermometroMEI';
 import { styles } from '../../../styles/generated/components/telas/Relatorios/temometro_meiStyles';
 import { inlineStyles } from '../../../styles/generated-inline/components/telas/Relatorios/temometro_meiInlineStyles';
+
 const formatarMoeda = (valor: number) => {
   return valor.toLocaleString('pt-BR', {
     style: 'currency',
@@ -22,9 +24,9 @@ const formatarMoeda = (valor: number) => {
 };
 
 export function TermometroMEI() {
-  const { dados, loading } = useTermometroMEI();
+  const { dados, loading, alternarDasPago } = useTermometroMEI();
 
-  if (loading)
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator color="#10B981" />
@@ -33,31 +35,35 @@ export function TermometroMEI() {
         </Text>
       </View>
     );
+  }
 
   const getCor = (percent: number) => {
-    if (percent >= 90) return '#EF4444'; // Perigo
-    if (percent >= 75) return '#F59E0B'; // Atenção
-    return '#10B981'; // Seguro
+    if (percent >= 90) return '#EF4444';
+    if (percent >= 75) return '#F59E0B';
+    return '#10B981';
   };
+
+  const dasColor = dados.das.pago
+    ? '#10B981'
+    : dados.das.vencido
+      ? '#EF4444'
+      : '#B45309';
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.title}>Termômetro MEI</Text>
-          <Text style={styles.subtitle}>
-            Ano Fiscal 2026
-          </Text>
+          <Text style={styles.title}>Termometro MEI</Text>
+          <Text style={styles.subtitle}>Ano fiscal 2026</Text>
         </View>
         {(dados.projecaoEstouro || dados.alerta) && (
           <AlertTriangle color="#EF4444" size={24} />
         )}
       </View>
 
-      {/* --- FATURAMENTO MENSAL (Média R$ 6.750) --- */}
       <View style={styles.card}>
         <View style={styles.row}>
-          <Text style={styles.label}>Mês Atual</Text>
+          <Text style={styles.label}>Faturamento do mes</Text>
           <Text
             style={[
               styles.valor,
@@ -87,10 +93,45 @@ export function TermometroMEI() {
         </Text>
       </View>
 
-      {/* --- FATURAMENTO ANUAL (R$ 81.000 ou Proporcional) --- */}
+      <View style={styles.metricsGrid}>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>
+            Pode faturar no mes
+          </Text>
+          <Text style={styles.metricValue}>
+            {formatarMoeda(dados.restanteMes)}
+          </Text>
+        </View>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>Media mensal</Text>
+          <Text style={styles.metricValue}>
+            {formatarMoeda(dados.mediaMensal)}
+          </Text>
+        </View>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>
+            Pode faturar no ano
+          </Text>
+          <Text style={styles.metricValue}>
+            {formatarMoeda(dados.restanteAno)}
+          </Text>
+        </View>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>Projecao anual</Text>
+          <Text
+            style={[
+              styles.metricValue,
+              dados.projecaoEstouro && { color: '#EF4444' },
+            ]}
+          >
+            {formatarMoeda(dados.projecaoAnual)}
+          </Text>
+        </View>
+      </View>
+
       <View style={styles.card}>
         <View style={styles.row}>
-          <Text style={styles.label}>Acumulado no Ano</Text>
+          <Text style={styles.label}>Acumulado no ano</Text>
           <Text
             style={[
               styles.valor,
@@ -125,40 +166,35 @@ export function TermometroMEI() {
         </View>
       </View>
 
-      {/* --- BOX DE STATUS / ALERTAS --- */}
       {dados.projecaoEstouro ? (
         <View style={[styles.alertBox, styles.alertError]}>
           <TrendingUp color="#EF4444" size={20} />
           <Text style={styles.alertText}>
             <Text style={inlineStyles.inline1}>
-              Risco de Desenquadramento:{' '}
+              Risco de desenquadramento:{' '}
             </Text>
-            No ritmo atual, sua projeção anual excede o
+            No ritmo atual, sua projecao anual excede o
             limite do MEI.
           </Text>
         </View>
       ) : dados.alerta ? (
-        <View
-          style={[styles.alertBox, styles.alertWarning]}
-        >
+        <View style={[styles.alertBox, styles.alertWarning]}>
           <AlertTriangle color="#B45309" size={20} />
           <Text
             style={[styles.alertText, { color: '#B45309' }]}
           >
-            Você atingiu 80% do limite. Planeje seus
-            próximos faturamentos com cautela.
+            Voce atingiu 80% do limite. Planeje os proximos
+            faturamentos com cautela.
           </Text>
         </View>
       ) : (
-        <View
-          style={[styles.alertBox, styles.alertSuccess]}
-        >
+        <View style={[styles.alertBox, styles.alertSuccess]}>
           <CheckCircle color="#10B981" size={20} />
           <Text
             style={[styles.alertText, { color: '#166534' }]}
           >
-            Faturamento saudável. Você está operando dentro
-            da margem de segurança.
+            Faturamento saudavel. Voce esta operando dentro
+            da margem de seguranca.
           </Text>
         </View>
       )}
@@ -173,8 +209,32 @@ export function TermometroMEI() {
           </Text>
         </View>
       )}
+
+      <TouchableOpacity
+        style={[
+          styles.dasCard,
+          dados.das.pago
+            ? styles.dasPago
+            : dados.das.vencido
+              ? styles.dasVencido
+              : styles.dasPendente,
+        ]}
+        activeOpacity={0.8}
+        onPress={alternarDasPago}
+      >
+        <Bell color={dasColor} size={20} />
+        <View style={styles.dasTextBox}>
+          <Text style={styles.dasTitle}>
+            {dados.das.pago
+              ? 'DAS deste mes marcado como pago'
+              : `Lembrar DAS ate dia ${dados.das.vencimentoDia}`}
+          </Text>
+          <Text style={styles.dasSubtitle}>
+            Toque aqui para{' '}
+            {dados.das.pago ? 'desmarcar' : 'marcar como pago'}.
+          </Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
-
-

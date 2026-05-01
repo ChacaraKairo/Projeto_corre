@@ -106,6 +106,8 @@ export const useLogin = () => {
     setCarregando(true);
 
     try {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
       let idLimpo = identificacao.trim();
       const senhaLimpa = senha.trim();
 

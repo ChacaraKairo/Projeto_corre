@@ -98,6 +98,8 @@ export const useCadastro = () => {
 
     try {
       setSalvando(true);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
       const valorMeta = parseFloat(meta) || 0;
 
       // Criptografia
