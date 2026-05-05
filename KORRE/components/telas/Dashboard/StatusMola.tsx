@@ -1,5 +1,6 @@
 // components/telas/Dashboard/StatusMola.tsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { useEficiencia } from '../../../hooks/dashboard/useEficiencia';
 
@@ -15,6 +16,7 @@ export const StatusMola: React.FC<StatusMolaProps> = ({
   gastos,
   meta,
 }) => {
+  const { t } = useTranslation();
   const {
     lucroReal,
     progressoMeta,
@@ -25,7 +27,7 @@ export const StatusMola: React.FC<StatusMolaProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.label}>Progresso da Meta</Text>
+        <Text style={styles.label}>{t('dashboard.progresso_meta')}</Text>
         <Text style={styles.value}>{percentualTexto}</Text>
       </View>
 

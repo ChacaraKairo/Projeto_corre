@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -26,6 +27,7 @@ import { safeBack } from '../../utils/navigation/safeBack';
 import { RelatorioItem } from '../../components/telas/Relatorios/RelatorioItem';
 
 export default function RelatoriosScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { tema } = useTema();
   const isDark = tema === 'escuro';
@@ -52,8 +54,8 @@ export default function RelatoriosScreen() {
       router.push(href as Href);
     } else {
       showCustomAlert(
-        'Em Breve',
-        'Este relatório estará disponível numa próxima atualização!',
+        t('relatorios.indisponivel_titulo'),
+        t('relatorios.indisponivel_msg'),
       );
     }
   };
@@ -84,7 +86,7 @@ export default function RelatoriosScreen() {
         <Text
           style={[styles.headerTitle, { color: textColor }]}
         >
-          Meus Relatórios
+          {t('relatorios.titulo')}
         </Text>
         <View style={inlineStyles.inline1} />
       </View>
@@ -101,7 +103,7 @@ export default function RelatoriosScreen() {
               { color: textColor },
             ]}
           >
-            Saúde Financeira
+            {t('relatorios.saude_financeira')}
           </Text>
           <View style={styles.listContainer}>
             {relatoriosFinanceiros.map((item) => (
@@ -129,7 +131,7 @@ export default function RelatoriosScreen() {
               { color: textColor },
             ]}
           >
-            Inteligência Operacional
+            {t('relatorios.inteligencia_operacional')}
           </Text>
           <View style={styles.listContainer}>
             {relatoriosOperacionais.map((item) => (
@@ -157,7 +159,7 @@ export default function RelatoriosScreen() {
               { color: textColor },
             ]}
           >
-            Veículo & Manutenção
+            {t('relatorios.veiculo_manutencao')}
           </Text>
           <View style={styles.listContainer}>
             {relatoriosVeiculo.map((item) => (
@@ -185,7 +187,7 @@ export default function RelatoriosScreen() {
               { color: textColor },
             ]}
           >
-            Fisco & Burocracia
+            {t('relatorios.fisco')}
           </Text>
           <View style={styles.listContainer}>
             {relatoriosImpostos.map((item) => (
@@ -226,14 +228,13 @@ export default function RelatoriosScreen() {
               { color: isDark ? '#DDD' : '#555' },
             ]}
           >
-            Dica: Aceda ao relatório{' '}
+            {t('relatorios.dica_1')}
             <Text
               style={dynamicInlineStyles.inline1({ isDark })}
             >
-              Termômetro MEI
+              {t('relatorios.termometro_mei')}
             </Text>{' '}
-            periodicamente para garantir que não ultrapassa
-            o seu limite de faturação anual.
+            {t('relatorios.dica_2')}
           </Text>
         </View>
       </ScrollView>

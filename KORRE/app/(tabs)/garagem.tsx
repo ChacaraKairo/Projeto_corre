@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -23,6 +24,7 @@ import { inlineStyles } from '../../styles/generated-inline/app/(tabs)/garagemIn
 // Importaremos os modais a seguir
 
 export default function GaragemScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const {
     veiculos,
@@ -69,7 +71,7 @@ export default function GaragemScreen() {
             { color: isDark ? '#FFF' : '#000' },
           ]}
         >
-          Minha Garagem
+          {t('garagem.titulo')}
         </Text>
         <View style={inlineStyles.inline1} />
       </View>
@@ -94,7 +96,7 @@ export default function GaragemScreen() {
                   { color: isDark ? '#888' : '#555' },
                 ]}
               >
-                Frota Registada
+                {t('garagem.frota')}
               </Text>
               <Text
                 style={[
@@ -102,7 +104,7 @@ export default function GaragemScreen() {
                   { color: isDark ? '#FFF' : '#000' },
                 ]}
               >
-                {veiculos.length} Máquinas
+                {veiculos.length} {t('garagem.maquinas')}
               </Text>
             </View>
             <TouchableOpacity
@@ -148,14 +150,13 @@ export default function GaragemScreen() {
                 { color: isDark ? '#AAA' : '#555' },
               ]}
             >
-              Ao alternar entre veículos, o seu{' '}
+              {t('garagem.nota_1')}
               <Text
                 style={inlineStyles.inline3}
               >
-                Dashboard
-              </Text>{' '}
-              passará a monitorizar automaticamente o
-              odómetro e os ganhos da máquina selecionada.
+                {t('garagem.nota_dashboard')}
+              </Text>
+              {t('garagem.nota_2')}
             </Text>
           </View>
         </ScrollView>

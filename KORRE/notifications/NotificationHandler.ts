@@ -4,6 +4,8 @@ import { AppRoutes } from '../constants/routes';
 import { handleRemoteCommand } from './RemoteCommandHandler';
 
 const isExpoGo = Constants.appOwnership === 'expo';
+const remoteCommandsEnabled =
+  process.env.EXPO_PUBLIC_KORRE_ENABLE_REMOTE_COMMANDS === 'true';
 
 export const NotificationHandler = {
   setupForegroundHandler: async () => {
@@ -26,7 +28,7 @@ export const NotificationHandler = {
     return Notifications.addNotificationReceivedListener(
       async (notification) => {
         const data = notification.request.content.data;
-        if (data?.kind === 'command') {
+        if (data?.kind === 'command' && remoteCommandsEnabled) {
           await handleRemoteCommand(data);
         }
       },
@@ -40,7 +42,7 @@ export const NotificationHandler = {
       async (response) => {
         const data = response.notification.request.content.data;
 
-        if (data?.kind === 'command') {
+        if (data?.kind === 'command' && remoteCommandsEnabled) {
           await handleRemoteCommand(data);
           return;
         }

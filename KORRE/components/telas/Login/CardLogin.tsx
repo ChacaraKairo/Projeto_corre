@@ -5,6 +5,7 @@ import {
   ShieldCheck,
 } from 'lucide-react-native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Text,
@@ -41,6 +42,7 @@ export const CardLogin: React.FC<CardLoginProps> = ({
   onNavigateCadastro,
   onEsqueciSenha,
 }) => {
+  const { t } = useTranslation();
   // Lógica de máscara dinâmica (E-mail ou CPF)
   const handleIdentificacaoChange = (text: string) => {
     const apenasNumeros = text.replace(/\D/g, '');
@@ -82,7 +84,7 @@ export const CardLogin: React.FC<CardLoginProps> = ({
           {...({ color: '#00C853' } as any)}
         />
         <Text style={styles.authLabelText}>
-          AUTENTICAÇÃO LOCAL
+          {t('login.autenticacao_local')}
         </Text>
       </View>
 
@@ -98,8 +100,8 @@ export const CardLogin: React.FC<CardLoginProps> = ({
 
       <View style={styles.inputWrapper}>
         <Input
-          label="Identificação"
-          placeholder="E-mail ou CPF"
+          label={t('login.identificacao')}
+          placeholder={t('login.email_cpf')}
           value={identificacao}
           onChangeText={handleIdentificacaoChange}
           autoCapitalize="none"
@@ -110,7 +112,7 @@ export const CardLogin: React.FC<CardLoginProps> = ({
 
       <View style={styles.inputWrapper}>
         <Input
-          label="Senha"
+          label={t('login.senha')}
           placeholder="••••••••"
           value={senha}
           onChangeText={setSenha}
@@ -131,7 +133,7 @@ export const CardLogin: React.FC<CardLoginProps> = ({
               {...({ color: '#0A0A0A' } as any)}
             />
           ) : (
-            <Text style={styles.btnEntrarText}>Entrar</Text>
+            <Text style={styles.btnEntrarText}>{t('login.entrar')}</Text>
           )}
         </TouchableOpacity>
 
@@ -156,7 +158,7 @@ export const CardLogin: React.FC<CardLoginProps> = ({
         >
           <Text style={styles.linkCadastroText}>
             <Text style={styles.linkCadastroBold}>
-              Esqueci minha senha
+              {t('login.esqueci_senha')}
             </Text>
           </Text>
         </TouchableOpacity>
@@ -168,9 +170,9 @@ export const CardLogin: React.FC<CardLoginProps> = ({
           onPress={onNavigateCadastro}
         >
           <Text style={styles.linkCadastroText}>
-            Ainda não tens conta?{' '}
+            {t('login.sem_conta')}{' '}
             <Text style={styles.linkCadastroBold}>
-              Registra-te aqui
+              {t('login.registre_aqui')}
             </Text>
           </Text>
         </TouchableOpacity>

@@ -1,5 +1,6 @@
-// MeuCorre/components/telas/Cadastro/HeaderCadastro.tsx
+// KORRE/components/telas/Cadastro/HeaderCadastro.tsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Image,
   Text,
@@ -12,6 +13,7 @@ interface HeaderProps {
 }
 
 export const HeaderCadastro: React.FC<HeaderProps> = () => {
+  const { t } = useTranslation();
   return (
     <View style={headerStyles.header}>
       {/* Container que faz o corte (Crop) */}
@@ -23,8 +25,7 @@ export const HeaderCadastro: React.FC<HeaderProps> = () => {
         />
       </View>
       <Text style={headerStyles.subtitulo}>
-        Configure seu perfil e assuma o controle do seu
-        corre.
+        {t('cadastro.subtitulo')}
       </Text>
     </View>
   );

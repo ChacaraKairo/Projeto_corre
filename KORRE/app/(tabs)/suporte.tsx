@@ -8,6 +8,7 @@ import {
   Youtube,
 } from 'lucide-react-native';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Linking, // <-- Importado para respeitar a área segura da tela
   Platform,
@@ -22,6 +23,11 @@ import { showCustomAlert } from '../../hooks/alert/useCustomAlert';
 import { useTema } from '../../hooks/modo_tema';
 
 import { styles } from '../../styles/telas/Suporte/suporteStyles';
+
+const SUPPORT_YOUTUBE_URL =
+  process.env.EXPO_PUBLIC_KORRE_SUPPORT_YOUTUBE_URL ?? '';
+const SUPPORT_WHATSAPP =
+  process.env.EXPO_PUBLIC_KORRE_SUPPORT_WHATSAPP ?? '';
 
 const FAQItem = ({
   pergunta,
@@ -78,6 +84,7 @@ const FAQItem = ({
 };
 
 export default function SuporteScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { tema } = useTema();
   const isDark = tema === 'escuro';
@@ -89,26 +96,39 @@ export default function SuporteScreen() {
 
   // Links
   const abrirYouTube = () => {
-    Linking.openURL(
-      'https://youtube.com/@SeuCanalMotoboy',
-    ).catch(() => {
+    if (!SUPPORT_YOUTUBE_URL) {
+      showCustomAlert(
+        t('suporte.canal_config_titulo'),
+        t('suporte.canal_config_msg'),
+      );
+      return;
+    }
+
+    Linking.openURL(SUPPORT_YOUTUBE_URL).catch(() => {
       showCustomAlert(
         'Erro',
-        'Não foi possível abrir o YouTube.',
+        t('suporte.youtube_erro'),
       );
     });
   };
 
   const abrirWhatsApp = () => {
-    const numero = '5511999999999';
+    if (!SUPPORT_WHATSAPP) {
+      showCustomAlert(
+        t('suporte.whatsapp_config_titulo'),
+        t('suporte.whatsapp_config_msg'),
+      );
+      return;
+    }
+
     const mensagem =
-      'Olá! Preciso de ajuda com o aplicativo.';
+      t('suporte.whatsapp_msg');
     Linking.openURL(
-      `whatsapp://send?phone=${numero}&text=${encodeURIComponent(mensagem)}`,
+      `whatsapp://send?phone=${SUPPORT_WHATSAPP}&text=${encodeURIComponent(mensagem)}`,
     ).catch(() => {
       showCustomAlert(
         'Erro',
-        'WhatsApp não está instalado neste dispositivo.',
+        t('suporte.whatsapp_erro'),
       );
     });
   };
@@ -155,7 +175,7 @@ export default function SuporteScreen() {
               { color: textColor },
             ]}
           >
-            Ajuda e Suporte
+            {t('suporte.titulo')}
           </Text>
         </View>
       </View>
@@ -177,18 +197,17 @@ export default function SuporteScreen() {
           />
           <View style={styles.youtubeTextContainer}>
             <Text style={styles.youtubeTitle}>
-              Tutoriais em Vídeo
+              {t('suporte.tutoriais')}
             </Text>
             <Text style={styles.youtubeSubtitle}>
-              Aprende a usar todas as funções do app passo a
-              passo no nosso canal.
+              {t('suporte.tutoriais_sub')}
             </Text>
           </View>
         </TouchableOpacity>
 
         {/* Secção de Contacto Direto */}
         <Text style={styles.sectionTitle}>
-          Precisa de Falar Connosco?
+          {t('suporte.contato')}
         </Text>
         <TouchableOpacity
           activeOpacity={0.8}
@@ -208,17 +227,17 @@ export default function SuporteScreen() {
                 { color: textColor },
               ]}
             >
-              Suporte via WhatsApp
+              {t('suporte.whatsapp')}
             </Text>
             <Text style={styles.whatsappSubtitle}>
-              Resposta em até 24 horas
+              {t('suporte.resposta_24h')}
             </Text>
           </View>
         </TouchableOpacity>
 
         {/* Secção de FAQ */}
         <Text style={styles.sectionTitle}>
-          Perguntas Frequentes
+          {t('suporte.faq')}
         </Text>
 
         <FAQItem
@@ -253,7 +272,7 @@ export default function SuporteScreen() {
             style={styles.footerIcon}
           />
           <Text style={styles.footerText}>
-            Termos de Uso e Privacidade
+            {t('suporte.termos_privacidade')}
           </Text>
         </TouchableOpacity>
       </ScrollView>

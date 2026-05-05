@@ -1,50 +1,131 @@
-# Welcome to your Expo app 👋
+# KORRE App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+KORRE e um app mobile para motoristas e entregadores acompanharem custo real por km, lucro, despesas, manutencao, metas e viabilidade de corridas. O app foi desenhado como offline-first: os dados principais ficam no SQLite local do aparelho.
 
-## Get started
+## Status do produto
 
-1. Install dependencies
+MVP avancado / beta tecnico. Indicado para testes controlados com usuarios conhecidos antes de qualquer venda publica.
 
-   ```bash
-   npm install
-   ```
+## Stack
 
-2. Start the app
+- Expo SDK `~54.0.33`
+- React Native `0.81.5`
+- React `19.1.0`
+- TypeScript `~5.9.2` com `strict`
+- Expo Router
+- SQLite com `expo-sqlite`
+- Expo Notifications
+- Biometria com `expo-local-authentication`
+- Testes com `node:test` via `tsx`
 
-   ```bash
-   npx expo start
-   ```
+## Requisitos
 
-In the output, you'll find options to open the app in a
+- Node.js 22
+- npm
+- Expo CLI via `npx`
+- EAS CLI via `npx eas`
+- Android Studio ou dispositivo fisico para testes Android
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Configuracao
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Crie o arquivo local de ambiente:
 
 ```bash
-npm run reset-project
+cp .env.example .env
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Variaveis conhecidas:
 
-## Learn more
+- `EXPO_PUBLIC_KORRE_API_BASE_URL`: URL base opcional para registro de push token e comunicacao remota.
+- `EXPO_PUBLIC_KORRE_ENABLE_REMOTE_COMMANDS`: habilita comandos remotos recebidos por push quando definido como `true`. O padrao seguro e desligado.
+- `EXPO_PUBLIC_KORRE_SUPPORT_YOUTUBE_URL`: canal oficial de tutoriais. Se vazio, o app informa que o canal ainda nao foi configurado.
+- `EXPO_PUBLIC_KORRE_SUPPORT_WHATSAPP`: telefone do WhatsApp em formato internacional, apenas numeros. Se vazio, o app informa que o suporte ainda nao foi configurado.
 
-To learn more about developing your project with Expo, look at the following resources:
+## Instalar e rodar
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm ci
+npm start
+```
 
-## Join the community
+Outros comandos uteis:
 
-Join our community of developers creating universal apps.
+```bash
+npm run android
+npm run ios
+npm run web
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Validacao
+
+```bash
+npm test
+npm run typecheck
+npm run lint
+npm run validate
+```
+
+`npm run validate` executa testes, typecheck e lint na mesma ordem usada pelo CI.
+
+## Build Android
+
+```bash
+npx eas build --profile preview --platform android
+npx eas build --profile production --platform android
+```
+
+Use `preview` para beta interno e `production` para gerar o bundle de publicacao.
+
+## Arquitetura
+
+- `app/`: rotas e telas do Expo Router.
+- `components/`: componentes visuais reutilizaveis.
+- `hooks/`: estado de tela e orquestracao de fluxos.
+- `database/`: inicializacao SQLite e repositories.
+- `services/`: servicos de dominio, como backup e restauracao.
+- `notifications/`: push, notificacoes locais e comandos remotos.
+- `utils/`: calculos, validacoes, autenticacao e helpers.
+- `tests/`: testes unitarios.
+- `styles/`: estilos manuais e estilos gerados.
+
+## Banco local
+
+O banco principal e `korre.db`. A inicializacao usa `PRAGMA user_version`, `WAL`, `foreign_keys = ON` e migracoes incrementais em `database/DatabaseInit.ts`.
+
+Tabelas principais:
+
+- `perfil_usuario`
+- `veiculos`
+- `parametros_financeiros`
+- `categorias_financeiras`
+- `transacoes_financeiras`
+- `itens_manutencao`
+- `historico_manutencao`
+- `notificacoes`
+- `remote_command_logs`
+
+## Seguranca e privacidade
+
+- O app funciona localmente sem backend obrigatorio.
+- Senhas sao armazenadas em formato derivado com salt.
+- Backups nao restauram senha de arquivos antigos ou manipulados.
+- Comandos remotos ficam desligados por padrao ate existir canal autenticado adequado para producao.
+
+Antes de lancamento publico, revise hash de senha, bloqueio por tentativas, criptografia de backup, termos, politica de privacidade e adequacao LGPD/Play Store.
+
+## CI
+
+O workflow em `../.github/workflows/ci.yml` executa:
+
+- `npm ci`
+- `npm test`
+- `npm run typecheck`
+- `npm run lint`
+
+## Checklist antes de beta interno
+
+- Configurar canais reais de suporte.
+- Rodar `npm run validate`.
+- Gerar build Android `preview`.
+- Testar cadastro, login, dashboard, financeiro, calculadora, oficina, backup e restore em aparelho real.
+- Validar textos de termos e politica de privacidade.

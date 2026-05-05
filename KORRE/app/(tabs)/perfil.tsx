@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -28,6 +29,7 @@ import { AcoesGrid } from '../../components/telas/Perfil/AcoesGrid';
 import { ModalEditarPerfil } from '../../components/telas/Perfil/ModalEditarPerfil';
 
 export default function PerfilScreen() {
+  const { t } = useTranslation();
   const {
     usuario,
     veiculo,
@@ -136,7 +138,7 @@ export default function PerfilScreen() {
               { color: '#F44336' },
             ]}
           >
-            Sair da Conta
+            {t('perfil.sair')}
           </Text>
         </TouchableOpacity>
       </ScrollView>
@@ -157,7 +159,7 @@ export default function PerfilScreen() {
           <View style={dynamicInlineStyles.inline1({ isDark })}>
             <View style={inlineStyles.inline2}>
               <Text style={dynamicInlineStyles.inline2({ isDark })}>
-                Trocar Veiculo
+                {t('garagem.trocar_veiculo')}
               </Text>
               <TouchableOpacity
                 onPress={() => setModalTrocaAberto(false)}
@@ -216,7 +218,7 @@ export default function PerfilScreen() {
                           isDark,
                         })}
                       >
-                        {v.placa || 'Sem placa'}
+                        {v.placa || t('common.sem_placa')}
                       </Text>
                     </View>
                   </TouchableOpacity>

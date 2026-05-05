@@ -4,6 +4,7 @@ import {
   ShieldCheck,
 } from 'lucide-react-native';
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Animated,
@@ -30,6 +31,7 @@ import { styles } from '../../styles/telas/Cadastro/componentes/cadastroStyles';
 import { TipoVeiculo } from '../../type/typeVeiculos';
 
 export default function CadastroScreen() {
+  const { t } = useTranslation();
   const {
     nome,
     setNome,
@@ -217,7 +219,7 @@ export default function CadastroScreen() {
                     )}
                   </View>
                   <Text style={styles.termosText}>
-                    Aceito os{' '}
+                    {t('cadastro.aceito')}{' '}
                     <Text
                       style={styles.termosDestaque}
                       onPress={(event) => {
@@ -225,9 +227,9 @@ export default function CadastroScreen() {
                         router.push('/(auth)/termos');
                       }}
                     >
-                      Termos de Uso
+                      {t('cadastro.termos')}
                     </Text>{' '}
-                    e confirmo o armazenamento local.
+                    {t('cadastro.armazenamento')}
                   </Text>
                 </TouchableOpacity>
 
@@ -249,7 +251,7 @@ export default function CadastroScreen() {
                   ) : (
                     <>
                       <Text style={styles.btnSalvarText}>
-                        Comecar o Korre
+                        {t('cadastro.comecar')}
                       </Text>
                       <ChevronRight size={24} color="#0A0A0A" />
                     </>

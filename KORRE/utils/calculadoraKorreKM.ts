@@ -1,5 +1,5 @@
 /**
- * Utilitario de Calculo Financeiro: MOVIMENTO (MeuCorre)
+ * Utilitario de Calculo Financeiro: MOVIMENTO (KORRE)
  * Foca no custo de desgaste do ativo e queima de insumos (Custo por KM).
  */
 

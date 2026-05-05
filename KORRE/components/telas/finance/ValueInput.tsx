@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -19,9 +20,14 @@ export const ValueInput = ({
   mainColor,
   inputRef,
   onChangeText,
-}: ValueInputProps) => (
-  <View style={styles.valueContainer}>
-    <Text style={styles.valueTitle}>Valor da Anotação</Text>
+}: ValueInputProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <View style={styles.valueContainer}>
+      <Text style={styles.valueTitle}>
+        {t('financeiro.valor_anotacao')}
+      </Text>
 
     <TouchableOpacity
       style={styles.valueTouchable}
@@ -51,5 +57,6 @@ export const ValueInput = ({
         selectionColor="transparent" // Garante que a seleção de texto também não apareça
       />
     </TouchableOpacity>
-  </View>
-);
+    </View>
+  );
+};

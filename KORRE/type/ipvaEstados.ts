@@ -1,6 +1,6 @@
 /**
  * REGRAS_IPVA_ESTADOS - Atualizado Exercício 2026
- * Mapeamento incluindo Vans e Veículos Utilitários de Carga (VUC) para integração no motor MeuCorre.
+ * Mapeamento incluindo Vans e Veículos Utilitários de Carga (VUC) para integração no motor KORRE.
  */
 
 /**

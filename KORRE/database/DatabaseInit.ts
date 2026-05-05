@@ -6,7 +6,7 @@ import { SelicService } from '../utils/SelicService'; // Certifique-se de que o 
 const db = SQLite.openDatabaseSync('korre.db');
 
 // Versão inicial consolidada
-export const DATABASE_VERSION = 4;
+export const DATABASE_VERSION = 5;
 
 export const DatabaseInit = () => {
   try {
@@ -55,6 +55,13 @@ export const DatabaseInit = () => {
       db.execSync('PRAGMA user_version = 4;');
       currentDbVersion = 4;
       logger.info('[BANCO] Migracao V4 aplicada com sucesso.');
+    }
+
+    if (currentDbVersion < 5) {
+      migrateToV5();
+      db.execSync('PRAGMA user_version = 5;');
+      currentDbVersion = 5;
+      logger.info('[BANCO] Migracao V5 aplicada com sucesso.');
     }
 
     // DISPARO AUTOMÁTICO: Verifica a Selic sempre que o app inicia (Lógica de dia 1 está no Service)
@@ -321,6 +328,29 @@ const migrateToV4 = () => {
     'limpeza_higienizacao_por_km',
     'REAL DEFAULT 0',
   );
+};
+
+const migrateToV5 = () => {
+  createPerformanceIndexes();
+};
+
+const createPerformanceIndexes = () => {
+  db.execSync(`
+    CREATE INDEX IF NOT EXISTS idx_transacoes_veiculo_tipo_data
+      ON transacoes_financeiras (veiculo_id, tipo, data_transacao);
+
+    CREATE INDEX IF NOT EXISTS idx_historico_manutencao_veiculo_data
+      ON historico_manutencao (veiculo_id, data_servico);
+
+    CREATE INDEX IF NOT EXISTS idx_itens_manutencao_veiculo
+      ON itens_manutencao (veiculo_id);
+
+    CREATE INDEX IF NOT EXISTS idx_notificacoes_lida_data
+      ON notificacoes (lida, data_criacao);
+
+    CREATE INDEX IF NOT EXISTS idx_remote_command_logs_request_id
+      ON remote_command_logs (request_id);
+  `);
 };
 
 const addColumnIfMissing = (

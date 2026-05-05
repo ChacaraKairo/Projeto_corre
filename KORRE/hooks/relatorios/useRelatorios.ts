@@ -9,21 +9,23 @@ import {
   Gauge,
   Landmark,
 } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 export function useRelatorios() {
+  const { t } = useTranslation();
   // PILAR 1: Saúde Financeira
   const relatoriosFinanceiros = [
     {
       id: 'balanco_dre',
-      titulo: 'Balanço Geral (DRE)',
-      desc: 'O seu lucro líquido real: Receitas vs Despesas Totais.',
+      titulo: t('relatorios.items.balanco_dre_titulo'),
+      desc: t('relatorios.items.balanco_dre_desc'),
       Icon: Briefcase,
       rota: '/relatorios/balanco_dre',
     },
     {
       id: 'fluxo_caixa',
-      titulo: 'Fluxo de Caixa',
-      desc: 'Entradas e saídas diárias/semanais para não faltar dinheiro.',
+      titulo: t('relatorios.items.fluxo_caixa_titulo'),
+      desc: t('relatorios.items.fluxo_caixa_desc'),
       Icon: Wallet,
       rota: 'relatorios/fluxo_caixa',
     },
@@ -33,15 +35,15 @@ export function useRelatorios() {
   const relatoriosOperacionais = [
     {
       id: 'receita_plataforma',
-      titulo: 'Receita por Plataforma',
-      desc: 'Qual app ou tipo de corrida rende mais?',
+      titulo: t('relatorios.items.receita_plataforma_titulo'),
+      desc: t('relatorios.items.receita_plataforma_desc'),
       Icon: Smartphone,
       rota: 'relatorios/receita_plataforma',
     },
     {
       id: 'produtividade',
-      titulo: 'Produtividade (Dias/Horas)',
-      desc: 'Descubra os melhores horários e o seu ganho real por KM.',
+      titulo: t('relatorios.items.produtividade_titulo'),
+      desc: t('relatorios.items.produtividade_desc'),
       Icon: Clock,
       rota: '',
     },
@@ -51,15 +53,15 @@ export function useRelatorios() {
   const relatoriosVeiculo = [
     {
       id: 'manutencoes',
-      titulo: 'Manutenções (Oficina)',
-      desc: 'Histórico de peças trocadas e custo total de oficina.',
+      titulo: t('relatorios.items.manutencoes_titulo'),
+      desc: t('relatorios.items.manutencoes_desc'),
       Icon: Wrench,
       rota: 'relatorios/manutencoes',
     },
     {
       id: 'consumo',
-      titulo: 'Consumo (Combustível)',
-      desc: 'Gasto total e custo do KM rodado na bomba de combustível.',
+      titulo: t('relatorios.items.consumo_titulo'),
+      desc: t('relatorios.items.consumo_desc'),
       Icon: Fuel,
       rota: '',
     },
@@ -69,22 +71,22 @@ export function useRelatorios() {
   const relatoriosImpostos = [
     {
       id: 'termometro_mei',
-      titulo: 'Termômetro MEI',
-      desc: 'Controle de limite de faturação para não ser desenquadrado.',
+      titulo: t('relatorios.items.termometro_mei_titulo'),
+      desc: t('relatorios.items.termometro_mei_desc'),
       Icon: Gauge,
       rota: 'relatorios/temometro_mei',
     },
     {
       id: 'extrato_irpf',
-      titulo: 'Extrato IRPF Anual',
-      desc: 'Valores exatos (isentos e tributáveis) para a declaração.',
+      titulo: t('relatorios.items.extrato_irpf_titulo'),
+      desc: t('relatorios.items.extrato_irpf_desc'),
       Icon: Landmark,
       rota: '',
     },
     {
       id: 'carne_leao',
-      titulo: 'Carnê-Leão',
-      desc: 'Livro caixa e despesas dedutíveis para motorista pessoa física.',
+      titulo: t('relatorios.items.carne_leao_titulo'),
+      desc: t('relatorios.items.carne_leao_desc'),
       Icon: FileText,
       rota: '/relatorios/carne-leao',
     },

@@ -1,10 +1,12 @@
 import { Stack } from "expo-router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Image, Text, View } from "react-native";
 import { useSplash } from "../hooks/splash/useSplash";
 import { styles } from "../styles/SplashStyles";
 
 export default function SplashScreen() {
+  const { t } = useTranslation();
   useSplash();
 
   return (
@@ -20,7 +22,7 @@ export default function SplashScreen() {
       />
 
       <ActivityIndicator size="large" color="#00C853" />
-      <Text style={styles.text}>Carregando dados locais...</Text>
+      <Text style={styles.text}>{t('common.loading_local')}</Text>
     </View>
   );
 }

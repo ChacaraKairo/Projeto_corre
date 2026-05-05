@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -22,6 +23,7 @@ import { dynamicInlineStyles } from '../styles/generated-dynamic/app/notificacoe
 // Aproveitando os seus estilos base
 
 export default function NotificacoesScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { tema } = useTema();
   const isDark = tema === 'escuro';
@@ -67,7 +69,7 @@ export default function NotificacoesScreen() {
           <Text
             style={dynamicInlineStyles.inline2({ isDark })}
           >
-            Notificações
+            {t('notificacoes.titulo')}
           </Text>
         </View>
         <TouchableOpacity
@@ -82,8 +84,8 @@ export default function NotificacoesScreen() {
       <TouchableOpacity
         onPress={() =>
           dispararNotificacao(
-            '💰 Meta Próxima!',
-            'Faltam apenas R$ 25 para bateres a tua meta diária!',
+            t('notificacoes.teste_titulo'),
+            t('notificacoes.teste_msg'),
             'sucesso',
           )
         }
@@ -92,7 +94,7 @@ export default function NotificacoesScreen() {
         <Text
           style={inlineStyles.inline4}
         >
-          TESTAR NOTIFICAÇÃO 📲
+          {t('notificacoes.testar')}
         </Text>
       </TouchableOpacity>
 
@@ -103,7 +105,7 @@ export default function NotificacoesScreen() {
           <Text
             style={inlineStyles.inline5}
           >
-            Nenhuma notificação no momento.
+            {t('notificacoes.vazio')}
           </Text>
         ) : (
           notificacoes.map((notif) => (

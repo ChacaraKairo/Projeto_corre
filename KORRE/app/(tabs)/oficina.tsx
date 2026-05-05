@@ -1,5 +1,6 @@
 // src/app/(telas)/oficina.tsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -25,6 +26,7 @@ import { ModalResetManutencao } from '../../components/telas/Oficina/ModalResetM
 import { GridItensManutencao } from '../../components/telas/Oficina/GridItensManutencao';
 
 export default function OficinaScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { tema } = useTema();
   const isDark = tema === 'escuro';
@@ -70,7 +72,7 @@ export default function OficinaScreen() {
             { color: isDark ? '#FFF' : '#000' },
           ]}
         >
-          Oficina
+          {t('oficina.titulo')}
         </Text>
 
         <TouchableOpacity

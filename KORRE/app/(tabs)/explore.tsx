@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -16,6 +17,7 @@ import { exploreStyles as styles } from '../../styles/telas/Explore/exploreStyle
 import { useTema } from '../../hooks/modo_tema';
 
 export default function DatabaseViewerScreen() {
+  const { t } = useTranslation();
   const {
     tabelas,
     tabelaSelecionada,
@@ -43,7 +45,7 @@ export default function DatabaseViewerScreen() {
             { color: isDark ? '#FFFFFF' : '#000000' },
           ]}
         >
-          Inspetor de Dados
+          {t('explore.titulo')}
         </Text>
         <TouchableOpacity
           onPress={() =>
@@ -99,14 +101,17 @@ export default function DatabaseViewerScreen() {
             { color: isDark ? '#FFFFFF' : '#000000' },
           ]}
         >
-          {dados.length} registros em {tabelaSelecionada}
+          {t('explore.registros_em', {
+            count: dados.length,
+            table: tabelaSelecionada,
+          })}
         </Text>
         <TouchableOpacity
           onPress={limparTabela}
           style={styles.deleteButton}
         >
           <Trash2 size={16} color="#FF4444" />
-          <Text style={styles.deleteText}>Limpar</Text>
+          <Text style={styles.deleteText}>{t('common.limpar')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -117,7 +122,7 @@ export default function DatabaseViewerScreen() {
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <Text style={styles.emptyText}>
-            Nenhum registro encontrado.
+            {t('explore.nenhum_registro')}
           </Text>
         }
         renderItem={({ item, index }) => (

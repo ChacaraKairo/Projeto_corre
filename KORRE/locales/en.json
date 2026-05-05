@@ -1,9 +1,26 @@
 {
+  "common": {
+    "cancelar": "Cancel",
+    "salvar": "Save",
+    "salvando": "Saving...",
+    "salvo": "Saved!",
+    "voltar": "Back",
+    "limpar": "Clear",
+    "erro": "Error",
+    "sucesso": "Success",
+    "em_breve": "Coming soon",
+    "sem_placa": "No plate",
+    "loading_local": "Loading local data..."
+  },
+  "tabs": {
+    "dashboard": "Dashboard",
+    "dados": "Data"
+  },
   "configuracoes": {
     "titulo": "Settings",
     "aparencia": "Appearance",
-    "tema_escuro": "Dark Theme",
-    "modo_visualizacao": "Display Mode",
+    "tema_escuro": "Dark theme",
+    "modo_visualizacao": "Display mode",
     "escuro": "Dark",
     "claro": "Light",
     "notificacoes": "Notifications",
@@ -12,58 +29,193 @@
     "regional": "Regional",
     "idioma": "App language",
     "idioma_sub": "Date and text formats",
-    "seguranca_dados": "Security and Data",
-    "exportar_backup": "Export Backup",
+    "seguranca_dados": "Security and data",
+    "exportar_backup": "Export backup",
     "exportando_backup": "Exporting backup...",
-    "restaurar_dados": "Restore Data",
+    "restaurar_dados": "Restore data",
     "restaurando_dados": "Restoring data...",
-    "zerar_app": "Reset App",
+    "zerar_app": "Reset app",
     "privacidade": "Privacy",
-    "privacidade_dados": "Data Privacy",
+    "privacidade_dados": "Data privacy",
     "privacidade_sub": "Manage local security",
     "ver": "View",
     "suporte": "Support",
-    "central_ajuda": "Help Center",
-    "central_ajuda_sub": "FAQs and tutorials",
-    "termos": "Terms of Use",
+    "central_ajuda": "Help center",
+    "central_ajuda_sub": "Questions and tutorials",
+    "termos": "Terms of use",
     "termos_sub": "Usage policies",
-    "versao": "App Version",
+    "politica_privacidade": "Privacy policy",
+    "versao": "App version",
     "atualizado": "Up to date",
     "selecione_idioma": "Select language",
     "cancelar": "Cancel"
   },
-  "tabs": {
-    "dashboard": "Dashboard",
-    "dados": "Data"
+  "login": {
+    "tagline": "You on the road, us in your pocket.",
+    "lembrar_identificacao": "Remember my identification",
+    "autenticacao_local": "LOCAL AUTHENTICATION",
+    "identificacao": "Identification",
+    "email_cpf": "Email or CPF",
+    "senha": "Password",
+    "entrar": "Sign in",
+    "esqueci_senha": "I forgot my password",
+    "sem_conta": "Do not have an account yet?",
+    "registre_aqui": "Register here",
+    "footer": "KORRE v1.2.0 - Data protected locally",
+    "subtitulo": "Access your account to continue."
+  },
+  "cadastro": {
+    "subtitulo": "Set up your profile and take control of your work.",
+    "aceito": "I accept the",
+    "termos": "Terms of use",
+    "armazenamento": "and confirm local storage.",
+    "comecar": "Start KORRE"
   },
   "dashboard": {
     "boas_vindas": "Rider",
+    "frase_padrao": "Let's earn!",
     "sem_manutencao": "No maintenance",
     "atrasada": "Overdue: {{item}}",
-    "manutencoes_atrasadas": "{{count}} overdue maintenance",
+    "manutencoes_atrasadas": "{{count}} overdue maintenance items",
     "atencao": "Attention: {{item}}",
-    "manutencoes_proximas": "{{count}} upcoming maintenance",
+    "manutencoes_proximas": "{{count}} upcoming maintenance items",
     "proxima": "Next: {{item}}",
-    "previsao_amanha": "Tomorrow's Forecast"
+    "previsao_amanha": "Tomorrow forecast",
+    "ver_tudo": "View all",
+    "progresso_meta": "Goal progress",
+    "live": "LIVE",
+    "modal_km_placeholder": "Ex: 12500"
   },
   "veiculo_card": {
-    "sem_veiculo": "No Vehicle",
+    "sem_veiculo": "No vehicle",
     "eficiencia": "EFFICIENCY",
     "garagem": "Garage",
     "oficina": "Workshop"
   },
   "garagem": {
-    "titulo": "My Garage",
-    "frota": "Registered Fleet",
+    "titulo": "My garage",
+    "frota": "Registered fleet",
     "maquinas": "Machines",
-    "nota_1": "When switching between vehicles, your ",
+    "nota_1": "When switching vehicles, your ",
     "nota_dashboard": "Dashboard",
     "nota_2": " will automatically monitor the selected machine's odometer and earnings.",
     "ativo": "Active",
     "saude": "Health",
     "excelente": "Excellent",
     "inativo": "Inactive",
-    "ativar": "Activate Machine",
-    "gerir": "Manage Workshop"
+    "ativar": "Activate machine",
+    "gerir": "Manage workshop",
+    "trocar_veiculo": "Switch vehicle"
+  },
+  "financeiro": {
+    "ganho": "INCOME",
+    "despesa": "EXPENSE",
+    "vincular_veiculo": "Link to vehicle",
+    "adicionar_categoria": "+ ADD NEW CATEGORY",
+    "salvar_anotacao": "SAVE ENTRY",
+    "salvando": "SAVING...",
+    "salvo": "SAVED!",
+    "valor_anotacao": "Entry amount",
+    "anotacao_feita": "ENTRY SAVED!",
+    "nova_categoria_placeholder": "Ex: Meal, tip..."
+  },
+  "explore": {
+    "titulo": "Data inspector",
+    "registros_em": "{{count}} records in {{table}}",
+    "nenhum_registro": "No records found."
+  },
+  "calculadora": {
+    "salvar_auditoria": "SAVE AUDIT",
+    "entendi": "GOT IT",
+    "patrimonio": "Assets and capital",
+    "custos_movimento": "Movement costs (KM)",
+    "composicao_km": "Cost per km composition",
+    "total_ikm": "Total IKM",
+    "custos_existencia": "Existence costs (time)",
+    "fator_humano": "Human factor (you)"
+  },
+  "origem_ganhos": {
+    "adicionar_plataforma": "ADD NEW PLATFORM",
+    "info": "Each chosen color and icon will be used on your Dashboard to organize your income in KORRE.",
+    "finalizar": "Finish selection",
+    "nova_origem": "NEW SOURCE",
+    "placeholder_nome": "Ex: Local delivery",
+    "buscar": "Search company or app..."
+  },
+  "oficina": {
+    "titulo": "Workshop",
+    "novo_item_placeholder": "Ex: Oil change",
+    "manutencao_configurada": "Maintenance configured!"
+  },
+  "historico": {
+    "periodo": "Period",
+    "apagar": "Delete",
+    "confirmar_exclusao": "Do you want to delete this record?",
+    "erro_salvar": "Error saving"
+  },
+  "perfil": {
+    "sair": "Sign out",
+    "editar_nome_placeholder": "Your name",
+    "nova_senha_placeholder": "New password (optional)"
+  },
+  "relatorios": {
+    "titulo": "My reports",
+    "saude_financeira": "Financial health",
+    "inteligencia_operacional": "Operational intelligence",
+    "veiculo_manutencao": "Vehicle and maintenance",
+    "fisco": "Tax and bureaucracy",
+    "indisponivel_titulo": "Coming soon",
+    "indisponivel_msg": "This report will be available in a future update!",
+    "dica_1": "Tip: Open the ",
+    "termometro_mei": "MEI thermometer",
+    "dica_2": " report regularly to make sure you do not exceed your annual revenue limit.",
+    "items": {
+      "balanco_dre_titulo": "General balance (DRE)",
+      "balanco_dre_desc": "Your real net profit: income vs total expenses.",
+      "fluxo_caixa_titulo": "Cash flow",
+      "fluxo_caixa_desc": "Daily and weekly inflows and outflows so money does not run short.",
+      "receita_plataforma_titulo": "Revenue by platform",
+      "receita_plataforma_desc": "Which app or ride type pays more?",
+      "produtividade_titulo": "Productivity (days/hours)",
+      "produtividade_desc": "Find the best hours and your real earnings per KM.",
+      "manutencoes_titulo": "Maintenance (workshop)",
+      "manutencoes_desc": "History of replaced parts and total workshop cost.",
+      "consumo_titulo": "Consumption (fuel)",
+      "consumo_desc": "Total spend and cost per KM at the fuel pump.",
+      "termometro_mei_titulo": "MEI thermometer",
+      "termometro_mei_desc": "Revenue limit control to avoid losing MEI status.",
+      "extrato_irpf_titulo": "Annual income tax extract",
+      "extrato_irpf_desc": "Exact exempt and taxable amounts for your declaration.",
+      "carne_leao_titulo": "Carne-leao",
+      "carne_leao_desc": "Cash book and deductible expenses for self-employed drivers."
+    }
+  },
+  "suporte": {
+    "titulo": "Help and support",
+    "canal_config_titulo": "Channel in setup",
+    "canal_config_msg": "Official KORRE tutorials have not been configured in this build yet.",
+    "youtube_erro": "Could not open YouTube.",
+    "whatsapp_config_titulo": "Support in setup",
+    "whatsapp_config_msg": "Official KORRE WhatsApp has not been configured in this build yet.",
+    "whatsapp_msg": "Hello! I need help with the app.",
+    "whatsapp_erro": "WhatsApp is not installed on this device.",
+    "tutoriais": "Video tutorials",
+    "tutoriais_sub": "Learn how to use every app feature step by step on our channel.",
+    "contato": "Need to talk to us?",
+    "whatsapp": "WhatsApp support",
+    "resposta_24h": "Reply within 24 hours",
+    "faq": "Frequently asked questions",
+    "termos_privacidade": "Terms of use and privacy"
+  },
+  "notificacoes": {
+    "titulo": "Notifications",
+    "testar": "TEST NOTIFICATION",
+    "vazio": "No notifications right now.",
+    "teste_titulo": "Goal is close!",
+    "teste_msg": "Only R$ 25 left to hit your daily goal!"
+  },
+  "modal": {
+    "titulo": "This is a modal",
+    "home": "Go to home screen"
   }
 }

@@ -1,10 +1,12 @@
 import { Tabs } from 'expo-router';
 import { Database, Home } from 'lucide-react-native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTema } from '../../hooks/modo_tema';
 import { CustomAlert } from '../../components/ui/CustomAlert';
 
 export default function TabLayout() {
+  const { t } = useTranslation();
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
@@ -23,7 +25,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="dashboard"
           options={{
-            title: 'Dashboard',
+            title: t('tabs.dashboard'),
             tabBarIcon: ({ color }) => (
               <Home size={24} color={color} />
             ),
@@ -32,7 +34,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="explore"
           options={{
-            title: 'Dados',
+            title: t('tabs.dados'),
             tabBarIcon: ({ color }) => (
               <Database size={24} color={color} />
             ),

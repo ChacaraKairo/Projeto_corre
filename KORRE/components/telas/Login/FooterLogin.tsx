@@ -2,14 +2,16 @@
 // Componente: FooterLogin
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { styles } from '../../../styles/telas/login/components/FooterLoginStyles';
 
 export const FooterLogin: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <View style={styles.footer}>
       <Text style={styles.footerText}>
-        KORRE v1.2.0 • Dados Protegidos Localmente
+        {t('login.footer')}
       </Text>
     </View>
   );

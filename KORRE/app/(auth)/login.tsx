@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { Check, Fuel } from 'lucide-react-native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Animated,
   ActivityIndicator,
@@ -21,6 +22,7 @@ import { AppRoutes } from '../../constants/routes';
 import { inlineStyles } from '../../styles/generated-inline/app/(auth)/loginInlineStyles';
 import { dynamicInlineStyles } from '../../styles/generated-dynamic/app/(auth)/loginDynamicStyles';
 const LoginScreen: React.FC = () => {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const {
@@ -77,7 +79,7 @@ const LoginScreen: React.FC = () => {
             <Text
               style={inlineStyles.inline4}
             >
-              Você nas ruas, nós no seu bolso.
+              {t('login.tagline')}
             </Text>
           </Animated.View>
 
@@ -120,7 +122,7 @@ const LoginScreen: React.FC = () => {
             <Text
               style={inlineStyles.inline6}
             >
-              Lembrar minha identificação
+              {t('login.lembrar_identificacao')}
             </Text>
           </TouchableOpacity>
 

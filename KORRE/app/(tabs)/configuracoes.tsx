@@ -221,7 +221,7 @@ export default function ConfiguracoesScreen() {
               isDark={isDark}
               isLast={true}
               icon={ShieldCheck}
-              title="Politica de Privacidade"
+              title={t('configuracoes.politica_privacidade')}
               onClick={() =>
                 router.push('/(auth)/politica-privacidade' as never)
               }

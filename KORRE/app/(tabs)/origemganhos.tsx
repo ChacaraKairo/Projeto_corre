@@ -4,6 +4,7 @@ import {
   Plus,
 } from 'lucide-react-native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ScrollView,
   Text,
@@ -23,6 +24,7 @@ import { useTema } from '../../hooks/modo_tema';
 import { styles } from '../../styles/telas/OrigemGanhos/OrigemGanhosStyles';
 
 export default function OrigemGanhosScreen() {
+  const { t } = useTranslation();
   // Puxando toda a lógica do nosso Hook
   const {
     busca,
@@ -110,7 +112,7 @@ export default function OrigemGanhosScreen() {
                 { color: textColor },
               ]}
             >
-              ADICIONAR NOVA PLATAFORMA
+              {t('origem_ganhos.adicionar_plataforma')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -123,9 +125,7 @@ export default function OrigemGanhosScreen() {
           <Text
             style={dynamicInlineStyles.inline2({ textMuted })}
           >
-            Cada cor e ícone escolhido será usado no seu
-            Dashboard para organizar os seus ganhos no
-            Korre.
+            {t('origem_ganhos.info')}
           </Text>
         </View>
       </ScrollView>
@@ -152,7 +152,7 @@ export default function OrigemGanhosScreen() {
           <Text
             style={inlineStyles.inline4}
           >
-            Finalizar Escolha
+            {t('origem_ganhos.finalizar')}
           </Text>
           <ChevronRight size={20} color="#0A0A0A" />
         </TouchableOpacity>

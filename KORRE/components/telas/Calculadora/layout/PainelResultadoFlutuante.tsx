@@ -1,5 +1,6 @@
 import { Clock, Gauge, TrendingUp } from 'lucide-react-native';
 import React, { memo, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { useTema } from '../../../../hooks/modo_tema';
 import { palette } from '../../../../styles/tokens';
@@ -15,6 +16,7 @@ interface Props {
 
 export const PainelResultadoFlutuante = memo(
   ({ form }: Props) => {
+    const { t } = useTranslation();
     const { tema } = useTema();
     const isDark = tema === 'escuro';
 
@@ -79,7 +81,7 @@ export const PainelResultadoFlutuante = memo(
 
           <View style={styles.efficiencyBadge}>
             <TrendingUp size={14} color={palette.white} />
-            <Text style={styles.efficiencyText}>LIVE</Text>
+            <Text style={styles.efficiencyText}>{t('dashboard.live')}</Text>
           </View>
         </View>
       </View>

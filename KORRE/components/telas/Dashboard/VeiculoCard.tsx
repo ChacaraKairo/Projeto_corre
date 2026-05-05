@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, TouchableOpacity } from 'react-native';
 import {
   Warehouse,
@@ -26,6 +27,7 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
   onGaragem,
   onOficina,
 }) => {
+  const { t } = useTranslation();
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
@@ -62,7 +64,7 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
                 { color: isDark ? '#FFF' : '#000' },
               ]}
             >
-              {veiculo?.modelo || 'Sem Veículo'}
+              {veiculo?.modelo || t('veiculo_card.sem_veiculo')}
             </Text>
             <Text
               style={[
@@ -82,7 +84,7 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
               { color: isDark ? '#666' : '#888' },
             ]}
           >
-            EFICIÊNCIA
+            {t('veiculo_card.eficiencia')}
           </Text>
           <Text
             style={[
@@ -109,7 +111,7 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
         >
           <Warehouse size={18} color="#00C853" />
           <Text style={styles.btnAcaoVeiculoTexto}>
-            Garagem
+            {t('veiculo_card.garagem')}
           </Text>
         </TouchableOpacity>
 
@@ -126,7 +128,7 @@ export const VeiculoCard: React.FC<VeiculoProps> = ({
         >
           <ClipboardList size={18} color="#00C853" />
           <Text style={styles.btnAcaoVeiculoTexto}>
-            Oficina
+            {t('veiculo_card.oficina')}
           </Text>
         </TouchableOpacity>
       </View>

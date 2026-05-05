@@ -1,5 +1,5 @@
 /**
- * Utilitário de Cálculo Financeiro: DECISÃO E LUCRATIVIDADE (MeuCorre)
+ * Utilitário de Cálculo Financeiro: DECISÃO E LUCRATIVIDADE (KORRE)
  * Implementa o algoritmo do "Semáforo de Decisão" (Verde, Amarelo, Vermelho).
  * Refatorado para suporte a Dead Miles e modularização.
  */

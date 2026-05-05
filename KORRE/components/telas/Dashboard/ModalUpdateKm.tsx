@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -26,6 +27,7 @@ export const ModalUpdateKm = ({
   km,
   setKm,
 }: ModalUpdateKmProps) => {
+  const { t } = useTranslation();
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
@@ -59,7 +61,7 @@ export const ModalUpdateKm = ({
               { color: isDark ? '#FFF' : '#000' },
             ]}
           >
-            Atualizar KM
+            {t('dashboard.atualizar_km', 'Atualizar KM')}
           </Text>
 
           <Text
@@ -68,7 +70,7 @@ export const ModalUpdateKm = ({
               { color: isDark ? '#888' : '#555' },
             ]}
           >
-            QUILOMETRAGEM ATUAL
+            {t('dashboard.quilometragem_atual', 'QUILOMETRAGEM ATUAL')}
           </Text>
           <TextInput
             style={[
@@ -80,7 +82,7 @@ export const ModalUpdateKm = ({
                 color: isDark ? '#FFF' : '#000',
               },
             ]}
-            placeholder="Ex: 12500"
+            placeholder={t('dashboard.modal_km_placeholder')}
             placeholderTextColor="#666"
             value={km}
             onChangeText={setKm}
@@ -106,7 +108,7 @@ export const ModalUpdateKm = ({
                   { color: isDark ? '#FFF' : '#000' },
                 ]}
               >
-                Cancelar
+                {t('common.cancelar')}
               </Text>
             </TouchableOpacity>
 
@@ -118,7 +120,7 @@ export const ModalUpdateKm = ({
               ]}
               disabled={!km.trim()}
             >
-              <Text style={styles.btnSaveText}>Salvar</Text>
+              <Text style={styles.btnSaveText}>{t('common.salvar')}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -2,6 +2,7 @@ import {
   Save } from 'lucide-react-native';
 import React,
   { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -33,6 +34,7 @@ import { ModalExplicativo } from '../../components/telas/Calculadora/ui/ModalExp
 import { MainButton as Button } from '../../components/ui/buttons/Button'; // Mantido caso seja global
 
 export default function CalculadoraScreen() {
+  const { t } = useTranslation();
   const {
     form,
     handleChange,
@@ -146,7 +148,7 @@ export default function CalculadoraScreen() {
 
               <View style={styles.buttonWrapper}>
                 <Button
-                  title="SALVAR AUDITORIA"
+                  title={t('calculadora.salvar_auditoria')}
                   onPress={calcularESalvar}
                   icon={Save}
                 />

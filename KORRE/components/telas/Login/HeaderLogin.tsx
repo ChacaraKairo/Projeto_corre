@@ -3,6 +3,7 @@
 
 import { Lock } from 'lucide-react-native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Animated, Text, View } from 'react-native';
 import { styles } from '../../../styles/telas/login/components/HeaderLoginStyles';
 
@@ -13,6 +14,7 @@ interface HeaderLoginProps {
 export const HeaderLogin: React.FC<HeaderLoginProps> = ({
   bounceAnim,
 }) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.header}>
       <Animated.View
@@ -29,7 +31,7 @@ export const HeaderLogin: React.FC<HeaderLoginProps> = ({
       </Animated.View>
       <Text style={styles.titulo}>KORRE</Text>
       <Text style={styles.subtitulo}>
-        Aceda à sua conta para continuar.
+        {t('login.subtitulo')}
       </Text>
     </View>
   );

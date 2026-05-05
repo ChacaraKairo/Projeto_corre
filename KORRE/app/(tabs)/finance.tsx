@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -28,6 +29,7 @@ import { useTema } from '../../hooks/modo_tema';
 import { safeBack } from '../../utils/navigation/safeBack';
 
 export default function AddTransactionScreen() {
+  const { t } = useTranslation();
   const {
     tipo,
     setTipo,
@@ -129,7 +131,7 @@ export default function AddTransactionScreen() {
                   },
                 ]}
               >
-                GANHO
+                {t('financeiro.ganho')}
               </Text>
             </TouchableOpacity>
 
@@ -175,7 +177,7 @@ export default function AddTransactionScreen() {
                   },
                 ]}
               >
-                DESPESA
+                {t('financeiro.despesa')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -189,7 +191,7 @@ export default function AddTransactionScreen() {
 
           <View style={styles.vehicleSection}>
             <Text style={styles.vehicleTitle}>
-              Vincular ao Veículo
+              {t('financeiro.vincular_veiculo')}
             </Text>
             <View style={inlineStyles.inline2}>
               <ScrollView
@@ -266,7 +268,7 @@ export default function AddTransactionScreen() {
                 { color: mainColor },
               ]}
             >
-              + ADICIONAR NOVA CATEGORIA
+              {t('financeiro.adicionar_categoria')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -310,10 +312,10 @@ export default function AddTransactionScreen() {
             ]}
           >
             {salvando
-              ? 'SALVANDO...'
+              ? t('financeiro.salvando')
               : showSuccess
-                ? 'SALVO!'
-                : 'SALVAR ANOTAÇÃO'}
+                ? t('financeiro.salvo')
+                : t('financeiro.salvar_anotacao')}
           </Text>
         </TouchableOpacity>
       </View>

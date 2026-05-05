@@ -1,5 +1,5 @@
 /**
- * Utilitário de Cálculo Financeiro: TEMPO (MeuCorre)
+ * Utilitário de Cálculo Financeiro: TEMPO (KORRE)
  * Foca no custo de "existência" do veículo e do motorista (Custo por Minuto).
  * Refatorado 100% alinhado com a Fonte Única de Verdade (viabilidadeCorrida.ts).
  */

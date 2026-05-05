@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, TouchableOpacity } from 'react-native';
 import {
   Clock,
@@ -17,6 +18,7 @@ export const UltimasMovimentacoes = ({
 }: {
   dados: MovimentacaoFinanceira[];
 }) => {
+  const { t } = useTranslation();
   const { tema } = useTema();
   const isDark = tema === 'escuro';
   const router = useRouter();
@@ -36,14 +38,14 @@ export const UltimasMovimentacoes = ({
               { color: isDark ? '#FFF' : '#000' },
             ]}
           >
-            ÚLTIMOS REGISTOS
+            {t('dashboard.ultimos_registros', 'ULTIMOS REGISTROS')}
           </Text>
         </View>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => router.push('/(tabs)/historico')}
         >
-          <Text style={styles.btnVerTudo}>Ver Tudo</Text>
+          <Text style={styles.btnVerTudo}>{t('dashboard.ver_tudo')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -55,7 +57,7 @@ export const UltimasMovimentacoes = ({
               { color: isDark ? '#888' : '#555' },
             ]}
           >
-            Nenhum registo hoje.
+            {t('dashboard.nenhum_registro_hoje', 'Nenhum registro hoje.')}
           </Text>
         ) : (
           dados.map((item) => (
@@ -99,7 +101,7 @@ export const UltimasMovimentacoes = ({
                       { color: isDark ? '#FFF' : '#000' },
                     ]}
                   >
-                    {item.categoria || 'Sem categoria'}
+                    {item.categoria || t('dashboard.sem_categoria', 'Sem categoria')}
                   </Text>
                   <Text
                     style={[
