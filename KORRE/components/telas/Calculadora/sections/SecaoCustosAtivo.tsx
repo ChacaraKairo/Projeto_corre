@@ -7,6 +7,7 @@ import {
   Wrench,
 } from 'lucide-react-native';
 import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { AJUDA_CALCULADORA } from '../../../../constants/calculadoraAjuda';
 import { palette } from '../../../../styles/tokens';
@@ -32,14 +33,16 @@ export const SecaoCustosAtivo = memo(
     onHelp,
     isComplete,
   }: SecaoCustosAtivoProps) => {
+    const { t } = useTranslation();
+
     return (
       <AccordionSection
-        title="Custos de Movimento (KM)"
+        title={t('calculadora.custos_movimento')}
         icon={<Gauge size={20} color={palette.brand} />}
         isComplete={isComplete}
         onHelpClick={() =>
           onHelp(
-            'Custos de Movimento',
+            t('calculadora.custos_movimento'),
             AJUDA_CALCULADORA.custosMovimento,
           )
         }

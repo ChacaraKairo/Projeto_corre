@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -15,15 +16,17 @@ export const HeaderOrigem: React.FC<HeaderOrigemProps> = ({
   busca,
   setBusca,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.header}>
       <View style={styles.headerTop}>
         <View>
           <Text style={styles.title}>
-            Configura o teu corre
+            {t('origem_ganhos.titulo', 'Configura o teu corre')}
           </Text>
           <Text style={styles.subtitle}>
-            Onde ganhas o teu dinheiro?
+            {t('origem_ganhos.subtitulo', 'Onde ganhas o teu dinheiro?')}
           </Text>
         </View>
       </View>
@@ -32,7 +35,7 @@ export const HeaderOrigem: React.FC<HeaderOrigemProps> = ({
         <Search size={18} color="#444" />
         <TextInput
           style={styles.searchInput}
-          placeholder="Procurar empresa ou app..."
+          placeholder={t('origem_ganhos.buscar')}
           placeholderTextColor="#444"
           value={busca}
           onChangeText={setBusca}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -64,6 +65,7 @@ export const ModalNovaOrigem: React.FC<ModalProps> = ({
   onSave,
   onClose,
 }) => {
+  const { t } = useTranslation();
   const PreviewIcon = IconComponents[icone] || Briefcase;
 
   return (
@@ -85,22 +87,22 @@ export const ModalNovaOrigem: React.FC<ModalProps> = ({
           >
             <PreviewIcon size={28} color={cor} />
           </View>
-          <Text style={styles.modalTitle}>NOVA ORIGEM</Text>
+          <Text style={styles.modalTitle}>{t('origem_ganhos.nova_origem')}</Text>
 
           <View style={styles.modalForm}>
             <Text style={styles.modalLabel}>
-              NOME DO APLICATIVO
+              {t('origem_ganhos.nome_app', 'NOME DO APLICATIVO')}
             </Text>
             <TextInput
               style={styles.modalInput}
-              placeholder="Ex: Entrega Local"
+              placeholder={t('origem_ganhos.placeholder_nome')}
               placeholderTextColor="#333"
               value={nome}
               onChangeText={setNome}
             />
 
             <Text style={styles.modalLabel}>
-              ESCOLHER ÍCONE
+              {t('financeiro.escolher_icone', 'ESCOLHER ICONE')}
             </Text>
             <View style={styles.iconGrid}>
               {iconList.map((ico) => {
@@ -127,7 +129,7 @@ export const ModalNovaOrigem: React.FC<ModalProps> = ({
             </View>
 
             <Text style={styles.modalLabel}>
-              ESCOLHER COR
+              {t('origem_ganhos.escolher_cor', 'ESCOLHER COR')}
             </Text>
             <View style={styles.colorGrid}>
               {colorPalette.map((col) => (
@@ -160,7 +162,7 @@ export const ModalNovaOrigem: React.FC<ModalProps> = ({
             onPress={onSave}
           >
             <Text style={styles.btnSaveModalText}>
-              REGISTAR ORIGEM
+              {t('origem_ganhos.registrar', 'REGISTRAR ORIGEM')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -168,7 +170,7 @@ export const ModalNovaOrigem: React.FC<ModalProps> = ({
             onPress={onClose}
           >
             <Text style={styles.btnCancelModalText}>
-              CANCELAR
+              {t('common.cancelar').toUpperCase()}
             </Text>
           </TouchableOpacity>
         </View>

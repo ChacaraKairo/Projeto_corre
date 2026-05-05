@@ -2,6 +2,7 @@
 // Componente: MetasSecao - Seleção de Meta Diária ou Semanal
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -35,12 +36,14 @@ export const MetasSecao: React.FC<MetasSecaoProps> = ({
   setTipoMeta,
   erro,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <View style={cadastroStyles.card}>
       <View style={localStyles.sectionTitleRow}>
         <Target size={18} color="#00C853" />
         <Text style={cadastroStyles.labelSecao}>
-          METAS E SEGURANÇA
+          {t('cadastro.metas_seguranca', 'METAS E SEGURANCA')}
         </Text>
       </View>
 
@@ -68,7 +71,7 @@ export const MetasSecao: React.FC<MetasSecaoProps> = ({
                 localStyles.toggleTextActive,
             ]}
           >
-            Diária
+            {t('cadastro.diaria', 'Diaria')}
           </Text>
         </TouchableOpacity>
 
@@ -94,7 +97,7 @@ export const MetasSecao: React.FC<MetasSecaoProps> = ({
                 localStyles.toggleTextActive,
             ]}
           >
-            Semanal
+            {t('cadastro.semanal', 'Semanal')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -102,8 +105,8 @@ export const MetasSecao: React.FC<MetasSecaoProps> = ({
       <Input
         label={
           tipoMeta === 'diaria'
-            ? 'Meta Diária (R$)'
-            : 'Meta Semanal (R$)'
+            ? t('cadastro.meta_diaria', 'Meta diaria (R$)')
+            : t('cadastro.meta_semanal', 'Meta semanal (R$)')
         }
         placeholder={
           tipoMeta === 'diaria'
@@ -119,8 +122,8 @@ export const MetasSecao: React.FC<MetasSecaoProps> = ({
 
       <Text style={localStyles.obsText}>
         {tipoMeta === 'diaria'
-          ? '* Esta meta será usada para calcular o seu progresso diário.'
-          : '* A meta semanal ajuda no planejamento financeiro de longo prazo.'}
+          ? t('cadastro.meta_diaria_obs', '* Esta meta sera usada para calcular o seu progresso diario.')
+          : t('cadastro.meta_semanal_obs', '* A meta semanal ajuda no planejamento financeiro de longo prazo.')}
       </Text>
     </View>
   );

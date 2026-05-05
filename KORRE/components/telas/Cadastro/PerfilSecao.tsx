@@ -1,5 +1,6 @@
 // Arquivo: src/components/telas/Cadastro/PerfilSecao.tsx
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -54,6 +55,7 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
   setFoto,
   erro,
 }) => {
+  const { t } = useTranslation();
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
   const handleTakeAction = async () => {
@@ -62,9 +64,9 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
       if (savedUri) setFoto(savedUri);
     } catch (error: any) {
       showCustomAlert(
-        'Erro',
+        t('common.erro'),
         error.message ||
-          'Não foi possível capturar a foto.',
+          t('cadastro.foto_erro', 'Nao foi possivel capturar a foto.'),
       );
     }
   };
@@ -90,7 +92,7 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
       <View style={localStyles.sectionTitleRow}>
         <User size={18} color="#00C853" />
         <Text style={styles.labelSecao}>
-          DADOS DO PILOTO
+          {t('cadastro.dados_piloto', 'DADOS DO PILOTO')}
         </Text>
       </View>
 
@@ -130,8 +132,8 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
       </View>
 
       <Input
-        label="Nome de Usuário"
-        placeholder="Ex: João Silva"
+        label={t('cadastro.nome_usuario', 'Nome de usuario')}
+        placeholder={t('cadastro.nome_placeholder', 'Ex: Joao Silva')}
         value={nome}
         onChangeText={(t) => setNome(t.toUpperCase())}
         autoCapitalize="characters"
@@ -140,7 +142,7 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
       />
 
       <Input
-        label="E-mail"
+        label={t('cadastro.email', 'E-mail')}
         placeholder="seu@email.com"
         value={email}
         onChangeText={(t) =>
@@ -155,7 +157,7 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
       />
 
       <Input
-        label="CPF (opcional)"
+        label={t('cadastro.cpf_opcional', 'CPF (opcional)')}
         placeholder="000.000.000-00"
         value={cpf}
         onChangeText={handleCpfChange}
@@ -168,7 +170,7 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
       {/* CAMPO 1: CRIAR SENHA */}
       <View style={localStyles.inputWrapper}>
         <Input
-          label="Crie uma Senha"
+          label={t('cadastro.crie_senha', 'Crie uma senha')}
           placeholder="••••••••"
           value={senha}
           onChangeText={(t) => setSenha(t.trim())} // Impede espaços acidentais
@@ -192,14 +194,14 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
             senhaInvalida && { color: '#EF4444' },
           ]}
         >
-          * Mínimo de 7 caracteres, com letras e números.
+          {t('cadastro.senha_regra', '* Minimo de 7 caracteres, com letras e numeros.')}
         </Text>
       </View>
 
       {/* CAMPO 2: CONFIRMAR SENHA */}
       <View style={localStyles.inputWrapper}>
         <Input
-          label="Confirme sua Senha"
+          label={t('cadastro.confirme_senha', 'Confirme sua senha')}
           placeholder="••••••••"
           value={confirmarSenha}
           onChangeText={(t) => setConfirmarSenha(t.trim())} // Impede espaços acidentais
@@ -209,7 +211,7 @@ export const PerfilSecao: React.FC<PerfilProps> = ({
         />
         {senhasDiferentes && (
           <Text style={localStyles.errorText}>
-            As senhas não coincidem.
+            {t('cadastro.senhas_nao_coincidem', 'As senhas nao coincidem.')}
           </Text>
         )}
       </View>

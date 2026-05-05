@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   Text,
@@ -65,6 +66,8 @@ export const AdicionarCategoria = ({
   setIcone,
   mainColor,
 }: AdicionarCategoriaProps) => {
+  const { t } = useTranslation();
+
   return (
     <Modal
       visible={visible}
@@ -80,25 +83,25 @@ export const AdicionarCategoria = ({
       >
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>
-            Nova Categoria
+            {t('financeiro.nova_categoria', 'Nova Categoria')}
           </Text>
 
           <Text style={styles.modalLabel}>
-            NOME DA CATEGORIA
+            {t('financeiro.nome_categoria', 'NOME DA CATEGORIA')}
           </Text>
           <TextInput
             style={[
               styles.modalInput,
               { borderColor: mainColor },
             ]}
-            placeholder="Ex: Refeição, Gorjeta..."
+            placeholder={t('financeiro.nova_categoria_placeholder')}
             placeholderTextColor="#666"
             value={nome}
             onChangeText={setNome}
           />
 
           <Text style={styles.modalLabel}>
-            ESCOLHER ÍCONE
+            {t('financeiro.escolher_icone', 'ESCOLHER ICONE')}
           </Text>
           <View style={styles.modalIconGrid}>
             {iconList.map((ico) => {
@@ -132,7 +135,7 @@ export const AdicionarCategoria = ({
               style={styles.modalBtnCancel}
             >
               <Text style={styles.modalBtnCancelText}>
-                Cancelar
+                {t('common.cancelar')}
               </Text>
             </TouchableOpacity>
 
@@ -148,7 +151,7 @@ export const AdicionarCategoria = ({
               disabled={!nome.trim()}
             >
               <Text style={styles.modalBtnSaveText}>
-                Salvar
+                {t('common.salvar')}
               </Text>
             </TouchableOpacity>
           </View>

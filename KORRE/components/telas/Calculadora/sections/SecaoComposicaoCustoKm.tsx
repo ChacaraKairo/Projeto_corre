@@ -1,5 +1,6 @@
 import { AlertTriangle, Gauge } from 'lucide-react-native';
 import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTema } from '../../../../hooks/modo_tema';
 import { palette, spacing } from '../../../../styles/tokens';
@@ -30,6 +31,7 @@ const itens = [
 
 export const SecaoComposicaoCustoKm = memo(
   ({ breakdown, avisos }: Props) => {
+    const { t } = useTranslation();
     const { tema } = useTema();
     const isDark = tema === 'escuro';
     const textColor = isDark ? palette.white : palette.surface750;
@@ -45,7 +47,7 @@ export const SecaoComposicaoCustoKm = memo(
 
     return (
       <AccordionSection
-        title="Composição do custo por km"
+        title={t('calculadora.composicao_km')}
         icon={<Gauge size={20} color={palette.brand} />}
         isComplete={avisos.length === 0}
         onHelpClick={() => undefined}
@@ -100,7 +102,7 @@ export const SecaoComposicaoCustoKm = memo(
             ))}
 
             <View style={styles.totalLinha}>
-              <Text style={styles.totalLabel}>Total IKM</Text>
+              <Text style={styles.totalLabel}>{t('calculadora.total_ikm')}</Text>
               <Text style={styles.totalValor}>
                 {formatCurrency(total)}
               </Text>

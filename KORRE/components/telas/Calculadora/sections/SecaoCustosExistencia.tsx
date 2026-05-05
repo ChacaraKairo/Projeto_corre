@@ -8,6 +8,7 @@ import {
   X,
 } from 'lucide-react-native';
 import React, { memo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   FlatList,
   Modal,
@@ -47,6 +48,7 @@ export const SecaoCustosExistencia = memo(
     onCalcularIPVA,
     isComplete,
   }: SecaoCustosExistenciaProps) => {
+    const { t } = useTranslation();
     const { tema } = useTema();
     const isDark = tema === 'escuro';
     const [modalUFVisivel, setModalUFVisivel] =
@@ -63,12 +65,12 @@ export const SecaoCustosExistencia = memo(
     return (
       <>
         <AccordionSection
-          title="Custos de Existência (Tempo)"
+          title={t('calculadora.custos_existencia')}
           icon={<Landmark size={20} color={palette.brand} />}
           isComplete={isComplete}
           onHelpClick={() =>
             onHelp(
-              'Custos de Existência',
+              t('calculadora.custos_existencia'),
               AJUDA_CALCULADORA.custosExistencia,
             )
           }

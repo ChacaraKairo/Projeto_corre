@@ -9,6 +9,7 @@ import {
   Utensils,
 } from 'lucide-react-native';
 import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { AJUDA_CALCULADORA } from '../../../../constants/calculadoraAjuda';
 import { palette } from '../../../../styles/tokens';
@@ -34,13 +35,15 @@ export const SecaoCustoPessoa = memo(
     onHelp,
     isComplete,
   }: SecaoCustoPessoaProps) => {
+    const { t } = useTranslation();
+
     return (
       <AccordionSection
-        title="Fator Humano (Você)"
+        title={t('calculadora.fator_humano')}
         icon={<User size={20} color={palette.brand} />}
         isComplete={isComplete}
         onHelpClick={() =>
-          onHelp('Fator Humano', AJUDA_CALCULADORA.fatorHumano)
+          onHelp(t('calculadora.fator_humano'), AJUDA_CALCULADORA.fatorHumano)
         }
       >
         <View style={sharedSectionStyles.fieldStack}>

@@ -4,6 +4,7 @@ import {
   Landmark,
 } from 'lucide-react-native';
 import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { AJUDA_CALCULADORA } from '../../../../constants/calculadoraAjuda';
 import { palette } from '../../../../styles/tokens';
@@ -29,21 +30,23 @@ export const SecaoPatrimonio = memo(
     onHelp,
     isComplete,
   }: SecaoPatrimonioProps) => {
+    const { t } = useTranslation();
+
     return (
       <AccordionSection
-        title="Patrimônio e Capital"
+        title={t('calculadora.patrimonio')}
         icon={<Coins size={20} color={palette.brand} />}
         isComplete={isComplete}
         onHelpClick={() =>
           onHelp(
-            'Patrimônio e Capital',
+            t('calculadora.patrimonio'),
             AJUDA_CALCULADORA.patrimonio,
           )
         }
       >
         <View style={sharedSectionStyles.fieldStack}>
           <InputFinanceiro
-            label="Valor do veículo (Tabela FIPE)"
+            label={t('calculadora.valor_veiculo_fipe', 'Valor do veiculo (Tabela FIPE)')}
             value={String(form.valor_veiculo_fipe || '')}
             onChangeText={(v) =>
               onChange('valor_veiculo_fipe', v)
@@ -52,12 +55,12 @@ export const SecaoPatrimonio = memo(
             icon={<Landmark size={18} color={palette.surface400} />}
             suffix="R$"
             onHelp={() =>
-              onHelp('Valor FIPE', AJUDA_CALCULADORA.valorFipe)
+              onHelp(t('calculadora.valor_fipe', 'Valor FIPE'), AJUDA_CALCULADORA.valorFipe)
             }
           />
 
           <InputFinanceiro
-            label="Taxa Selic anual"
+            label={t('calculadora.selic_anual', 'Taxa Selic anual')}
             value={String(
               form.custo_oportunidade_selic || '',
             )}
@@ -70,7 +73,7 @@ export const SecaoPatrimonio = memo(
             }
             suffix="%"
             onHelp={() =>
-              onHelp('Taxa Selic', AJUDA_CALCULADORA.selic)
+              onHelp(t('calculadora.taxa_selic', 'Taxa Selic'), AJUDA_CALCULADORA.selic)
             }
           />
         </View>

@@ -2,6 +2,7 @@ import {
   Info,
   X } from 'lucide-react-native';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Modal,
   ScrollView,
@@ -22,6 +23,7 @@ interface ModalExplicativoProps {
 export const ModalExplicativo: React.FC<
   ModalExplicativoProps
 > = ({ visible, onClose, titulo, textoExplicativo }) => {
+  const { t } = useTranslation();
   const { tema } = useTema();
   const isDark = tema === 'escuro';
 
@@ -84,7 +86,7 @@ export const ModalExplicativo: React.FC<
             onPress={onClose}
             activeOpacity={0.8}
           >
-            <Text style={styles.btnOkText}>ENTENDI</Text>
+            <Text style={styles.btnOkText}>{t('calculadora.entendi')}</Text>
           </TouchableOpacity>
         </View>
       </View>
